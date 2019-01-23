@@ -1,7 +1,4 @@
 -- Date utilities
-SELECT 'hazardutilities.cleandate(TRUNC(SYSDATE, ''MM'') + 100)' functioncall, hazardutilities.cleandate(TRUNC(SYSDATE, 'MM') + 100) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.cleandate(TO_DATE(''17891014'', ''YYYYMMDD''))' functioncall, hazardutilities.cleandate(TO_DATE('17891014', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.cleandate(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.cleandate(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleandate(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.cleandate('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleandate(''20181121'', ''abcd'')' functioncall, hazardutilities.cleandate('20181121', 'abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleandate(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.cleandate('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
