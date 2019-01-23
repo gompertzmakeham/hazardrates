@@ -261,7 +261,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION cleandate(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 		returndate DATE;
 	BEGIN
-		returndate := cleandate(TO_DATE(datestring, formatmodel));
+		returndate := TO_DATE(datestring, formatmodel);
 		RETURN returndate;
 	EXCEPTION
 		WHEN OTHERS THEN

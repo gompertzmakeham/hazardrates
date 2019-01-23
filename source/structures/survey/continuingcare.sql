@@ -1,4 +1,7 @@
-CREATE MATERIALIZED VIEW surveycontinuingcare NOLOGGING NOCOMPRESS PARALLEL BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
+ALTER SESSION FORCE PARALLEL DDL PARALLEL 8;
+ALTER SESSION FORCE PARALLEL DML PARALLEL 8;
+ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8;
+CREATE MATERIALIZED VIEW surveycontinuingcare NOLOGGING NOCOMPRESS PARALLEL 8 BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
 WITH
 
 	-- Ingest all continuing care events
@@ -51,6 +54,8 @@ WITH
 
 		-- Long term care
 		SELECT
+		
+			/*+ parrallel(8) */
 			hazardutilities.cleanphn(a0.uli_ab_phn) uliabphn,
 			hazardutilities.cleansex(a0.reported_gender) sex,
 			a0.birth_date birthdate,
