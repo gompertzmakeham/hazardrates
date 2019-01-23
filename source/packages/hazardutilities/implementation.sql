@@ -140,9 +140,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION ageyears(startdate IN DATE, enddate IN DATE) RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN floor(months_between(enddate, startdate) / 12);
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END ageyears;
 
 	/*
@@ -151,9 +148,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION yearend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(inputdate, 12) - 1;
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END yearend;
 
 	/*
@@ -162,9 +156,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION yearanniversary(startdate IN DATE, enddate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(startdate, 12 * ceil(months_between(enddate, startdate) / 12));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END yearanniversary;
 
 	/*
@@ -172,10 +163,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION fiscalstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN add_months(TRUNC(add_months(cleandate(inputdate), -3), 'yyyy'), 3);
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
+		RETURN add_months(TRUNC(add_months(inputdate, -3), 'yyyy'), 3);
 	END fiscalstart;
 
 	/*
@@ -183,10 +171,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION fiscalend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN yearend(fiscalstart(cleandate(inputdate)));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
+		RETURN yearend(fiscalstart(inputdate));
 	END fiscalend;
 
 	/*
@@ -195,9 +180,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION fiscalstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalstart(cleandate(datestring, formatmodel));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END fiscalstart;
 
 	/*
@@ -206,9 +188,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION fiscalend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalend(cleandate(datestring, formatmodel));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END fiscalend;
 
 	/*
@@ -217,9 +196,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION fiscalstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalstart(cleandate(datestring));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END fiscalstart;
 
 	/*
@@ -228,9 +204,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION fiscalend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalend(cleandate(datestring));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END fiscalend;
 
 	/*
@@ -238,10 +211,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION calendarstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN TRUNC(cleandate(inputdate), 'yyyy');
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
+		RETURN TRUNC(inputdate, 'yyyy');
 	END calendarstart;
 
 	/*
@@ -249,10 +219,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION calendarend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN yearend(calendarstart(cleandate(inputdate)));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
+		RETURN yearend(calendarstart(inputdate));
 	END calendarend;
 
 	/*
@@ -261,9 +228,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION calendarstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarstart(cleandate(datestring, formatmodel));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END calendarstart;
 
 	/*
@@ -272,9 +236,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION calendarend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarend(cleandate(datestring, formatmodel));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END calendarend;
 
 	/*
@@ -283,9 +244,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION calendarstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarstart(cleandate(datestring));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END calendarstart;
 
 	/*
@@ -294,37 +252,21 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION calendarend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarend(cleandate(datestring));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END calendarend;
-
-	/*
-	 *  Check for minimally plausible date range
-	 */
-	FUNCTION cleandate(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
-	BEGIN
-		CASE
-			WHEN inputdate BETWEEN TO_DATE('18000101', 'YYYYMMDD') AND TRUNC(SYSDATE, 'MM') THEN
-				RETURN inputdate;
-			ELSE
-				RETURN NULL;
-		END CASE;
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
-	END cleandate;
 
 	/*
 	 *  Try to convert a string to a date according to the format model. Return null when the
 	 *  string cannot be converted to a date.
 	 */
 	FUNCTION cleandate(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+		returndate DATE;
 	BEGIN
-		RETURN cleandate(TO_DATE(datestring, formatmodel));
+		returndate := cleandate(TO_DATE(datestring, formatmodel));
+		RETURN returndate;
 	EXCEPTION
 		WHEN OTHERS THEN
-			RETURN NULL;
+			returndate := NULL;
+			RETURN returndate;
 	END cleandate;
 
 	/*
@@ -334,9 +276,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION cleandate(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN cleandate(datestring, 'YYYYMMDD');
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END cleandate;
 
 	/*
@@ -351,9 +290,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			ELSE
 				RETURN NULL;
 		END CASE;
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END cleanphn;
 
 	/*
@@ -364,9 +300,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION cleanphn(inputphn IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN cleanphn(to_number(regexp_replace(inputphn, '[^0-9]', '')));
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END cleanphn;
 
 	/*
@@ -376,8 +309,5 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	FUNCTION cleansex(inputsex IN VARCHAR2) RETURN VARCHAR2 DETERMINISTIC AS
 	BEGIN
 		RETURN regexp_substr(UPPER(inputsex), '[FM]', 1, 1, 'i');
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN NULL;
 	END cleansex;
 END hazardutilities;

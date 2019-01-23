@@ -6,13 +6,9 @@ SELECT
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend,
-	SUM(a2.durationdays) durationdays,
-	SUM(CASE WHEN hazardutilities.cleandate(a1.admitdate) BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) durationadmisions,
-	SUM(CASE WHEN hazardutilities.cleandate(a1.disdate) BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) durationdischarges,
-	MIN(a0.birthequipoise) birthequipoise,
-	MIN(a0.deceasedequipoise) deceasedequipoise,
-	MAX(a2.ageinterval) ageinterval,
-	MAX(a2.agecensus) agecensus
+	SUM(a2.durationdays) staydays,
+	SUM(CASE WHEN hazardutilities.cleandate(a1.admitdate) BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) admissioncount,
+	SUM(CASE WHEN hazardutilities.cleandate(a1.disdate) BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) dischargecount
 FROM
 	personsurveillance a0
 	INNER JOIN

@@ -7,24 +7,16 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.rcpt_uli) uliabphn,
 			hazardutilities.cleansex(a0.rcpt_gender_cd) sex,
-			hazardutilities.cleandate(a0.rcpt_dob) birthdate,
+			a0.rcpt_dob birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.dspn_date) servicestart,
-			greatest
-			(
-				hazardutilities.cleandate(a0.dspn_date),
-				COALESCE(hazardutilities.cleandate(a0.rcpt_dob), hazardutilities.cleandate(a0.dspn_date))
-			) serviceend,
+			a0.dspn_date servicestart,
+			a0.dspn_date serviceend,
 
 			-- Calendar year boundaries
 			hazardutilities.calendarstart(a0.dspn_date) surveillancestart,
-			greatest
-			(
-				hazardutilities.calendarend(a0.dspn_date),
-				COALESCE(hazardutilities.calendarend(a0.rcpt_dob), hazardutilities.calendarend(a0.dspn_date))
-			) surveillanceend,
+			hazardutilities.calendarend(a0.dspn_date) surveillanceend,
 
 			-- Postal code determines residency
 			CASE substr(UPPER(a0.rcpt_postal_cd), 1, 1)
@@ -37,7 +29,7 @@ WITH
 			
 			-- Birth observed
 			CASE
-				WHEN hazardutilities.cleandate(a0.dspn_date) = hazardutilities.cleandate(a0.rcpt_dob) THEN
+				WHEN a0.dspn_date = a0.rcpt_dob THEN
 					1
 				ELSE
 					CAST(NULL AS INTEGER)
@@ -48,13 +40,7 @@ WITH
 		FROM
 			ahsdata.pin_dspn a0
 		WHERE
-			hazardutilities.cleandate(a0.dspn_date) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.rcpt_dob) IS NULL
-				OR
-				hazardutilities.cleandate(a0.rcpt_dob) <= hazardutilities.cleandate(a0.dspn_date)
-			)
+			a0.dspn_date BETWEEN COALESCE(a0.rcpt_dob, a0.dspn_date) AND TRUNC(SYSDATE, 'MM')
 	)
 
 -- Digest to one record per person

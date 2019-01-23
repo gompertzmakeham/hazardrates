@@ -110,11 +110,6 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	FUNCTION calendarend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
 
 	/*
-	 *  Check for minimally plausible date range
-	 */
-	FUNCTION cleandate(inputdate IN DATE) RETURN DATE DETERMINISTIC;
-
-	/*
 	 *  Try to convert a string to a date according to the format model. Return null when the
 	 *  string cannot be converted to a date.
 	 */

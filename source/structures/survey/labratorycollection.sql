@@ -9,16 +9,16 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
-			hazardutilities.cleandate(a0.clnt_birth_dt) birthdate,
+			a0.clnt_birth_dt birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.clct_dt) servicestart,
-			hazardutilities.cleandate(a0.clct_dt) serviceend,
+			a0.clct_dt servicestart,
+			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
+			a0.clct_dt surveillancestart,
+			a0.clct_dt surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -35,7 +35,7 @@ WITH
 			
 			-- Birth observation
 			CASE
-				WHEN hazardutilities.cleandate(a0.clct_dt) = hazardutilities.cleandate(a0.clnt_birth_dt) THEN
+				WHEN a0.clct_dt = a0.clnt_birth_dt THEN
 					1
 				ELSE
 					0
@@ -46,29 +46,23 @@ WITH
 		FROM
 			ahsdata.lab_lf a0
 		WHERE
-			hazardutilities.cleandate(a0.clct_dt) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.clnt_birth_dt) IS NULL
-				OR
-				hazardutilities.cleandate(a0.clnt_birth_dt) <= hazardutilities.cleandate(a0.clct_dt)
-			)
+			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 		
 		-- Labratory Meditech
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
-			hazardutilities.cleandate(a0.clnt_birth_dt) birthdate,
+			a0.clnt_birth_dt birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.clct_dt) servicestart,
-			hazardutilities.cleandate(a0.clct_dt) serviceend,
+			a0.clct_dt servicestart,
+			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
+			a0.clct_dt surveillancestart,
+			a0.clct_dt surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -83,7 +77,7 @@ WITH
 			
 			-- Birth observation
 			CASE
-				WHEN hazardutilities.cleandate(a0.clct_dt) = hazardutilities.cleandate(a0.clnt_birth_dt) THEN
+				WHEN a0.clct_dt = a0.clnt_birth_dt THEN
 					1
 				ELSE
 					0
@@ -94,29 +88,23 @@ WITH
 		FROM
 			ahsdata.lab_mt a0
 		WHERE
-			hazardutilities.cleandate(a0.clct_dt) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.clnt_birth_dt) IS NULL
-				OR
-				hazardutilities.cleandate(a0.clnt_birth_dt) <= hazardutilities.cleandate(a0.clct_dt)
-			)
+			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Labratory Millenium
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
-			hazardutilities.cleandate(a0.clnt_birth_dt) birthdate,
+			a0.clnt_birth_dt birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.clct_dt) servicestart,
-			hazardutilities.cleandate(a0.clct_dt) serviceend,
+			a0.clct_dt servicestart,
+			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
+			a0.clct_dt surveillancestart,
+			a0.clct_dt surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -129,7 +117,7 @@ WITH
 			
 			-- Birth observation
 			CASE
-				WHEN hazardutilities.cleandate(a0.clct_dt) = hazardutilities.cleandate(a0.clnt_birth_dt) THEN
+				WHEN a0.clct_dt = a0.clnt_birth_dt THEN
 					1
 				ELSE
 					0
@@ -140,29 +128,23 @@ WITH
 		FROM
 			ahsdata.lab_ml a0
 		WHERE
-			hazardutilities.cleandate(a0.clct_dt) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.clnt_birth_dt) IS NULL
-				OR
-				hazardutilities.cleandate(a0.clnt_birth_dt) <= hazardutilities.cleandate(a0.clct_dt)
-			)
+			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Labratory Sunquest
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
-			hazardutilities.cleandate(a0.clnt_birth_dt) birthdate,
+			a0.clnt_birth_dt birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.clct_dt) servicestart,
-			hazardutilities.cleandate(a0.clct_dt) serviceend,
+			a0.clct_dt servicestart,
+			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
+			a0.clct_dt surveillancestart,
+			a0.clct_dt surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -175,7 +157,7 @@ WITH
 			
 			-- Birth observation
 			CASE
-				WHEN hazardutilities.cleandate(a0.clct_dt) = hazardutilities.cleandate(a0.clnt_birth_dt) THEN
+				WHEN a0.clct_dt = a0.clnt_birth_dt THEN
 					1
 				ELSE
 					0
@@ -186,13 +168,7 @@ WITH
 		FROM
 			ahsdata.lab_sq a0
 		WHERE
-			hazardutilities.cleandate(a0.clct_dt) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.clnt_birth_dt) IS NULL
-				OR
-				hazardutilities.cleandate(a0.clnt_birth_dt) <= hazardutilities.cleandate(a0.clct_dt)
-			)
+			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 	)
 
 -- Digest to one record per person

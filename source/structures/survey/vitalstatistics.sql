@@ -9,16 +9,20 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
-			hazardutilities.cleandate(a0.birth_date) birthdate,
-			hazardutilities.cleandate(a0.oop_death_) deceaseddate,
+			a0.birth_date birthdate,
+			a0.oop_death_ deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.birth_date) servicestart,
-			COALESCE(hazardutilities.cleandate(a0.oop_death_), hazardutilities.cleandate(a0.birth_date)) serviceend,
+			a0.birth_date servicestart,
+			COALESCE(a0.oop_death_, a0.birth_date) serviceend,
 
 			-- Calendar year boundaries
 			hazardutilities.calendarstart(a0.birth_date) surveillancestart,
-			COALESCE(hazardutilities.calendarend(a0.oop_death_), hazardutilities.calendarend(a0.birth_date)) surveillanceend,
+			COALESCE
+			(
+				hazardutilities.calendarend(a0.oop_death_),
+				hazardutilities.calendarend(a0.birth_date)
+			) surveillanceend,
 
 			-- Directly determine residency
 			CASE
@@ -46,25 +50,19 @@ WITH
 		FROM
 			vital_stats_dsp.ex_ah_bth_2000_2016 a0
 		WHERE
-			hazardutilities.cleandate(a0.birth_date) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.oop_death_) IS NULL
-				OR
-				 hazardutilities.cleandate(a0.oop_death_) BETWEEN hazardutilities.cleandate(a0.birth_date) AND TRUNC(SYSDATE, 'MM')
-			)
+			COALESCE(a0.oop_death_, TRUNC(SYSDATE, 'MM')) BETWEEN a0.birth_date AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Births 2015 to 2017
 		SELECT
 			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
-			hazardutilities.cleandate(a0.birth_date) birthdate,
+			a0.birth_date birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 			
 			-- Service boundaries
-			hazardutilities.cleandate(a0.birth_date) servicestart,
-			hazardutilities.cleandate(a0.birth_date) serviceend,
+			a0.birth_date servicestart,
+			a0.birth_date serviceend,
 			
 			-- Calendar year boundaries
 			hazardutilities.calendarstart(a0.birth_date) surveillancestart,
@@ -85,19 +83,19 @@ WITH
 		FROM
 			vital_stats_dsp.ahs_bth_2015_2017 a0
 		WHERE
-			hazardutilities.cleandate(a0.birth_date) <= TRUNC(SYSDATE, 'MM')
+			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Births 2000 to 2015
 		SELECT
 			hazardutilities.cleanphn(a0.primary_uli_c) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
-			hazardutilities.cleandate(a0.birth_date) birthdate,
+			a0.birth_date birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 			
 			-- Service boundaries
-			hazardutilities.cleandate(a0.birth_date) servicestart,
-			hazardutilities.cleandate(a0.birth_date) serviceend,
+			a0.birth_date servicestart,
+			a0.birth_date serviceend,
 			
 			-- Calendar year boundaries
 			hazardutilities.calendarstart(a0.birth_date) surveillancestart,
@@ -118,7 +116,7 @@ WITH
 		FROM
 			vital_stats_dsp.ex_vs_bth_2000_2015 a0
 		WHERE
-			hazardutilities.cleandate(a0.birth_date) <= TRUNC(SYSDATE, 'MM')
+			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Deaths 2010 to 2016
@@ -126,35 +124,35 @@ WITH
 			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
 					CAST(NULL AS DATE)
 				ELSE
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 			END birthdate,
-			hazardutilities.cleandate(a0.dethdate) deceaseddate,
+			a0.dethdate deceaseddate,
 
 			-- Service boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
-					hazardutilities.cleandate(a0.dethdate)
-				WHEN hazardutilities.cleandate(a0.birth_date) IS NULL THEN
-					hazardutilities.cleandate(a0.dethdate)
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+					a0.dethdate
+				WHEN a0.birth_date IS NULL THEN
+					a0.dethdate
 				WHEN a0.inf_deth = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				WHEN a0.neonatal = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				WHEN a0.early_neo = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				ELSE
-					hazardutilities.cleandate(a0.dethdate)
+					a0.dethdate
 			END servicestart,
-			hazardutilities.cleandate(a0.dethdate) serviceend,
+			a0.dethdate serviceend,
 			
 			-- Calendar year boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
 					hazardutilities.calendarstart(a0.dethdate)
-				WHEN hazardutilities.cleandate(a0.birth_date) IS NULL THEN
+				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarstart(a0.dethdate)
 				WHEN a0.inf_deth = 1 THEN
 					hazardutilities.calendarstart(a0.birth_date)
@@ -197,13 +195,7 @@ WITH
 		FROM
 			vital_stats_dsp.ex_ah_dth_2010_2016 a0
 		WHERE
-			hazardutilities.cleandate(a0.dethdate) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.birth_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.birth_date) <= hazardutilities.cleandate(a0.dethdate)
-			)
+			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Deaths 2015 to 2017
@@ -211,35 +203,35 @@ WITH
 			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
 					CAST(NULL AS DATE)
 				ELSE
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 			END birthdate,
-			hazardutilities.cleandate(a0.dethdate) deceaseddate,
+			a0.dethdate deceaseddate,
 
 			-- Service boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
-					hazardutilities.cleandate(a0.dethdate)
-				WHEN hazardutilities.cleandate(a0.birth_date) IS NULL THEN
-					hazardutilities.cleandate(a0.dethdate)
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+					a0.dethdate
+				WHEN a0.birth_date IS NULL THEN
+					a0.dethdate
 				WHEN a0.inf_deth = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				WHEN a0.neonatal = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				WHEN a0.early_neo = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				ELSE
-					hazardutilities.cleandate(a0.dethdate)
+					a0.dethdate
 			END servicestart,
-			hazardutilities.cleandate(a0.dethdate) serviceend,
+			a0.dethdate serviceend,
 			
 			-- Calendar year boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
 					hazardutilities.calendarstart(a0.dethdate)
-				WHEN hazardutilities.cleandate(a0.birth_date) IS NULL THEN
+				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarstart(a0.dethdate)
 				WHEN a0.inf_deth = 1 THEN
 					hazardutilities.calendarstart(a0.birth_date)
@@ -282,13 +274,7 @@ WITH
 		FROM
 			vital_stats_dsp.ahs_dth_2015_2017 a0
 		WHERE
-			hazardutilities.cleandate(a0.dethdate) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.birth_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.birth_date) <= hazardutilities.cleandate(a0.dethdate)
-			)
+			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Deaths early
@@ -296,35 +282,35 @@ WITH
 			hazardutilities.cleanphn(a0.primary_uli) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
 					CAST(NULL AS DATE)
 				ELSE
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 			END birthdate,
-			hazardutilities.cleandate(a0.dethdate) deceaseddate,
+			a0.dethdate deceaseddate,
 
 			-- Service boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
-					hazardutilities.cleandate(a0.dethdate)
-				WHEN hazardutilities.cleandate(a0.birth_date) IS NULL THEN
-					hazardutilities.cleandate(a0.dethdate)
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+					a0.dethdate
+				WHEN a0.birth_date IS NULL THEN
+					a0.dethdate
 				WHEN a0.inf_deth = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				WHEN a0.neonatal = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				WHEN a0.early_neo = 1 THEN
-					hazardutilities.cleandate(a0.birth_date)
+					a0.birth_date
 				ELSE
-					hazardutilities.cleandate(a0.dethdate)
+					a0.dethdate
 			END servicestart,
-			hazardutilities.cleandate(a0.dethdate) serviceend,
+			a0.dethdate serviceend,
 			
 			-- Calendar year boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.birth_date) < add_months(hazardutilities.cleandate(a0.dethdate), -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
 					hazardutilities.calendarstart(a0.dethdate)
-				WHEN hazardutilities.cleandate(a0.birth_date) IS NULL THEN
+				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarstart(a0.dethdate)
 				WHEN a0.inf_deth = 1 THEN
 					hazardutilities.calendarstart(a0.birth_date)
@@ -367,13 +353,7 @@ WITH
 		FROM
 			vital_stats_dsp.ex_vs_deaths_phn a0
 		WHERE
-			hazardutilities.cleandate(a0.dethdate) <= TRUNC(SYSDATE, 'MM')
-			AND
-			(
-				hazardutilities.cleandate(a0.birth_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.birth_date) <= hazardutilities.cleandate(a0.dethdate)
-			)
+			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 	)
 
 -- Digest to one record per person

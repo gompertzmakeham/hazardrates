@@ -7,49 +7,49 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.phn) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
-			hazardutilities.cleandate(a0.birth_dt) birthdate,
+			a0.birth_dt birthdate,
 
 			-- Exact death is the end date
 			CASE
 				WHEN a0.death_ind = '1' THEN
-					hazardutilities.cleandate(a0.pers_reap_end_date)
+					a0.pers_reap_end_date
 				WHEN a0.pers_reap_end_rsn_code = 'D' THEN
-					hazardutilities.cleandate(a0.pers_reap_end_date)
+					a0.pers_reap_end_date
 				ELSE
 					CAST(NULL AS DATE)
 			END deceaseddate,
 
 			-- Service boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= hazardutilities.cleandate(a0.birth_dt) THEN
-					hazardutilities.cleandate(a0.birth_dt)
-				WHEN hazardutilities.cleandate(a0.pers_reap_end_date) IS NOT NULL THEN
-					hazardutilities.cleandate(a0.pers_reap_end_date)
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
+					a0.birth_dt
+				WHEN a0.pers_reap_end_date IS NOT NULL THEN
+					a0.pers_reap_end_date
 				ELSE
 					NULL
 			END servicestart,
 			CASE
-				WHEN hazardutilities.cleandate(a0.pers_reap_end_date) IS NOT NULL THEN
+				WHEN a0.pers_reap_end_date IS NOT NULL THEN
 					hazardutilities.cleandate(a0.pers_reap_end_date)
-				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= hazardutilities.cleandate(a0.birth_dt) THEN
-					hazardutilities.cleandate(a0.birth_dt)
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
+					a0.birth_dt
 				ELSE
 					NULL
 			END serviceend,
 
 			-- Fiscal year boundaries
 			CASE
-				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= hazardutilities.cleandate(a0.birth_dt) THEN
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
 					hazardutilities.fiscalstart(a0.birth_dt)
-				WHEN hazardutilities.cleandate(a0.pers_reap_end_date) IS NOT NULL THEN
+				WHEN a0.pers_reap_end_date IS NOT NULL THEN
 					hazardutilities.fiscalstart(a0.pers_reap_end_date)
 				ELSE
 					hazardutilities.cleandate(a0.fye - 1 || '0401')
 			END surveillancestart,
 			CASE
-				WHEN hazardutilities.cleandate(a0.pers_reap_end_date) IS NOT NULL THEN
+				WHEN a0.pers_reap_end_date IS NOT NULL THEN
 					hazardutilities.fiscalend(a0.pers_reap_end_date)
-				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= hazardutilities.cleandate(a0.birth_dt) THEN
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
 					hazardutilities.fiscalend(a0.birth_dt)
 				ELSE
 					hazardutilities.cleandate(a0.fye || '0331')
@@ -70,7 +70,7 @@ WITH
 
 			-- Birth observed
 			CASE
-				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= hazardutilities.cleandate(a0.birth_dt) THEN
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
 					1
 				WHEN a0.birth_dt IS NULL AND a0.birth_ind = '1' THEN
 					1
@@ -82,7 +82,7 @@ WITH
 			CASE
 				WHEN a0.death_ind = '1' THEN
 					1
-				WHEN COALESCE(a0.pers_reap_end_rsn_code, '0') = 'D' THEN
+				WHEN a0.pers_reap_end_rsn_code = 'D' THEN
 					1
 				ELSE
 					0
@@ -92,13 +92,7 @@ WITH
 		FROM
 			ahsdata.provincial_registry a0
 		WHERE
-			(hazardutilities.cleandate(a0.birth_dt) IS NULL AND hazardutilities.cleandate(a0.pers_reap_end_date) IS NULL)
-			OR
-			(hazardutilities.cleandate(a0.birth_dt) <= TRUNC(SYSDATE, 'MM') AND hazardutilities.cleandate(a0.pers_reap_end_date) IS NULL)
-			OR
-			(hazardutilities.cleandate(a0.birth_dt) IS NULL AND hazardutilities.cleandate(a0.pers_reap_end_date) <= TRUNC(SYSDATE, 'MM'))
-			OR
-			hazardutilities.cleandate(a0.pers_reap_end_date) BETWEEN hazardutilities.cleandate(a0.birth_dt) AND TRUNC(SYSDATE, 'MM')
+			COALESCE(a0.pers_reap_end_date, a0.birth_dt, TRUNC(SYSDATE, 'MM')) BETWEEN COALESCE(a0.birth_dt, a0.pers_reap_end_date, TRUNC(SYSDATE, 'MM')) AND TRUNC(SYSDATE, 'MM')
 	)
 
 -- Digest to one record per person

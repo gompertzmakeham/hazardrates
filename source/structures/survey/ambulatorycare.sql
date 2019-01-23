@@ -80,11 +80,7 @@ WITH
 		WHERE
 			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
 			AND
-			(
-				hazardutilities.cleandate(a0.disdate) IS NULL
-				OR
-				hazardutilities.cleandate(a0.disdate) <= TRUNC(SYSDATE, 'MM')
-			)
+			COALESCE(hazardutilities.cleandate(a0.disdate), TRUNC(SYSDATE, 'MM')) <= TRUNC(SYSDATE, 'MM')
 			AND
 			(
 				hazardutilities.cleandate(a0.birthdate) IS NULL
@@ -170,11 +166,7 @@ WITH
 		WHERE
 			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')
 			AND
-			(
-				hazardutilities.cleandate(a0.disp_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.disp_date) <= TRUNC(SYSDATE, 'MM')
-			)
+			COALESCE(hazardutilities.cleandate(a0.disp_date), TRUNC(SYSDATE, 'MM')) <= TRUNC(SYSDATE, 'MM')
 			AND
 			(
 				hazardutilities.cleandate(a0.birthdate) IS NULL

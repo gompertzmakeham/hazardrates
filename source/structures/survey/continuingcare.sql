@@ -9,12 +9,12 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.uli_ab_phn) uliabphn,
 			hazardutilities.cleansex(a0.reported_gender) sex,
-			hazardutilities.cleandate(a0.birth_date) birthdate,
-			hazardutilities.cleandate(a0.deceased_date) deceaseddate,
+			a0.birth_date birthdate,
+			a0.deceased_date deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.first_appear_date) servicestart,
-			hazardutilities.cleandate(a0.last_known_date) serviceend,
+			a0.first_appear_date servicestart,
+			a0.last_known_date serviceend,
 
 			-- Calendar year boundaries
 			hazardutilities.calendarstart(a0.first_appear_date) surveillancestart,
@@ -24,7 +24,7 @@ WITH
 			
 			-- Birth observed
 			CASE
-				WHEN hazardutilities.cleandate(a0.first_appear_date) <= hazardutilities.cleandate(a0.birth_date) THEN
+				WHEN a0.first_appear_date <= a0.birth_date THEN
 					1
 				ELSE
 					0
@@ -32,7 +32,7 @@ WITH
 			
 			-- Death observed
 			CASE
-				WHEN hazardutilities.cleandate(a0.deceased_date) IS NOT NULL THEN
+				WHEN a0.deceased_date IS NOT NULL THEN
 					1
 				ELSE
 					0
@@ -42,48 +42,44 @@ WITH
 		FROM
 			TABLE(continuing_care.home_care.get_client) a0
 		WHERE
-			hazardutilities.cleandate(a0.last_known_date) BETWEEN hazardutilities.cleandate(a0.first_appear_date) AND TRUNC(SYSDATE, 'MM')
+			a0.last_known_date BETWEEN a0.first_appear_date AND TRUNC(SYSDATE, 'MM')
 			AND
-			(
-				hazardutilities.cleandate(a0.birth_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.birth_date) <= hazardutilities.cleandate(a0.last_known_date)
-			)
+			COALESCE(a0.birth_date, a0.last_known_date) <= a0.last_known_date
 			AND
-			(
-				hazardutilities.cleandate(a0.deceased_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.first_appear_date) <= hazardutilities.cleandate(a0.deceased_date)
-			)
+			a0.first_appear_date <= COALESCE(a0.deceased_date, a0.first_appear_date)
 		UNION ALL
 
 		-- Long term care
 		SELECT
 			hazardutilities.cleanphn(a0.uli_ab_phn) uliabphn,
 			hazardutilities.cleansex(a0.reported_gender) sex,
-			hazardutilities.cleandate(a0.birth_date) birthdate,
+			a0.birth_date birthdate,
 			
 			-- Exact deceased date
 			CASE a0.discharge_disposition_code
 				WHEN '11' THEN
-					hazardutilities.cleandate(a0.discharge_date)
+					a0.discharge_date
 				ELSE
 					NULL
 			END deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.admit_date) servicestart,
-			COALESCE(hazardutilities.cleandate(a0.discharge_date), TRUNC(SYSDATE, 'MM')) serviceend,
+			a0.admit_date servicestart,
+			COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM')) serviceend,
 
 			-- Calendar year boundaries
 			hazardutilities.calendarstart(a0.admit_date) surveillancestart,
-			hazardutilities.calendarend(COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM'))) surveillanceend,
+			COALESCE
+			(
+				hazardutilities.calendarend(a0.discharge_date),
+				hazardutilities.calendarend(TRUNC(SYSDATE, 'MM'))
+			) surveillanceend,
 			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observed
 			CASE
-				WHEN hazardutilities.cleandate(a0.admit_date) <= hazardutilities.cleandate(a0.birth_date) THEN
+				WHEN a0.admit_date <= a0.birth_date THEN
 					1
 				ELSE
 					0
@@ -101,13 +97,9 @@ WITH
 		FROM
 			TABLE(continuing_care.accis.get_adt) a0
 		WHERE
-			COALESCE(hazardutilities.cleandate(a0.discharge_date), TRUNC(SYSDATE, 'MM')) BETWEEN hazardutilities.cleandate(a0.admit_date) AND TRUNC(SYSDATE, 'MM')
+			COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM')) BETWEEN a0.admit_date AND TRUNC(SYSDATE, 'MM')
 			AND
-			(
-				hazardutilities.cleandate(a0.birth_date) IS NULL
-				OR
-				hazardutilities.cleandate(a0.birth_date) <= COALESCE(hazardutilities.cleandate(a0.discharge_date), TRUNC(SYSDATE, 'MM'))
-			)
+			COALESCE(a0.birth_date, a0.admit_date) <= COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM'))
 	)
 
 -- Digest to one record per person

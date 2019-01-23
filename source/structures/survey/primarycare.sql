@@ -7,12 +7,12 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.rcpt_uli) uliabphn,
 			hazardutilities.cleansex(a0.rcpt_gender_code) sex,
-			hazardutilities.cleandate(a0.rcpt_dob) birthdate,
+			a0.rcpt_dob birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			hazardutilities.cleandate(a0.se_start_date) servicestart,
-			hazardutilities.cleandate(a0.se_end_date) serviceend,
+			a0.se_start_date servicestart,
+			a0.se_end_date serviceend,
 
 			-- Fiscal year boundaries
 			hazardutilities.fiscalstart(a0.se_end_date) surveillancestart,
@@ -29,7 +29,7 @@ WITH
 			
 			-- Birth observed
 			CASE
-				WHEN hazardutilities.cleandate(a0.se_start_date) <= hazardutilities.cleandate(a0.rcpt_dob) THEN
+				WHEN a0.se_start_date <= a0.rcpt_dob THEN
 					1
 				ELSE
 					0
@@ -40,13 +40,9 @@ WITH
 		FROM
 			ahsdata.ab_claims a0
 		WHERE
-			hazardutilities.cleandate(a0.se_end_date) BETWEEN hazardutilities.cleandate(a0.se_start_date) AND TRUNC(SYSDATE, 'MM')
+			a0.se_end_date BETWEEN a0.se_start_date AND TRUNC(SYSDATE, 'MM')
 			AND
-			(
-				hazardutilities.cleandate(a0.rcpt_dob) IS NULL
-				OR
-				hazardutilities.cleandate(a0.rcpt_dob) <= hazardutilities.cleandate(a0.se_end_date)
-			)
+			COALESCE(a0.rcpt_dob, a0.se_start_date) <= a0.se_end_date
 	)
 
 -- Digest to one record per person

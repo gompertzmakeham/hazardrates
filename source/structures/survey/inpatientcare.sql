@@ -98,11 +98,7 @@ WITH
 		WHERE
 			hazardutilities.cleandate(a0.disdate) BETWEEN hazardutilities.cleandate(a0.admitdate) AND TRUNC(SYSDATE, 'MM')
 			AND
-			(
-				hazardutilities.cleandate(a0.birthdate) IS NULL
-				OR
-				hazardutilities.cleandate(a0.birthdate) <= hazardutilities.cleandate(a0.disdate)
-			)
+			COALESCE(hazardutilities.cleandate(a0.birthdate), hazardutilities.cleandate(a0.admitdate)) <= hazardutilities.cleandate(a0.disdate)
 	)
 
 -- Digest to one record per person

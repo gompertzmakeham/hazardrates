@@ -10,5 +10,5 @@ DROP MATERIALIZED VIEW surveyprimarycare;
 DROP MATERIALIZED VIEW surveyvitalstatistics;
 
 -- Base support
-DROP PACKAGE hazardutilities;
 DROP PACKAGE surveillanceutilities;
+DROP PACKAGE hazardutilities;
