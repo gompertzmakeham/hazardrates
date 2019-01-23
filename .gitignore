@@ -1,8 +1,4 @@
-# Do not include data files
-**/data
-
-## Do not include privilege granting
-**/privileges
-
-## Do not include graphics
-**/images
+# Do not include data files, privilege granting, or images
+data
+privileges
+images
