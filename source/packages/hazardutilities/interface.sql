@@ -16,7 +16,9 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 		durationdays INTEGER,
 		intervalage INTEGER,
 		ageinterval INTEGER,
-		agecensus INTEGER
+		agecensus INTEGER,
+		evententry INTEGER,
+		eventexit INTEGER
 	);
 
 	/*
@@ -139,4 +141,25 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	 *  characters not indicating either female or male.
 	 */
 	FUNCTION cleansex(inputsex IN VARCHAR2) RETURN VARCHAR2 DETERMINISTIC;
+	
+	/*
+	 *  Ensure the inpatient care facility number is between 80000 and 80999.
+	 */
+	FUNCTION cleaninpatient(inputfacility IN INTEGER) RETURN INTEGER DETERMINISTIC;
+	
+	/*
+	 *  Convert to number and ensure the inpatient facility number is between 80000 and 80999.
+	 */
+	FUNCTION cleaninpatient(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC;
+	
+	/*
+	 *  Ensure the ambulatory care facility number is between 88000 and 88999.
+	 */
+	FUNCTION cleanambulatory(inputfacility IN INTEGER) RETURN INTEGER DETERMINISTIC;
+	
+	/*
+	 *  Convert to number ensure the ambulatory care facility number is between 88000 and 
+	 *  88999.
+	 */
+	FUNCTION cleanambulatory(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC;
 END hazardutilities;

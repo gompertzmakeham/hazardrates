@@ -10,12 +10,12 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 		ingestevents AS
 		(
 			SELECT a0.* FROM surveyambulatorycare a0 UNION ALL
-			-- SELECT a0.* FROM surveyannualregistry a0 UNION ALL
+			SELECT a0.* FROM surveyannualregistry a0 UNION ALL
 			SELECT a0.* FROM surveycontinuingcare a0 UNION ALL
 			SELECT a0.* FROM surveyinpatientcare a0 UNION ALL
-			-- SELECT a0.* FROM surveylabratorycollection a0 UNION ALL
-			-- SELECT a0.* FROM surveypharmacydispense a0 UNION ALL
-			-- SELECT a0.* FROM surveyprimarycare a0 UNION ALL
+			SELECT a0.* FROM surveylabratorycollection a0 UNION ALL
+			SELECT a0.* FROM surveypharmacydispense a0 UNION ALL
+			SELECT a0.* FROM surveyprimarycare a0 UNION ALL
 			SELECT a0.* FROM surveyvitalstatistics a0
 		),
 	

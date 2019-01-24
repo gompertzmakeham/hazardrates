@@ -1,4 +1,7 @@
-CREATE MATERIALIZED VIEW censuslongtermcare NOLOGGING NOCOMPRESS PARALLEL BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
+ALTER SESSION FORCE PARALLEL DDL PARALLEL 8;
+ALTER SESSION FORCE PARALLEL DML PARALLEL 8;
+ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8;
+CREATE MATERIALIZED VIEW censuslongtermcare NOLOGGING NOCOMPRESS PARALLEL 8 BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
 SELECT
 
 	/*+ cardinality(a2, 1) */
@@ -7,8 +10,8 @@ SELECT
 	a2.intervalstart,
 	a2.intervalend,
 	SUM(a2.durationdays) staydays,
-	SUM(CASE WHEN a1.admit_date BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) admissioncount,
-	SUM(CASE WHEN a1.discharge_date BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) dischargecount
+	SUM(a2.evententry) admissioncount,
+	SUM(a2.eventexit) dischargecount
 FROM
 	personsurveillance a0
 	INNER JOIN
@@ -32,3 +35,12 @@ GROUP BY
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend;
+
+COMMENT ON MATERIALIZED VIEW censuslongtermcare IS 'Utilization of long term care in census intervals of each person.';
+COMMENT ON COLUMN censuslongtermcare.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
+COMMENT ON COLUMN censuslongtermcare.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
+COMMENT ON COLUMN censuslongtermcare.intervalstart IS 'Start date of the census interval which intersects with the event.';
+COMMENT ON COLUMN censuslongtermcare.intervalend IS 'End date of the census interval which intersects with the event.';
+COMMENT ON COLUMN censuslongtermcare.staydays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN censuslongtermcare.admissioncount IS 'Admissions in the census interval.';
+COMMENT ON COLUMN censuslongtermcare.dischargecount IS 'Discharges in the census interval.';

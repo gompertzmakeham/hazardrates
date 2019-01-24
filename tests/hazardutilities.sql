@@ -44,7 +44,15 @@ SELECT 'hazardutilities.cleanphn(1000000002)' functioncall, hazardutilities.clea
 SELECT 'hazardutilities.cleanphn(987654321)' functioncall, hazardutilities.cleanphn(987654321) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleanphn(''abcd'')' functioncall, hazardutilities.cleanphn('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleanphn(''12345a67890'')' functioncall, hazardutilities.cleanphn('12345a67890') callresult FROM dual UNION ALL
-SELECT 'hazardutilities.cleanphn(''a123b456c789'')' functioncall, hazardutilities.cleanphn('a123b456c789d') callresult FROM dual;
+SELECT 'hazardutilities.cleanphn(''a123b456c789'')' functioncall, hazardutilities.cleanphn('a123b456c789d') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninpatient(''abcd'')' functioncall, hazardutilities.cleaninpatient('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninpatient(''87000'')' functioncall, hazardutilities.cleaninpatient('87000') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninpatient(''80-700'')' functioncall, hazardutilities.cleaninpatient('80-700') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninpatient(''80700'')' functioncall, hazardutilities.cleaninpatient('80700') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleanambulatory(''abcd'')' functioncall, hazardutilities.cleanambulatory('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleanambulatory(''87000'')' functioncall, hazardutilities.cleanambulatory('87000') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleanambulatory(''88-700'')' functioncall, hazardutilities.cleanambulatory('88-700') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleanambulatory(''88700'')' functioncall, hazardutilities.cleanambulatory('88700') callresult FROM dual;
 
 -- String utilities
 SELECT 'hazardutilities.cleansex(''abcd'')' functioncall, hazardutilities.cleansex('abcd') callresult FROM dual UNION ALL

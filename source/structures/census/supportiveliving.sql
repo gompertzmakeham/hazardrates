@@ -1,4 +1,7 @@
-CREATE MATERIALIZED VIEW censussupportiveliving NOLOGGING NOCOMPRESS PARALLEL BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
+ALTER SESSION FORCE PARALLEL DDL PARALLEL 8;
+ALTER SESSION FORCE PARALLEL DML PARALLEL 8;
+ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8;
+CREATE MATERIALIZED VIEW censussupportiveliving NOLOGGING NOCOMPRESS PARALLEL 8 BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
 SELECT
 
 	/*+ cardinality(a2, 1) */
@@ -7,8 +10,8 @@ SELECT
 	a2.intervalstart,
 	a2.intervalend,
 	SUM(a2.durationdays) staydays,
-	SUM(CASE WHEN a1.entry_from_date BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) admisioncount,
-	SUM(CASE WHEN a1.exit_to_date BETWEEN a2.intervalstart AND a2.intervalend THEN 1 ELSE 0 END) dischargecount
+	SUM(a2.evententry) admissioncount,
+	SUM(a2.eventexit) dischargecount
 FROM
 	personsurveillance a0
 	INNER JOIN
@@ -32,3 +35,12 @@ GROUP BY
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend;
+
+COMMENT ON MATERIALIZED VIEW censussupportiveliving IS 'Utilization of designated supportive living levels 3, 4, and 4 dementia in census intervals of each person.';
+COMMENT ON COLUMN censussupportiveliving.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
+COMMENT ON COLUMN censussupportiveliving.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
+COMMENT ON COLUMN censussupportiveliving.intervalstart IS 'Start date of the census interval which intersects with the event.';
+COMMENT ON COLUMN censussupportiveliving.intervalend IS 'End date of the census interval which intersects with the event.';
+COMMENT ON COLUMN censussupportiveliving.staydays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN censussupportiveliving.admissioncount IS 'Admissions in the census interval.';
+COMMENT ON COLUMN censussupportiveliving.dischargecount IS 'Discharges in the census interval.';

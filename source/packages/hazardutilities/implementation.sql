@@ -56,23 +56,53 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.intervalstart);
 			returnbirth.intervalage := ageyears(birthdate, returnbirth.intervalstart);
 
-			-- Assign duration
+			-- Fiscal start and event start flag
+			CASE returnfiscal.durationstart
+				WHEN eventstart THEN
+					returnfiscal.evententry := 1;
+				ELSE
+					returnfiscal.evententry := 0;
+			END CASE;
+			
+			-- Birth start and event start flag
+			CASE returnbirth.durationstart
+				WHEN eventstart THEN
+					returnbirth.evententry := 1;
+				ELSE
+					returnbirth.evententry := 0;
+			END CASE;
+
+			-- Fiscal end and event end flag
+			CASE returnfiscal.durationend
+				WHEN eventend THEN
+					returnfiscal.eventexit := 1;
+				ELSE
+					returnfiscal.eventexit := 0;
+			END CASE;
+			
+			-- Birth end and event end flag
+			CASE returnbirth.durationend
+				WHEN eventend THEN
+					returnbirth.eventexit := 1;
+				ELSE
+					returnbirth.eventexit := 0;
+			END CASE;
+
+			-- Assign duration and send
 			CASE
 				WHEN returnfiscal.durationstart <= returnfiscal.durationend THEN
 					returnfiscal.durationdays := 1 + returnfiscal.durationend - returnfiscal.durationstart;
+					PIPE ROW (returnfiscal);
 				ELSE
 					returnfiscal.durationdays := 0;
 			END CASE;
 			CASE
-				WHEN returnbirth.intervalstart <= returnbirth.durationend THEN
+				WHEN returnbirth.durationstart <= returnbirth.durationend THEN
 					returnbirth.durationdays := 1 + returnbirth.durationend - returnbirth.durationstart;
+					PIPE ROW (returnbirth);
 				ELSE
 					returnbirth.durationdays := 0;
 			END CASE;
-
-			-- Send
-			PIPE ROW (returnfiscal);
-			PIPE ROW (returnbirth);
 
 			-- Increment fiscal interval
 			returnfiscal.censusstart := add_months(returnfiscal.censusstart, 12);
@@ -128,6 +158,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		returncensus.durationend := eventdate;
 		returncensus.intervalage := ageyears(birthdate, returncensus.intervalstart);
 		returncensus.durationdays := 1;
+		returncensus.evententry := 1;
+		returncensus.eventexit := 1;
 
 		-- Send
 		PIPE ROW (returncensus);
@@ -310,4 +342,47 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	BEGIN
 		RETURN regexp_substr(UPPER(inputsex), '[FM]', 1, 1, 'i');
 	END cleansex;
+	
+	/*
+	 *  Ensure the inpatient care facility number is between 80000 and 80999.
+	 */
+	FUNCTION cleaninpatient(inputfacility IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		CASE
+			WHEN inputfacility BETWEEN 80000 AND 80999 THEN
+				RETURN inputfacility;
+			ELSE
+				RETURN NULL;
+		END CASE;
+	END cleaninpatient;
+	
+	/*
+	 *  Convert to number and ensure the inpatient facility number is between 80000 and 80999.
+	 */
+	FUNCTION cleaninpatient(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		RETURN cleaninpatient(to_number(COALESCE(regexp_replace(inputfacility, '[^0-9]', ''), '0')));
+	END cleaninpatient;
+	
+	/*
+	 *  Ensure the ambulatory care facility number is between 88000 and 88999.
+	 */
+	FUNCTION cleanambulatory(inputfacility IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		CASE
+			WHEN inputfacility BETWEEN 88000 AND 88999 THEN
+				RETURN inputfacility;
+			ELSE
+				RETURN NULL;
+		END CASE;
+	END cleanambulatory;
+	
+	/*
+	 *  Convert to number ensure the ambulatory care facility number is between 88000 and 
+	 *  88999.
+	 */
+	FUNCTION cleanambulatory(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		RETURN cleanambulatory(to_number(COALESCE(regexp_replace(inputfacility, '[^0-9]', ''), '0')));
+	END cleanambulatory;
 END hazardutilities;
