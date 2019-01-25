@@ -1,4 +1,4 @@
--- Tabulate inconsistent records ingested from labratory collections
+-- Tabulate inconsistent records ingested from laboratory collections
 WITH
 	assertiondata AS
 	(
@@ -113,12 +113,12 @@ ORDER BY
 	3 ASC NULLS FIRST,
 	4 ASC NULLS FIRST;
 	
--- Tabulate inconsistent records digested from labratory collection
+-- Tabulate inconsistent records digested from laboratory collection
 WITH
 	assertiondata AS
 	(
 		SELECT
-			'Labratory Collection' sourcesystem,
+			'Laboratory Collection' sourcesystem,
 			CASE
 				WHEN a0.leastbirth > a0.greatestbirth THEN
 					1

@@ -8,7 +8,7 @@ WITH
 	eventdata AS
 	(
 
-		-- laboratory Fusion
+		-- Laboratory Fusion
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
@@ -52,7 +52,7 @@ WITH
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 		
-		-- laboratory Meditech
+		-- Laboratory Meditech
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
@@ -94,7 +94,7 @@ WITH
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
-		-- laboratory Millenium
+		-- Laboratory Millenium
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
@@ -134,7 +134,7 @@ WITH
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
-		-- laboratory Sunquest
+		-- Laboratory Sunquest
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
 			hazardutilities.cleansex(a0.clnt_gndr) sex,
