@@ -93,7 +93,7 @@ WITH
 					0
 			END deceasedsurveyinconsistent
 		FROM
-			surveycontinuingcare a0
+			surveypharmacydispense a0
 	)
 SELECT
 	a0.birthinconsistent,

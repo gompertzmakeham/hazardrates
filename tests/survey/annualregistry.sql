@@ -119,7 +119,7 @@ WITH
 					0
 			END deceasedsurveyinconsistent
 		FROM
-			surveycontinuingcare a0
+			surveyannualregistry a0
 	)
 SELECT
 	a0.birthinconsistent,
