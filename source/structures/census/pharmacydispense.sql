@@ -14,7 +14,10 @@ SELECT
 	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN a1.dspn_date ELSE NULL END) controlleddays,
 	COUNT(DISTINCT a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD')) allsitedays,
 	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN NULL ELSE a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') END) standardsitedays,
-	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') ELSE NULL END) controlledsitedays
+	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') ELSE NULL END) controlledsitedays,
+	COUNT(*) alltherapeutics,
+	SUM(CASE a1.drug_triplicate_boo WHEN 'T' THEN 0 ELSE 1 END) standardtherapeutics,
+	SUM(CASE a1.drug_triplicate_boo WHEN 'T' THEN 1 ELSE 0 END) controlledtherapeutics
 FROM
 	personsurveillance a0
 	INNER JOIN
@@ -54,3 +57,6 @@ COMMENT ON COLUMN censuspharmacydispense.controlleddays IS 'Number of unique day
 COMMENT ON COLUMN censuspharmacydispense.allsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed any prescription.';
 COMMENT ON COLUMN censuspharmacydispense.standardsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed a prescription of a therapeutic not subject to controlled substances regulations.';
 COMMENT ON COLUMN censuspharmacydispense.controlledsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed a prescription of a therapeutic subject to controlled substances regulations.';
+COMMENT ON COLUMN censuspharmacydispense.alltherapeutics IS 'Number of distinct dispensed therapeutics.';
+COMMENT ON COLUMN censuspharmacydispense.alltherapeutics IS 'Number of distinct dispensed therapeutics not subject to controlled substances regulations.';
+COMMENT ON COLUMN censuspharmacydispense.alltherapeutics IS 'Number of distinct dispensed therapeutics subject to controlled substances regulations.';

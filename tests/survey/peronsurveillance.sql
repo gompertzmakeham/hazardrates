@@ -107,29 +107,29 @@ WITH
 		SELECT
 			COUNT(DISTINCT a0.birthdate) birthcount,
 			COUNT(DISTINCT a0.deceaseddate) deceasedcount,
-			a0.birthequipoise,
-			a0.deceasedequipoise,
+			a0.birthdateequipoise,
+			a0.deceaseddateequipoise,
 			a0.uliabphn
 		FROM
 			personsurveillance a0
 		GROUP BY
 			a0.uliabphn,
-			a0.birthequipoise,
-			a0.deceasedequipoise
+			a0.birthdateequipoise,
+			a0.deceaseddateequipoise
 	)
 SELECT
 	a0.birthcount,
 	a0.deceasedcount,
-	a0.birthequipoise,
-	a0.deceasedequipoise,
+	a0.birthdateequipoise,
+	a0.deceaseddateequipoise,
 	COUNT(*) personcount
 FROM
 	persondata a0
 GROUP BY
 	a0.birthcount,
 	a0.deceasedcount,
-	a0.birthequipoise,
-	a0.deceasedequipoise
+	a0.birthdateequipoise,
+	a0.deceaseddateequipoise
 ORDER BY
 	1 ASC NULLS FIRST,
 	2 ASC NULLS FIRST,

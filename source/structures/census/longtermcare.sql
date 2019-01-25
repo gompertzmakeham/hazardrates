@@ -11,7 +11,8 @@ SELECT
 	a2.intervalend,
 	SUM(a2.durationdays) staydays,
 	SUM(a2.evententry) admissioncount,
-	SUM(a2.eventexit) dischargecount
+	SUM(a2.eventexit) dischargecount,
+	COUNT(*) intersectingstays
 FROM
 	personsurveillance a0
 	INNER JOIN
@@ -44,3 +45,4 @@ COMMENT ON COLUMN censuslongtermcare.intervalend IS 'End date of the census inte
 COMMENT ON COLUMN censuslongtermcare.staydays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
 COMMENT ON COLUMN censuslongtermcare.admissioncount IS 'Admissions in the census interval.';
 COMMENT ON COLUMN censuslongtermcare.dischargecount IS 'Discharges in the census interval.';
+COMMENT ON COLUMN censuslongtermcare.intersectingstays IS 'Stays intersecting with the census interval.';
