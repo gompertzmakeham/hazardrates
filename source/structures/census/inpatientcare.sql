@@ -39,7 +39,7 @@ GROUP BY
 	a2.intervalstart,
 	a2.intervalend;
 
-COMMENT ON MATERIALIZED VIEW censusinpatientcare IS 'Utilization of inpatient care in census intervals of each person.';
+COMMENT ON MATERIALIZED VIEW censusinpatientcare IS 'Utilization of unplanned, urgent, or emergency inpatient care in census intervals of each person.';
 COMMENT ON COLUMN censusinpatientcare.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN censusinpatientcare.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censusinpatientcare.intervalstart IS 'Start date of the census interval which intersects with the event.';

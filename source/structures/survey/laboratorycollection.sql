@@ -20,8 +20,8 @@ WITH
 			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			a0.clct_dt surveillancestart,
-			a0.clct_dt surveillanceend,
+			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
+			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -64,8 +64,8 @@ WITH
 			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			a0.clct_dt surveillancestart,
-			a0.clct_dt surveillanceend,
+			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
+			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -106,8 +106,8 @@ WITH
 			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			a0.clct_dt surveillancestart,
-			a0.clct_dt surveillanceend,
+			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
+			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
 
 			-- Postal code determines residency
 			CASE
@@ -146,8 +146,8 @@ WITH
 			a0.clct_dt serviceend,
 
 			-- Fiscal year boundaries
-			a0.clct_dt surveillancestart,
-			a0.clct_dt surveillanceend,
+			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
+			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
 
 			-- Postal code determines residency
 			CASE

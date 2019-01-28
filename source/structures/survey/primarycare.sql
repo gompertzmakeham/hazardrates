@@ -18,7 +18,7 @@ WITH
 			a0.se_end_date serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.se_end_date) surveillancestart,
+			hazardutilities.fiscalstart(a0.se_start_date) surveillancestart,
 			hazardutilities.fiscalend(a0.se_end_date) surveillanceend,
 
 			-- Coverage determines residency

@@ -54,8 +54,6 @@ WITH
 
 		-- Long term care
 		SELECT
-		
-			/*+ parrallel(8) */
 			hazardutilities.cleanphn(a0.uli_ab_phn) uliabphn,
 			hazardutilities.cleansex(a0.reported_gender) sex,
 			a0.birth_date birthdate,

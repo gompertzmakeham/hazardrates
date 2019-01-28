@@ -13,11 +13,11 @@ SELECT
 	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN NULL ELSE a1.dspn_date END) standarddays,
 	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN a1.dspn_date ELSE NULL END) controlleddays,
 	COUNT(DISTINCT a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD')) allsitedays,
-	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN NULL ELSE a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') END) standardsitedays,
-	COUNT(DISTINCT CASE a1.drug_triplicate_boo WHEN 'T' THEN a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') ELSE NULL END) controlledsitedays,
+	COUNT(DISTINCT CASE a1.dspn_triplicate_boo WHEN 'T' THEN NULL ELSE a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') END) standardsitedays,
+	COUNT(DISTINCT CASE a1.dspn_triplicate_boo WHEN 'T' THEN a1.fac_key_di360 || '-' || to_char(a1.dspn_date, 'YYYYMMDD') ELSE NULL END) controlledsitedays,
 	COUNT(*) alltherapeutics,
-	SUM(CASE a1.drug_triplicate_boo WHEN 'T' THEN 0 ELSE 1 END) standardtherapeutics,
-	SUM(CASE a1.drug_triplicate_boo WHEN 'T' THEN 1 ELSE 0 END) controlledtherapeutics
+	SUM(CASE a1.dspn_triplicate_boo WHEN 'T' THEN 0 ELSE 1 END) standardtherapeutics,
+	SUM(CASE a1.dspn_triplicate_boo WHEN 'T' THEN 1 ELSE 0 END) controlledtherapeutics
 FROM
 	personsurveillance a0
 	INNER JOIN
@@ -28,6 +28,10 @@ FROM
 		a1.prscb_prid IS NOT NULL
 		AND
 		a1.supp_drug_atc_code IS NOT NULL
+		AND
+		a1.drug_prod_id = a1.drug_din
+		AND
+		a1.drug_triplicate_boo = a1.dspn_triplicate_boo
 		AND
 		a1.nhp_boo = 'F'
 		AND
