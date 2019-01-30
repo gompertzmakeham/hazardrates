@@ -385,4 +385,28 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	BEGIN
 		RETURN cleanambulatory(to_number(COALESCE(regexp_replace(inputfacility, '[^0-9]', ''), '0')));
 	END cleanambulatory;
+
+	/*
+	 *  Check for a minimally plausible Alberta provincial provider identifier, containing
+	 *  exactly nine digits with no leading zeroes, return null otherwise.
+	 */
+	FUNCTION cleanprid(inputprid IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		CASE
+			WHEN inputprid BETWEEN 100000000 AND 999999999 THEN
+				RETURN inputprid;
+			ELSE
+				RETURN NULL;
+		END CASE;
+	END cleanprid;
+
+	/*
+	 *  Clean a string of all non-numeric characters, then check for a minimally plausible 
+	 *  Alberta provincial provider identifier, containing exactly nine digits with no leading
+	 *  zeroes, return null otherwise.
+	 */
+	FUNCTION cleanprid(inputprid IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		RETURN cleanprid(to_number(regexp_replace(inputprid, '[^0-9]', '')));
+	END cleanprid;
 END hazardutilities;

@@ -162,4 +162,17 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	 *  88999.
 	 */
 	FUNCTION cleanambulatory(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC;
+
+	/*
+	 *  Check for a minimally plausible Alberta provincial provider identifier, containing
+	 *  exactly nine digits with no leading zeroes, return null otherwise.
+	 */
+	FUNCTION cleanprid(inputprid IN INTEGER) RETURN INTEGER DETERMINISTIC;
+
+	/*
+	 *  Clean a string of all non-numeric characters, then check for a minimally plausible 
+	 *  Alberta provincial provider identifier, containing exactly nine digits with no leading
+	 *  zeroes, return null otherwise.
+	 */
+	FUNCTION cleanprid(inputprid IN VARCHAR2) RETURN INTEGER DETERMINISTIC;
 END hazardutilities;

@@ -68,7 +68,7 @@ WITH
 			AND
 			a0.clnt_fac_cd IS NOT NULL
 	)
-	
+
 -- Digest to one record per person per census interval partitioning the surveillance span
 SELECT
 
@@ -95,7 +95,7 @@ GROUP BY
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend;
-	
+
 COMMENT ON MATERIALIZED VIEW censuslaboratorycollection IS 'Utilization of community laboratories in census intervals of each person.';
 COMMENT ON COLUMN censuslaboratorycollection.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN censuslaboratorycollection.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
