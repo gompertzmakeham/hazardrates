@@ -3,31 +3,54 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Partition an event into fiscal years, subpartitioned by the birthday.
 	 */
-	FUNCTION generatecensus(eventstart IN DATE, eventend IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED AS
+	FUNCTION generatecensus(eventstart IN DATE, eventend IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC AS
 		returnfiscal censusinterval;
 		returnbirth censusinterval;
 		lastfiscal DATE := fiscalstart(eventend);
+		localcount INTEGER := 0;
 	BEGIN
 
 		-- Assign representation
 		returnfiscal.ageinterval := 0;
 		returnbirth.ageinterval := 1;
 
-		-- Determine if the birthday interval coincides with the fiscal interval
-		CASE birthdate 
-			WHEN fiscalstart(birthdate) THEN
-				returnfiscal.agecensus := 1;
-				returnbirth.agecensus := 1;
-			ELSE
-				returnfiscal.agecensus := 0;
-				returnbirth.agecensus := 0;
-		END CASE;
-
 		-- Fiscal interval
 		returnfiscal.censusstart := fiscalstart(eventstart);
 		returnfiscal.censusend := yearend(returnfiscal.censusstart);
 		returnbirth.censusstart := fiscalstart(eventstart);
 		returnbirth.censusend := yearend(returnbirth.censusstart);
+		
+		-- Determine if the birthday interval coincides with the fiscal interval
+		CASE birthdate 
+			WHEN fiscalstart(birthdate) THEN
+				returnfiscal.agecensus := 1;
+				returnbirth.agecensus := 1;
+				returnfiscal.intervalcount := 1 + floor(months_between(lastfiscal, returnfiscal.censusstart) / 12);
+				returnbirth.intervalcount := 1 + floor(months_between(lastfiscal, returnbirth.censusstart) / 12);
+			ELSE
+				returnfiscal.agecensus := 0;
+				returnbirth.agecensus := 0;
+				returnfiscal.intervalcount := 2 * (1 + floor(months_between(lastfiscal, returnfiscal.censusstart) / 12));
+				returnbirth.intervalcount := 2 * (1 + floor(months_between(lastfiscal, returnbirth.censusstart) / 12));
+		END CASE;
+
+		-- Check for no initial fiscal interval
+		CASE
+			WHEN yearanniversary(birthdate, returnfiscal.censusstart) <= eventstart THEN
+				returnfiscal.intervalcount := returnfiscal.intervalcount - 1;
+				returnbirth.intervalcount := returnbirth.intervalcount - 1;
+			ELSE
+				NULL;
+		END CASE;
+
+		-- Check for no final age interval
+		CASE
+			WHEN eventend < yearanniversary(birthdate, lastfiscal) THEN
+				returnfiscal.intervalcount := returnfiscal.intervalcount - 1;
+				returnbirth.intervalcount := returnbirth.intervalcount - 1;
+			ELSE
+				NULL;
+		END CASE;
 
 		-- Partition the event
 		WHILE returnfiscal.censusstart <= lastfiscal LOOP
@@ -88,20 +111,26 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returnbirth.eventexit := 0;
 			END CASE;
 
-			-- Assign duration and send
+			-- Assign duration, increment, and send
 			CASE
 				WHEN returnfiscal.durationstart <= returnfiscal.durationend THEN
+					localcount := 1 + localcount;
 					returnfiscal.durationdays := 1 + returnfiscal.durationend - returnfiscal.durationstart;
+					returnfiscal.intervalorder := localcount;
 					PIPE ROW (returnfiscal);
 				ELSE
 					returnfiscal.durationdays := 0;
+					returnfiscal.intervalorder := localcount;
 			END CASE;
 			CASE
 				WHEN returnbirth.durationstart <= returnbirth.durationend THEN
+					localcount := 1 + localcount;
 					returnbirth.durationdays := 1 + returnbirth.durationend - returnbirth.durationstart;
+					returnbirth.intervalorder := localcount;
 					PIPE ROW (returnbirth);
 				ELSE
 					returnbirth.durationdays := 0;
+					returnbirth.intervalorder := localcount;
 			END CASE;
 
 			-- Increment fiscal interval
@@ -116,7 +145,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate an event into fiscal years, subpartitioned by the birthday.
 	 */
-	FUNCTION generatecensus(eventdate IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED AS
+	FUNCTION generatecensus(eventdate IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC AS
 		returncensus censusinterval;
 	BEGIN
 
@@ -127,6 +156,10 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		-- Birthday interval
 		returncensus.agestart := yearanniversary(birthdate, returncensus.censusstart);
 		returncensus.ageend := yearend(returncensus.agestart);
+
+		-- Order and count
+		returncensus.intervalcount := 1;
+		returncensus.intervalorder := 1;
 
 		-- Assign the event to an interval
 		CASE

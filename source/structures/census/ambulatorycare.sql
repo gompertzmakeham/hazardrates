@@ -12,6 +12,7 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.phn) uliabphn,
 			hazardutilities.cleandate(a0.visdate) visitdate,
+			hazardutilities.cleanambulatory(a0.inst) siteidentifier,
 			a0.los_minutes visitminutes
 		FROM
 			ahsdata.ahs_ambulatory a0
@@ -31,6 +32,7 @@ WITH
 		SELECT
 			hazardutilities.cleanphn(a0.phn) uliabphn,
 			hazardutilities.cleandate(a0.visit_date) visitdate,
+			hazardutilities.cleanambulatory(a0.inst) siteidentifier,
 			a0.visit_los_minutes visitminutes
 		FROM
 			ahsdata.ahs_nacrs_main a0
@@ -44,8 +46,41 @@ WITH
 			a0.abstract_type IN ('A', 'E', 'U')
 			AND
 			a0.visit_mode = 1
+	),
+
+	-- Digest to one record per person per day per institution
+	sitedata AS
+	(
+		SELECT
+			a0.uliabphn,
+			a0.visitdate,
+			a0.siteidentifier,
+			SUM(a0.visitminutes) visitminutes,
+			COUNT(*) visitcount
+		FROM
+			eventdata a0
+		GROUP BY
+			a0.uliabphn,
+			a0.visitdate,
+			a0.siteidentifier
+	),
+
+	-- Digest to one record per person per day
+	daydata AS
+	(
+		SELECT
+			a0.uliabphn,
+			a0.visitdate,
+			SUM(a0.visitminutes) visitminutes,
+			SUM(a0.visitcount) visitcount,
+			COUNT(*) sitecount
+		FROM
+			sitedata a0
+		GROUP BY
+			a0.uliabphn,
+			a0.visitdate
 	)
-	
+
 -- Digest to one record per person per census interval partitioning the surveillance span
 SELECT
 
@@ -55,12 +90,13 @@ SELECT
 	a2.intervalstart,
 	a2.intervalend,
 	SUM(a1.visitminutes) visitminutes,
-	COUNT(DISTINCT a1.visitdate) visitdays,
-	COUNT(*) visitcount
+	SUM(a1.visitcount) visitcount,
+	SUM(a1.sitecount) visitsitedays,
+	COUNT(*) visitdays
 FROM
 	personsurveillance a0
 	INNER JOIN
-	eventdata a1
+	daydata a1
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
@@ -79,5 +115,6 @@ COMMENT ON COLUMN censusambulatorycare.cornercase IS 'Extremum of the observatio
 COMMENT ON COLUMN censusambulatorycare.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censusambulatorycare.intervalend IS 'End date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censusambulatorycare.visitminutes IS 'Naive sum of minutes that intersected with the census interval, including overlapping visits.';
-COMMENT ON COLUMN censusambulatorycare.visitdays IS 'Unique days of visits in the census interval.';
 COMMENT ON COLUMN censusambulatorycare.visitcount IS 'Visits in the census interval.';
+COMMENT ON COLUMN censusambulatorycare.visitsitedays IS 'Unique combinations of days and sites visited in the census interval.';
+COMMENT ON COLUMN censusambulatorycare.visitdays IS 'Unique days of visits in the census interval.';

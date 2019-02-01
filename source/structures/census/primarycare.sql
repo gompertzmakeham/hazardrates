@@ -99,9 +99,65 @@ WITH
 					a0.delv_site_type_cls IN ('DIAG', 'OFFC')
 				)
 			)
+	),
+
+	-- Digest to one record per patient per provider per day
+	providerdata AS
+	(
+		SELECT
+			a0.uliabphn,
+			a0.uliabprid,
+			a0.visitdate,
+			MAX(a0.anesthesiologist * a0.primaryprovider * a0.primaryskill) anesthesiologist,
+			MAX(a0.generalpractitioner * a0.primaryprovider * a0.primaryskill) generalpractitioner,
+			MAX(a0.pathologist * a0.primaryprovider * a0.primaryskill) pathologist,
+			MAX(a0.radiologist * a0.primaryprovider * a0.primaryskill) radiologist,
+			MAX(a0.specialist * a0.primaryprovider * a0.primaryskill) specialist,
+			SUM(a0.anesthesiologist * a0.primaryprovider * a0.primaryskill) anesthesiologyprocedures,
+			SUM(a0.generalpractitioner * a0.primaryprovider * a0.primaryskill) generalpracticeprocedures,
+			SUM(a0.pathologist * a0.primaryprovider * a0.primaryskill) pathologyprocedures,
+			SUM(a0.radiologist * a0.primaryprovider * a0.primaryskill) radiologyprocedures,
+			SUM(a0.specialist * a0.primaryprovider * a0.primaryskill) specialtyprocedures,
+			COUNT(*) allprocedures
+		FROM
+			eventdata a0
+		GROUP BY
+			a0.uliabphn,
+			a0.uliabprid,
+			a0.visitdate
+	),
+
+	-- Digest to one record per patient per day
+	daydata AS
+	(
+		SELECT
+			a0.uliabphn,
+			a0.visitdate,
+			MAX(a0.anesthesiologist) anesthesiologist,
+			MAX(a0.generalpractitioner) generalpractitioner,
+			MAX(a0.pathologist) pathologist,
+			MAX(a0.radiologist) radiologist,
+			MAX(a0.specialist) specialist,
+			SUM(a0.anesthesiologyprocedures) anesthesiologyprocedures,
+			SUM(a0.generalpracticeprocedures) generalpracticeprocedures,
+			SUM(a0.pathologyprocedures) pathologyprocedures,
+			SUM(a0.radiologyprocedures) radiologyprocedures,
+			SUM(a0.specialtyprocedures) specialtyprocedures,
+			SUM(a0.allprocedures) allprocedures,
+			SUM(a0.anesthesiologist) anesthesiologists,
+			SUM(a0.generalpractitioner) generalpractitioners,
+			SUM(a0.pathologist) pathologists,
+			SUM(a0.radiologist) radiologists,
+			SUM(a0.specialist) specialists,
+			COUNT(*) allproviders
+		FROM
+			providerdata a0
+		GROUP BY
+			a0.uliabphn,
+			a0.visitdate
 	)
 
--- Digest primary care
+-- Digest to one record per person per census interval partitioning the surveillance span
 SELECT
 
 	/*+ cardinality(a2, 1) */
@@ -109,114 +165,24 @@ SELECT
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.anesthesiologist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.visitdate
-			ELSE
-				NULL
-		END
-	) anesthesiologydays,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.anesthesiologist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.uliabprid || '-' || to_char(a1.visitdate, 'YYYYMMDD')
-			ELSE
-				NULL
-		END
-	) anesthesiologyproviderdays,
-	SUM(a1.anesthesiologist * a1.primaryprovider * a1.primaryskill) anesthesiologyprocedures,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.generalpractitioner * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.visitdate
-			ELSE
-				NULL
-		END
-	) gpdays,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.generalpractitioner * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.uliabprid || '-' || to_char(a1.visitdate, 'YYYYMMDD')
-			ELSE
-				NULL
-		END
-	) gpproviderdays,
-	SUM(a1.generalpractitioner * a1.primaryprovider * a1.primaryskill) gpprocedures,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.pathologist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.visitdate
-			ELSE
-				NULL
-		END
-	) pathologydays,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.pathologist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.uliabprid || '-' || to_char(a1.visitdate, 'YYYYMMDD')
-			ELSE
-				NULL
-		END
-	) pathologyproviderdays,
-	SUM(a1.pathologist * a1.primaryprovider * a1.primaryskill) pathologyprocedures,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.radiologist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.visitdate
-			ELSE
-				NULL
-		END
-	) radiologydays,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.radiologist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.uliabprid || '-' || to_char(a1.visitdate, 'YYYYMMDD')
-			ELSE
-				NULL
-		END
-	) radiologyproviderdays,
-	SUM(a1.radiologist * a1.primaryprovider * a1.primaryskill) radiologyprocedures,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.specialist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.visitdate
-			ELSE
-				NULL
-		END
-	) specialistdays,
-	COUNT
-	(
-		DISTINCT
-		CASE a1.specialist * a1.primaryprovider * a1.primaryskill
-			WHEN 1 THEN
-				a1.uliabprid || '-' || to_char(a1.visitdate, 'YYYYMMDD')
-			ELSE
-				NULL
-		END
-	) specialistproviderdays,
-	SUM(a1.specialist * a1.primaryprovider * a1.primaryskill) specialistprocedures,
-	COUNT(DISTINCT a1.visitdate) alldays,
-	COUNT(DISTINCT a1.uliabprid || '-' || to_char(a1.visitdate, 'YYYYMMDD')) allproviderdays,
-	COUNT(*) allprocedures
+	SUM(a0.anesthesiologyprocedures) anesthesiologyprocedures,
+	SUM(a0.generalpracticeprocedures) generalpracticeprocedures,
+	SUM(a0.pathologyprocedures) pathologyprocedures,
+	SUM(a0.radiologyprocedures) radiologyprocedures,
+	SUM(a0.specialtyprocedures) specialtyprocedures,
+	SUM(a0.allprocedures) allprocedures,
+	SUM(a0.anesthesiologists) anesthesiologistsdays,
+	SUM(a0.generalpractitioners) generalpractitionersdays,
+	SUM(a0.pathologists) pathologistsdays,
+	SUM(a0.radiologists) radiologistsdays,
+	SUM(a0.specialists) specialistsdays,
+	SUM(a0.allproviders) allproviderdays,
+	SUM(a0.anesthesiologist) anesthesiologydays,
+	SUM(a0.generalpractitioner) generalpracticedays,
+	SUM(a0.pathologist) pahtologydays,
+	SUM(a0.radiologist) radiologistdays,
+	SUM(a0.specialist) specialtydays,
+	COUNT(*) alldays
 FROM
 	personsurveillance a0
 	INNER JOIN
@@ -238,21 +204,21 @@ COMMENT ON COLUMN censusprimarycare.uliabphn IS 'Unique lifetime identifier of t
 COMMENT ON COLUMN censusprimarycare.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censusprimarycare.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censusprimarycare.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censusprimarycare.anesthesiologydays IS 'Number of unique days in the census interval when an anesthesiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.anesthesiologyproviderdays IS 'Number of unique combinations of anesthesiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.anesthesiologyprocedures IS 'Number of procedures in the census interval provided by an anesthiologist in the role of most responsible procedure provider and specifically delivering care in their specialty.';
-COMMENT ON COLUMN censusprimarycare.gpdays IS 'Number of unique days in the census interval when a general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.gpproviderdays IS 'Number of unique combinations of general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.gpprocedures IS 'Number of procedures in the census interval provided by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.pathologydays IS 'Number of unique days in the census interval when a pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.pathologyproviderdays IS 'Number of unique combinations of pathologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.generalpracticeprocedures IS 'Number of procedures in the census interval provided by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.pathologyprocedures IS 'Number of procedures in the census interval provided by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.radiologydays IS 'Number of unique days in the census interval when a radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.radiologyproviderdays IS 'Number of unique combinations of radiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.radiologyprocedures IS 'Number of procedures in the census interval provided by a radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.specialistdays IS 'Number of unique days in the census interval when a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
-COMMENT ON COLUMN censusprimarycare.specialistproviderdays IS 'Number of unique combinations of specialists other than an anesthesiologists, general practitioners, pathologists or radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.specialistprocedures IS 'Number of procedures in the census interval provided by a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.alldays IS 'Number of unique days in the census interval when the person visited primary care in the community.';
-COMMENT ON COLUMN censusprimarycare.allproviderdays IS 'Number of unique combinations of providers and unique days in the census interval when the person utilized primary care.';
+COMMENT ON COLUMN censusprimarycare.specialtyprocedures IS 'Number of procedures in the census interval provided by a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.allprocedures IS 'Number of primary care procedures in the census interval.';
+COMMENT ON COLUMN censusprimarycare.anesthesiologistsdays IS 'Number of unique combinations of anesthesiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.generalpractitionersdays IS 'Number of unique combinations of general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.pathologistsdays IS 'Number of unique combinations of pathologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.radiologistsdays IS 'Number of unique combinations of radiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.specialistsdays IS 'Number of unique combinations of specialists other than an anesthesiologists, general practitioners, pathologists or radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.allproviderdays IS 'Number of unique combinations of providers and unique days in the census interval when the person utilized primary care.';
+COMMENT ON COLUMN censusprimarycare.anesthesiologydays IS 'Number of unique days in the census interval when an anesthesiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.generalpracticedays IS 'Number of unique days in the census interval when a general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.pathologydays IS 'Number of unique days in the census interval when a pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.radiologydays IS 'Number of unique days in the census interval when a radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.specialtydays IS 'Number of unique days in the census interval when a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
+COMMENT ON COLUMN censusprimarycare.alldays IS 'Number of unique days in the census interval when the person visited primary care in the community.';

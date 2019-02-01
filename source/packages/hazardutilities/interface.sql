@@ -18,7 +18,9 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 		ageinterval INTEGER,
 		agecensus INTEGER,
 		evententry INTEGER,
-		eventexit INTEGER
+		eventexit INTEGER,
+		intervalcount INTEGER,
+		intervalorder INTEGER
 	);
 
 	/*
@@ -29,12 +31,12 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	/*
 	 *  Partition an event into fiscal years, subpartitioned by the birthday.
 	 */
-	FUNCTION generatecensus(eventstart IN DATE, eventend IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED;
+	FUNCTION generatecensus(eventstart IN DATE, eventend IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC;
 
 	/*
 	 *  Truncate an event into fiscal years, subpartitioned by the birthday.
 	 */
-	FUNCTION generatecensus(eventdate IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED;
+	FUNCTION generatecensus(eventdate IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC;
 
 	/*
 	 *  Lower truncated years between start date and end date.

@@ -67,6 +67,39 @@ WITH
 			a0.ordr_sts_cd = 'RE'
 			AND
 			a0.clnt_fac_cd IS NOT NULL
+	),
+
+	-- Digest to one record per patient per day per laboratory
+	sitedata AS
+	(
+		SELECT
+			a0.uliabphn,
+			a0.sourcesystem,
+			a0.siteidentifier,
+			a0.collectdate,
+			COUNT(*) assaycount
+		FROM
+			eventdata
+		GROUP BY
+			a0.uliabphn,
+			a0.sourcesystem,
+			a0.siteidentifier,
+			a0.collectdate
+	),
+
+	-- Digest to one record per patient per day
+	daydata AS
+	(
+		SELECT
+			a0.uliabphn,
+			a0.collectdate,
+			SUM(a0.assaycount) assaycount,
+			COUNT(*) sitecount
+		FROM
+			eventdata
+		GROUP BY
+			a0.uliabphn,
+			a0.collectdate
 	)
 
 -- Digest to one record per person per census interval partitioning the surveillance span
@@ -77,13 +110,13 @@ SELECT
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend,
-	COUNT(DISTINCT a1.collectdate) collectdays,
-	COUNT(DISTINCT a1.sourcesystem || '-' || a1.siteidentifier || '-' || to_char(a1.collectdate, 'YYYYMMDD')) collectsitedays,
-	COUNT(*) assaycount
+	SUM(a1.assaycount) assaycount,
+	SUM(a1.sitecount) collectsitedays,
+	COUNT(*) collectdays
 FROM
 	personsurveillance a0
 	INNER JOIN
-	eventdata a1
+	daydata a1
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
@@ -101,6 +134,6 @@ COMMENT ON COLUMN censuslaboratorycollection.uliabphn IS 'Unique lifetime identi
 COMMENT ON COLUMN censuslaboratorycollection.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censuslaboratorycollection.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censuslaboratorycollection.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censuslaboratorycollection.collectdays IS 'Number of unique days in the census interval when the person had a collection taken.';
-COMMENT ON COLUMN censuslaboratorycollection.collectsitedays IS 'Number unique combinations of sites and days in the census interval where the person had a collection taken.';
 COMMENT ON COLUMN censuslaboratorycollection.assaycount IS 'Number assays done of samples collected in the census interval.';
+COMMENT ON COLUMN censuslaboratorycollection.collectsitedays IS 'Number unique combinations of sites and days in the census interval where the person had a collection taken.';
+COMMENT ON COLUMN censuslaboratorycollection.collectdays IS 'Number of unique days in the census interval when the person had a collection taken.';
