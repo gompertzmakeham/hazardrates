@@ -2,7 +2,8 @@
  *  Reverse dependency order releasing.
  */
 
--- Census support
+-- Utilization support
+DROP MATERIALIZED VIEW personutilization;
 DROP MATERIALIZED VIEW personcensus;
 
 -- Census structures

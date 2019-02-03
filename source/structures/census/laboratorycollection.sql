@@ -79,7 +79,7 @@ WITH
 			a0.collectdate,
 			COUNT(*) assaycount
 		FROM
-			eventdata
+			eventdata a0
 		GROUP BY
 			a0.uliabphn,
 			a0.sourcesystem,
@@ -96,7 +96,7 @@ WITH
 			SUM(a0.assaycount) assaycount,
 			COUNT(*) sitecount
 		FROM
-			eventdata
+			sitedata a0
 		GROUP BY
 			a0.uliabphn,
 			a0.collectdate

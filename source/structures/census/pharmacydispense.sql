@@ -11,26 +11,26 @@ WITH
 			a0.rcpt_uli uliabphn,
 			a0.dspn_date dispensedate,
 			a0.fac_key_di360 siteidentifier,
-			CASE a1.dspn_triplicate_boo WHEN 'T' THEN 0 ELSE 1 END standardtherapeutic,
-			CASE a1.dspn_triplicate_boo WHEN 'T' THEN 1 ELSE 0 END controlledtherapeutic
+			CASE a0.dspn_triplicate_boo WHEN 'T' THEN 0 ELSE 1 END standardtherapeutic,
+			CASE a0.dspn_triplicate_boo WHEN 'T' THEN 1 ELSE 0 END controlledtherapeutic
 		FROM
-			ahsdata.pin_dspn a1
+			ahsdata.pin_dspn a0
 		WHERE
-			hazardutilties.cleanprid(a1.prscb_prid) IS NOT NULL
+			hazardutilities.cleanprid(a0.prscb_prid) IS NOT NULL
 			AND
-			a1.supp_drug_atc_code IS NOT NULL
+			a0.supp_drug_atc_code IS NOT NULL
 			AND
-			a1.drug_prod_id = a1.drug_din
+			a0.dspn_prod_id = a0.drug_din
 			AND
-			a1.drug_triplicate_boo = a1.dspn_triplicate_boo
+			a0.drug_triplicate_boo = a0.dspn_triplicate_boo
 			AND
-			a1.nhp_boo = 'F'
+			a0.nhp_boo = 'F'
 			AND
-			a1.dspn_prod_id_tp_code = 'DIN'
+			a0.dspn_prod_id_tp_code = 'DIN'
 			AND
-			a1.fac_key_di360 IS NOT NULL
+			a0.fac_key_di360 IS NOT NULL
 			AND
-			a1.dspn_act_tp_code <> 'Z'
+			a0.dspn_act_tp_code <> 'Z'
 	),
 
 	-- Digest to one record per person per day per pharmacy
@@ -82,14 +82,14 @@ SELECT
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend,
-	SUM(a0.standardtherapeutics) standardtherapeutics,
-	SUM(a0.controlledtherapeutics) controlledtherapeutics,
-	SUM(a0.alltherapeutics) alltherapeutics,
-	SUM(a0.standardsites) standardsitedays,
-	SUM(a0.controlledsites) controlledsitedays,
-	SUM(a0.allsites) allsitedays,
-	SUM(a0.standardtherapeutic) standarddays,
-	SUM(a0.controlledtherapeutic) controlleddays,
+	SUM(a1.standardtherapeutics) standardtherapeutics,
+	SUM(a1.controlledtherapeutics) controlledtherapeutics,
+	SUM(a1.alltherapeutics) alltherapeutics,
+	SUM(a1.standardsites) standardsitedays,
+	SUM(a1.controlledsites) controlledsitedays,
+	SUM(a1.allsites) allsitedays,
+	SUM(a1.standardtherapeutic) standarddays,
+	SUM(a1.controlledtherapeutic) controlleddays,
 	COUNT(*) alldays
 FROM
 	personsurveillance a0
@@ -98,9 +98,9 @@ FROM
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
-		a1.dspn_date BETWEEN a0.extremumstart AND a0.extremumend
+		a1.dispensedate BETWEEN a0.extremumstart AND a0.extremumend
 	CROSS JOIN
-	TABLE(hazardutilities.generatecensus(a1.dspn_date, a0.birthdate)) a2
+	TABLE(hazardutilities.generatecensus(a1.dispensedate, a0.birthdate)) a2
 GROUP BY
 	a0.uliabphn,
 	a0.cornercase,

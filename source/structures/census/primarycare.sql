@@ -165,28 +165,28 @@ SELECT
 	a0.cornercase,
 	a2.intervalstart,
 	a2.intervalend,
-	SUM(a0.anesthesiologyprocedures) anesthesiologyprocedures,
-	SUM(a0.generalpracticeprocedures) generalpracticeprocedures,
-	SUM(a0.pathologyprocedures) pathologyprocedures,
-	SUM(a0.radiologyprocedures) radiologyprocedures,
-	SUM(a0.specialtyprocedures) specialtyprocedures,
-	SUM(a0.allprocedures) allprocedures,
-	SUM(a0.anesthesiologists) anesthesiologistsdays,
-	SUM(a0.generalpractitioners) generalpractitionersdays,
-	SUM(a0.pathologists) pathologistsdays,
-	SUM(a0.radiologists) radiologistsdays,
-	SUM(a0.specialists) specialistsdays,
-	SUM(a0.allproviders) allproviderdays,
-	SUM(a0.anesthesiologist) anesthesiologydays,
-	SUM(a0.generalpractitioner) generalpracticedays,
-	SUM(a0.pathologist) pahtologydays,
-	SUM(a0.radiologist) radiologistdays,
-	SUM(a0.specialist) specialtydays,
+	SUM(a1.anesthesiologyprocedures) anesthesiologyprocedures,
+	SUM(a1.generalpracticeprocedures) generalpracticeprocedures,
+	SUM(a1.pathologyprocedures) pathologyprocedures,
+	SUM(a1.radiologyprocedures) radiologyprocedures,
+	SUM(a1.specialtyprocedures) specialtyprocedures,
+	SUM(a1.allprocedures) allprocedures,
+	SUM(a1.anesthesiologists) anesthesiologistsdays,
+	SUM(a1.generalpractitioners) generalpractitionersdays,
+	SUM(a1.pathologists) pathologistsdays,
+	SUM(a1.radiologists) radiologistsdays,
+	SUM(a1.specialists) specialistsdays,
+	SUM(a1.allproviders) allproviderdays,
+	SUM(a1.anesthesiologist) anesthesiologydays,
+	SUM(a1.generalpractitioner) generalpracticedays,
+	SUM(a1.pathologist) pathologydays,
+	SUM(a1.radiologist) radiologydays,
+	SUM(a1.specialist) specialtydays,
 	COUNT(*) alldays
 FROM
 	personsurveillance a0
 	INNER JOIN
-	eventdata a1
+	daydata a1
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
