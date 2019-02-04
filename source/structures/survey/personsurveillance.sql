@@ -20,6 +20,7 @@ COMMENT ON COLUMN personsurveillance.immigrateequipoise IS 'Extremums agree on o
 COMMENT ON COLUMN personsurveillance.emigrateequipoise IS 'Extremums agree on occurrence of emigration event: 1 yes, 0 no.';
 COMMENT ON COLUMN personsurveillance.startequipoise IS 'Extremums start dates agree: 1 yes, 0 no.';
 COMMENT ON COLUMN personsurveillance.endequipoise IS 'Extremums end dates agree: 1 yes, 0 no.';
+COMMENT ON COLUMN personsurveillance.ageequipoise IS 'Extremums have the same age in the fiscal year: 1 yes, 0 no.';
 COMMENT ON COLUMN personsurveillance.birthdate IS 'Best estimate of the birth date from all adminstrative records, either least (U) or greatest (L) bound, depending on the corner case.';
 COMMENT ON COLUMN personsurveillance.deceaseddate IS 'Best estimate of the deceased date from all adminstrative records, either least (L) or greatest (U) bound, depending on the corner case, null when unknown.';
 COMMENT ON COLUMN personsurveillance.surveillancestart IS 'Start date of the observation bounds of the person.';

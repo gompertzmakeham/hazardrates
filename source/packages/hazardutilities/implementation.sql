@@ -11,8 +11,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	BEGIN
 
 		-- Assign representation
-		returnfiscal.ageinterval := 0;
-		returnbirth.ageinterval := 1;
+		returnfiscal.agecoincideinterval := 0;
+		returnbirth.agecoincideinterval := 1;
 
 		-- Fiscal interval
 		returnfiscal.censusstart := fiscalstart(eventstart);
@@ -23,13 +23,13 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		-- Determine if the birthday interval coincides with the fiscal interval
 		CASE birthdate 
 			WHEN fiscalstart(birthdate) THEN
-				returnfiscal.agecensus := 1;
-				returnbirth.agecensus := 1;
+				returnfiscal.agecoincidecensus := 1;
+				returnbirth.agecoincidecensus := 1;
 				returnfiscal.intervalcount := 1 + floor(months_between(lastfiscal, returnfiscal.censusstart) / 12);
 				returnbirth.intervalcount := 1 + floor(months_between(lastfiscal, returnbirth.censusstart) / 12);
 			ELSE
-				returnfiscal.agecensus := 0;
-				returnbirth.agecensus := 0;
+				returnfiscal.agecoincidecensus := 0;
+				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 2 * (1 + floor(months_between(lastfiscal, returnfiscal.censusstart) / 12));
 				returnbirth.intervalcount := 2 * (1 + floor(months_between(lastfiscal, returnbirth.censusstart) / 12));
 		END CASE;
@@ -56,18 +56,16 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		WHILE returnfiscal.censusstart <= lastfiscal LOOP
 
 			-- Birthday interval
-			returnfiscal.agestart := yearanniversary(birthdate, returnfiscal.censusstart);
+			returnfiscal.agestart := add_months(yearanniversary(birthdate, returnfiscal.censusstart), -12);
 			returnfiscal.ageend := yearend(returnfiscal.agestart);
 			returnbirth.agestart := yearanniversary(birthdate, returnbirth.censusstart);
 			returnbirth.ageend := yearend(returnbirth.agestart);
 
-			-- Interval starting on the fiscal year start
-			returnfiscal.intervalstart := returnfiscal.censusstart;
-			returnfiscal.intervalend := returnfiscal.agestart - 1;
-
-			-- Interval starting on the birthday
-			returnbirth.intervalstart := returnbirth.agestart;
-			returnbirth.intervalend := returnbirth.censusend;
+			-- Intersection of fiscal and age intervals
+			returnfiscal.intervalstart := greatest(returnfiscal.censusstart, returnfiscal.agestart);
+			returnfiscal.intervalend := least(returnfiscal.censusend, returnfiscal.ageend);
+			returnbirth.intervalstart := greatest(returnbirth.censusstart, returnbirth.agestart);
+			returnbirth.intervalend := least(returnbirth.censusend, returnbirth.ageend);
 
 			-- Duration within the interval
 			returnfiscal.durationstart := greatest(eventstart, returnfiscal.intervalstart);
@@ -147,48 +145,48 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION generatecensus(eventdate IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC AS
 		returncensus censusinterval;
+		localbirth DATE;
 	BEGIN
 
 		-- Fiscal interval
 		returncensus.censusstart := fiscalstart(eventdate);
 		returncensus.censusend := yearend(returncensus.censusstart);
 
-		-- Birthday interval
-		returncensus.agestart := yearanniversary(birthdate, returncensus.censusstart);
-		returncensus.ageend := yearend(returncensus.agestart);
-
 		-- Order and count
 		returncensus.intervalcount := 1;
 		returncensus.intervalorder := 1;
 
 		-- Assign the event to an interval
+		localbirth := yearanniversary(birthdate, returncensus.censusstart);
 		CASE
 
 			-- Birthday interval coincides with the fiscal interval
-			WHEN returncensus.censusstart = returncensus.agestart THEN
-				returncensus.agecensus := 1;
-				returncensus.ageinterval := 1;
-				returncensus.intervalstart := returncensus.censusstart;
-				returncensus.intervalend := returncensus.censusend;
+			WHEN returncensus.censusstart = localbirth THEN
+				returncensus.agecoincidecensus := 1;
+				returncensus.agecoincideinterval := 1;
+				returncensus.agestart := localbirth;
 
 			-- Interval starting on the fiscal year start
-			WHEN eventdate < returncensus.agestart THEN
-				returncensus.agecensus := 0;
-				returncensus.ageinterval := 0;
-				returncensus.intervalstart := returncensus.censusstart;
-				returncensus.intervalend := returncensus.agestart - 1;
+			WHEN eventdate < localbirth THEN
+				returncensus.agecoincidecensus := 0;
+				returncensus.agecoincideinterval := 0;
+				returncensus.agestart := add_months(localbirth, -12);
 
 			-- Interval starting on the birthday
 			ELSE
-				returncensus.agecensus := 0;
-				returncensus.ageinterval := 1;
-				returncensus.intervalstart := returncensus.agestart;
-				returncensus.intervalend := returncensus.censusend;
+				returncensus.agecoincidecensus := 0;
+				returncensus.agecoincideinterval := 1;
+				returncensus.agestart := localbirth;
 		END CASE;
 
-		-- Age and days
+		-- Final interval boundaries
+		returncensus.ageend := yearend(returncensus.agestart);
+		returncensus.intervalstart := greatest(returncensus.censusstart, returncensus.agestart);
+		returncensus.intervalend := least(returncensus.censusend, returncensus.ageend);
 		returncensus.durationstart := eventdate;
 		returncensus.durationend := eventdate;
+
+		-- Age and days
 		returncensus.intervalage := ageyears(birthdate, returncensus.intervalstart);
 		returncensus.durationdays := 1;
 		returncensus.evententry := 1;
@@ -364,7 +362,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION cleanphn(inputphn IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
 	BEGIN
-		RETURN cleanphn(to_number(regexp_replace(inputphn, '[^0-9]', '')));
+		RETURN cleanphn(cleaninteger(inputphn));
 	END cleanphn;
 
 	/*
@@ -394,7 +392,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION cleaninpatient(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
 	BEGIN
-		RETURN cleaninpatient(to_number(COALESCE(regexp_replace(inputfacility, '[^0-9]', ''), '0')));
+		RETURN cleaninpatient(cleaninteger(inputfacility));
 	END cleaninpatient;
 	
 	/*
@@ -416,7 +414,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION cleanambulatory(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
 	BEGIN
-		RETURN cleanambulatory(to_number(COALESCE(regexp_replace(inputfacility, '[^0-9]', ''), '0')));
+		RETURN cleanambulatory(cleaninteger(inputfacility));
 	END cleanambulatory;
 
 	/*
@@ -440,6 +438,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION cleanprid(inputprid IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
 	BEGIN
-		RETURN cleanprid(to_number(regexp_replace(inputprid, '[^0-9]', '')));
+		RETURN cleanprid(cleaninteger(inputprid));
 	END cleanprid;
+
+	/*
+	 *  Clean a string of all non-numeric characters.
+	 */
+	FUNCTION cleaninteger(inputstring IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	BEGIN
+		RETURN to_number(regexp_replace(inputstring, '[^0-9]', ''));
+	END cleaninteger;
 END hazardutilities;

@@ -40,6 +40,7 @@ CREATE OR REPLACE PACKAGE surveillanceutilities AS
 		emigrateequipoise INTEGER,
 		startequipoise INTEGER,
 		endequipoise INTEGER,
+		ageequipoise INTEGER,
 		birthdate DATE,
 		deceaseddate DATE,
 		surveillancestart DATE,

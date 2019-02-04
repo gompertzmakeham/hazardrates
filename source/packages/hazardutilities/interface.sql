@@ -15,8 +15,8 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 		durationend DATE,
 		durationdays INTEGER,
 		intervalage INTEGER,
-		ageinterval INTEGER,
-		agecensus INTEGER,
+		agecoincideinterval INTEGER,
+		agecoincidecensus INTEGER,
 		evententry INTEGER,
 		eventexit INTEGER,
 		intervalcount INTEGER,
@@ -177,4 +177,9 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	 *  zeroes, return null otherwise.
 	 */
 	FUNCTION cleanprid(inputprid IN VARCHAR2) RETURN INTEGER DETERMINISTIC;
+
+	/*
+	 *  Clean a string of all non-numeric characters.
+	 */
+	FUNCTION cleaninteger(inputstring IN VARCHAR2) RETURN INTEGER DETERMINISTIC;
 END hazardutilities;

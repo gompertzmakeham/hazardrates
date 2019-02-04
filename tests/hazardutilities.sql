@@ -39,6 +39,9 @@ SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360) + 23, SYSDATE)' funct
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360) - 23, SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -360) - 23, SYSDATE) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -12) + 23, SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -12) + 23, SYSDATE) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -12), SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -12), SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninteger(''987654321'')' functioncall, hazardutilities.cleaninteger('987654321') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninteger(''abcd'')' functioncall, hazardutilities.cleaninteger('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.cleaninteger(''12345a67890'')' functioncall, hazardutilities.cleaninteger('12345a67890') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleanphn(2)' functioncall, hazardutilities.cleanphn(2) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleanphn(1000000002)' functioncall, hazardutilities.cleanphn(1000000002) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleanphn(987654321)' functioncall, hazardutilities.cleanphn(987654321) callresult FROM dual UNION ALL

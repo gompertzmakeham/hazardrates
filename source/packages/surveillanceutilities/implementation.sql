@@ -258,7 +258,7 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 					returnupper.endequipoise := 1;
 			END CASE;
 
-			-- Birth observation equipose
+			-- Birth observation equipoise
 			CASE
 				WHEN returnlower.surveillancebirth = returnupper.surveillancebirth THEN
 					returnlower.birthequipoise := 1;
@@ -268,7 +268,7 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 					returnupper.birthequipoise := 0;
 			END CASE;
 
-			-- Deceased observation equipose
+			-- Deceased observation equipoise
 			CASE
 				WHEN returnlower.surveillancedeceased = returnupper.surveillancedeceased THEN
 					returnlower.deceasedequipoise := 1;
@@ -278,7 +278,7 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 					returnupper.deceasedequipoise := 0;
 			END CASE;
 
-			-- Immigration observation equipose
+			-- Immigration observation equipoise
 			CASE
 				WHEN returnlower.surveillanceimmigrate = returnupper.surveillanceimmigrate THEN
 					returnlower.immigrateequipoise := 1;
@@ -288,7 +288,7 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 					returnupper.immigrateequipoise := 0;
 			END CASE;
 
-			-- Emigration observation equipose
+			-- Emigration observation equipoise
 			CASE
 				WHEN returnlower.surveillanceemigrate = returnupper.surveillanceemigrate THEN
 					returnlower.emigrateequipoise := 1;
@@ -296,6 +296,16 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 				ELSE
 					returnlower.emigrateequipoise := 0;
 					returnupper.emigrateequipoise := 0;
+			END CASE;
+
+			-- Age in fiscal census equipoise
+			CASE
+				WHEN hazardutilities.fiscalstart(localrow.leastbirth) = hazardutilities.fiscalstart(localrow.greatestbirth) THEN
+					returnlower.ageequipoise := 1;
+					returnupper.ageequipoise := 1;
+				ELSE
+					returnlower.ageequipoise := 0;
+					returnupper.ageequipoise := 0;
 			END CASE;
 
 			-- Send only valid intervals where the range of birth dates is disjoint from the
