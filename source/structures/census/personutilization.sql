@@ -33,7 +33,7 @@ WITH
 				AND
 				a0.intervalend = a1.intervalend
 	),
-	
+
 	-- Mix in laboratory
 	addlaboratory AS
 	(
@@ -66,7 +66,7 @@ WITH
 				AND
 				a0.intervalend = a1.intervalend
 	),
-	
+
 	-- Mix in long term care
 	addlongtermcare AS
 	(
@@ -102,7 +102,7 @@ WITH
 				AND
 				a0.intervalend = a1.intervalend
 	),
-	
+
 	-- Mix in pharmacy
 	addpharmacy AS
 	(
@@ -147,7 +147,7 @@ WITH
 				AND
 				a0.intervalend = a1.intervalend
 	),
-	
+
 	-- Mix in primary care
 	addprimarycare AS
 	(
@@ -210,7 +210,7 @@ WITH
 				AND
 				a0.intervalend = a1.intervalend
 	)
-	
+
 -- Final mix supportive living
 SELECT
 	COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
@@ -274,55 +274,55 @@ FROM
 		a0.intervalstart = a1.intervalstart
 		AND
 		a0.intervalend = a1.intervalend;
-		
+
 COMMENT ON MATERIALIZED VIEW personutilization IS 'For every person that at any time was covered by Alberta Healthcare Insurance partition the surviellance interval by the intersections of fiscal years and age years, rectified by the start and end of the surveillance interval.';
 COMMENT ON COLUMN personutilization.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN personutilization.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
-COMMENT ON COLUMN personutilization.durationend IS 'Closed end of the interval, rectified to the end of the surveillance interval.';
-COMMENT ON COLUMN personutilization.durationdays IS 'Duration of the interval in days, an integer starting at 1, using the convention that the interval is closed so that the duration is end minus start plus one day.';
-COMMENT ON COLUMN censusambulatorycare.ambulatoryminutes IS 'Naive sum of minutes that intersected with the census interval, including overlapping visits.';
-COMMENT ON COLUMN censusambulatorycare.ambulatoryvisits IS 'Visits in the census interval.';
-COMMENT ON COLUMN censusambulatorycare.ambulatorysitedays IS 'Unique combinations of days and sites visited in the census interval.';
-COMMENT ON COLUMN censusambulatorycare.ambulatorydays IS 'Unique days of visits in the census interval.';
-COMMENT ON COLUMN censusinpatientcare.inpatientdays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN censusinpatientcare.inpatientadmissions IS 'Admissions in the census interval.';
-COMMENT ON COLUMN censusinpatientcare.inpatientdischarges IS 'Discharges in the census interval.';
-COMMENT ON COLUMN censusinpatientcare.inpatientstays IS 'Stays intersecting with the census interval.';
-COMMENT ON COLUMN censuslaboratorycollection.laboratoryassays IS 'Number assays done of samples collected in the census interval.';
-COMMENT ON COLUMN censuslaboratorycollection.laboratorysitedays IS 'Number unique combinations of sites and days in the census interval where the person had a collection taken.';
-COMMENT ON COLUMN censuslaboratorycollection.laboratorydays IS 'Number of unique days in the census interval when the person had a collection taken.';
-COMMENT ON COLUMN censuslongtermcare.longtermcarestays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN censuslongtermcare.longtermcareadmissions IS 'Admissions in the census interval.';
-COMMENT ON COLUMN censuslongtermcare.longtermcaredischarges IS 'Discharges in the census interval.';
-COMMENT ON COLUMN censuslongtermcare.longtermcarestays IS 'Stays intersecting with the census interval.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacystandardtherapeutics IS 'Number of distinct dispensed therapeutics not subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacycontrolledtherapeutics IS 'Number of distinct dispensed therapeutics subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacytherapeutics IS 'Number of distinct dispensed therapeutics.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacystandardsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed a prescription of a therapeutic not subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacycontrolledsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed a prescription of a therapeutic subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacysitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed any prescription.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacystandarddays IS 'Number of unique days in the census interval when the person was dispensed a standard prescription of a therapeutic not subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacycontrolleddays IS 'Number of unique days in the census interval when the person was dispensed a triple pad prescription of a therapeutic subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.pharmacydays IS 'Number of unique days in the census interval when the person was dispensed any prescription.';
-COMMENT ON COLUMN censusprimarycare.anesthesiologyprocedures IS 'Number of procedures in the census interval provided by an anesthiologist in the role of most responsible procedure provider and specifically delivering care in their specialty.';
-COMMENT ON COLUMN censusprimarycare.generalpracticeprocedures IS 'Number of procedures in the census interval provided by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.pathologyprocedures IS 'Number of procedures in the census interval provided by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.radiologyprocedures IS 'Number of procedures in the census interval provided by a radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.specialtyprocedures IS 'Number of procedures in the census interval provided by a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.primarycareprocedures IS 'Number of primary care procedures in the census interval.';
-COMMENT ON COLUMN censusprimarycare.anesthesiologistsdays IS 'Number of unique combinations of anesthesiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.generalpractitionersdays IS 'Number of unique combinations of general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.pathologistsdays IS 'Number of unique combinations of pathologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.radiologistsdays IS 'Number of unique combinations of radiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.specialistsdays IS 'Number of unique combinations of specialists other than an anesthesiologists, general practitioners, pathologists or radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.primarycareproviderdays IS 'Number of unique combinations of providers and unique days in the census interval when the person utilized primary care.';
-COMMENT ON COLUMN censusprimarycare.anesthesiologydays IS 'Number of unique days in the census interval when an anesthesiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.generalpracticedays IS 'Number of unique days in the census interval when a general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.pathologydays IS 'Number of unique days in the census interval when a pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.radiologydays IS 'Number of unique days in the census interval when a radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
-COMMENT ON COLUMN censusprimarycare.specialtydays IS 'Number of unique days in the census interval when a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
-COMMENT ON COLUMN censusprimarycare.primarycaredays IS 'Number of unique days in the census interval when the person visited primary care in the community.';
-COMMENT ON COLUMN censussupportiveliving.supportivelivingdays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN censussupportiveliving.supportivelivingadmissions IS 'Admissions in the census interval.';
-COMMENT ON COLUMN censussupportiveliving.supportivelivingdischarges IS 'Discharges in the census interval.';
-COMMENT ON COLUMN censussupportiveliving.supportivelivingstays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.intervalstart IS 'Closed start of the intersection of the fiscal year and the age interval.';
+COMMENT ON COLUMN personutilization.intervalend IS 'Closed end of the intersection of the fiscal year and the age interval.';
+COMMENT ON COLUMN personutilization.ambulatoryminutes IS 'Naive sum of minutes that intersected with the census interval, including overlapping visits.';
+COMMENT ON COLUMN personutilization.ambulatoryvisits IS 'Visits in the census interval.';
+COMMENT ON COLUMN personutilization.ambulatorysitedays IS 'Unique combinations of days and sites visited in the census interval.';
+COMMENT ON COLUMN personutilization.ambulatorydays IS 'Unique days of visits in the census interval.';
+COMMENT ON COLUMN personutilization.inpatientdays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.inpatientadmissions IS 'Admissions in the census interval.';
+COMMENT ON COLUMN personutilization.inpatientdischarges IS 'Discharges in the census interval.';
+COMMENT ON COLUMN personutilization.inpatientstays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.laboratoryassays IS 'Number assays done of samples collected in the census interval.';
+COMMENT ON COLUMN personutilization.laboratorysitedays IS 'Number unique combinations of sites and days in the census interval where the person had a collection taken.';
+COMMENT ON COLUMN personutilization.laboratorydays IS 'Number of unique days in the census interval when the person had a collection taken.';
+COMMENT ON COLUMN personutilization.longtermcarestays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.longtermcareadmissions IS 'Admissions in the census interval.';
+COMMENT ON COLUMN personutilization.longtermcaredischarges IS 'Discharges in the census interval.';
+COMMENT ON COLUMN personutilization.longtermcarestays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.pharmacystandardtherapeutics IS 'Number of distinct dispensed therapeutics not subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacycontrolledtherapeutics IS 'Number of distinct dispensed therapeutics subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacytherapeutics IS 'Number of distinct dispensed therapeutics.';
+COMMENT ON COLUMN personutilization.pharmacystandardsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed a prescription of a therapeutic not subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacycontrolledsitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed a prescription of a therapeutic subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacysitedays IS 'Number of unique combinations of pharmacies and days in the census interval when the person was dispensed any prescription.';
+COMMENT ON COLUMN personutilization.pharmacystandarddays IS 'Number of unique days in the census interval when the person was dispensed a standard prescription of a therapeutic not subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacycontrolleddays IS 'Number of unique days in the census interval when the person was dispensed a triple pad prescription of a therapeutic subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacydays IS 'Number of unique days in the census interval when the person was dispensed any prescription.';
+COMMENT ON COLUMN personutilization.anesthesiologyprocedures IS 'Number of procedures in the census interval provided by an anesthiologist in the role of most responsible procedure provider and specifically delivering care in their specialty.';
+COMMENT ON COLUMN personutilization.generalpracticeprocedures IS 'Number of procedures in the census interval provided by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+COMMENT ON COLUMN personutilization.pathologyprocedures IS 'Number of procedures in the census interval provided by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+COMMENT ON COLUMN personutilization.radiologyprocedures IS 'Number of procedures in the census interval provided by a radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+COMMENT ON COLUMN personutilization.specialtyprocedures IS 'Number of procedures in the census interval provided by a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+COMMENT ON COLUMN personutilization.primarycareprocedures IS 'Number of primary care procedures in the census interval.';
+COMMENT ON COLUMN personutilization.anesthesiologistsdays IS 'Number of unique combinations of anesthesiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.generalpractitionersdays IS 'Number of unique combinations of general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.pathologistsdays IS 'Number of unique combinations of pathologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.radiologistsdays IS 'Number of unique combinations of radiologist and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.specialistsdays IS 'Number of unique combinations of specialists other than an anesthesiologists, general practitioners, pathologists or radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.primarycareproviderdays IS 'Number of unique combinations of providers and unique days in the census interval when the person utilized primary care.';
+COMMENT ON COLUMN personutilization.anesthesiologydays IS 'Number of unique days in the census interval when an anesthesiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.generalpracticedays IS 'Number of unique days in the census interval when a general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.pathologydays IS 'Number of unique days in the census interval when a pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.radiologydays IS 'Number of unique days in the census interval when a radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.specialtydays IS 'Number of unique days in the census interval when a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
+COMMENT ON COLUMN personutilization.primarycaredays IS 'Number of unique days in the census interval when the person visited primary care in the community.';
+COMMENT ON COLUMN personutilization.supportivelivingdays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.supportivelivingadmissions IS 'Admissions in the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingdischarges IS 'Discharges in the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingstays IS 'Stays intersecting with the census interval.';
