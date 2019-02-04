@@ -2,61 +2,270 @@ ALTER SESSION FORCE PARALLEL DDL PARALLEL 8;
 ALTER SESSION FORCE PARALLEL DML PARALLEL 8;
 ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8;
 CREATE MATERIALIZED VIEW personutilization NOLOGGING NOCOMPRESS PARALLEL 8 BUILD IMMEDIATE REFRESH COMPLETE ON DEMAND AS
+WITH
+
+	-- Link ambulatory to inpatient
+	ambulatoryinpatient AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.visitminutes, 0) ambulatoryminutes,
+			COALESCE(a0.visitcount, 0) ambulatoryvisits,
+			COALESCE(a0.visitsitedays, 0) ambulatorysitedays,
+			COALESCE(a0.visitdays, 0) ambulatorydays,
+			COALESCE(a1.staydays, 0) inpatientdays,
+			COALESCE(a1.admissioncount, 0) inpatientadmissions,
+			COALESCE(a1.dischargecount, 0) inpatientdischarges,
+			COALESCE(a1.intersectingstays, 0) inpatientstays
+		FROM
+			censusambulatorycare a0
+			FULL JOIN
+			censusinpatientcare a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+	
+	-- Mix in laboratory
+	addlaboratory AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a1.assaycount, 0) laboratoryassays,
+			COALESCE(a1.collectsitedays, 0) laboratorysitedays,
+			COALESCE(a1.collectdays, 0) laboratorydays
+		FROM
+			ambulatoryinpatient a0
+			FULL JOIN
+			censuslaboratorycollection a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+	
+	-- Mix in long term care
+	addlongtermcare AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
+			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
+			COALESCE(a0.laboratorydays, 0) laboratorydays,
+			COALESCE(a1.admissioncount, 0) longtermcareadmissions,
+			COALESCE(a1.dischargecount, 0) longtermcaredischarges,
+			COALESCE(a1.intersectingstays, 0) longtermcarestays
+		FROM
+			addlaboratory a0
+			FULL JOIN
+			censuslongtermcare a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+	
+	-- Mix in pharmacy
+	addpharmacy AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
+			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
+			COALESCE(a0.laboratorydays, 0) laboratorydays,
+			COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
+			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
+			COALESCE(a0.longtermcarestays, 0) longtermcarestays,
+			COALESCE(a1.standardtherapeutics, 0) pharmacystandardtherapeutics,
+			COALESCE(a1.controlledtherapeutics, 0) pharmacycontrolledtherapeutics,
+			COALESCE(a1.alltherapeutics, 0) pharmacytherapeutics,
+			COALESCE(a1.standardsitedays, 0) pharmacystandardsitedays,
+			COALESCE(a1.controlledsitedays, 0) pharmacycontrolledsitedays,
+			COALESCE(a1.allsitedays, 0) pharmacysitedays,
+			COALESCE(a1.standarddays, 0) pharmacystandarddays,
+			COALESCE(a1.controlleddays, 0) pharmacycontrolleddays,
+			COALESCE(a1.alldays, 0) pharmacydays
+		FROM
+			addlongtermcare a0
+			FULL JOIN
+			censuspharmacydispense a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+	
+	-- Mix in primary care
+	addprimarycare AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
+			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
+			COALESCE(a0.laboratorydays, 0) laboratorydays,
+			COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
+			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
+			COALESCE(a0.longtermcarestays, 0) longtermcarestays,
+			COALESCE(a0.pharmacystandardtherapeutics, 0) pharmacystandardtherapeutics,
+			COALESCE(a0.pharmacycontrolledtherapeutics, 0) pharmacycontrolledtherapeutics,
+			COALESCE(a0.pharmacytherapeutics, 0) pharmacytherapeutics,
+			COALESCE(a0.pharmacystandardsitedays, 0) pharmacystandardsitedays,
+			COALESCE(a0.pharmacycontrolledsitedays, 0) pharmacycontrolledsitedays,
+			COALESCE(a0.pharmacysitedays, 0) pharmacysitedays,
+			COALESCE(a0.pharmacystandarddays, 0) pharmacystandarddays,
+			COALESCE(a0.pharmacycontrolleddays, 0) pharmacycontrolleddays,
+			COALESCE(a0.pharmacydays, 0) pharmacydays,
+			COALESCE(a1.anesthesiologyprocedures, 0) anesthesiologyprocedures,
+			COALESCE(a1.generalpracticeprocedures, 0) generalpracticeprocedures,
+			COALESCE(a1.pathologyprocedures, 0) pathologyprocedures,
+			COALESCE(a1.radiologyprocedures, 0) radiologyprocedures,
+			COALESCE(a1.specialtyprocedures, 0) specialtyprocedures,
+			COALESCE(a1.allprocedures, 0) primarycareprocedures,
+			COALESCE(a1.anesthesiologistsdays, 0) anesthesiologistsdays,
+			COALESCE(a1.generalpractitionersdays, 0) generalpractitionersdays,
+			COALESCE(a1.pathologistsdays, 0) pathologistsdays,
+			COALESCE(a1.radiologistsdays, 0) radiologistsdays,
+			COALESCE(a1.specialistsdays, 0) specialistsdays,
+			COALESCE(a1.allproviderdays, 0) primarycareproviderdays,
+			COALESCE(a1.anesthesiologydays, 0) anesthesiologydays,
+			COALESCE(a1.generalpracticedays, 0) generalpracticedays,
+			COALESCE(a1.pahtologydays, 0) pathologydays,
+			COALESCE(a1.radiologistdays, 0) radiologydays,
+			COALESCE(a1.specialtydays, 0) specialtydays,
+			COALESCE(a1.alldays, 0) primarycaredays
+		FROM
+			addpharmacy a0
+			FULL JOIN
+			censusprimarycare a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	)
+	
+-- Final mix supportive living
 SELECT
-	a0.uliabphn,
-	a0.cornercase,
-	a0.durationstart,
-	a0.durationend,
-	a1.visitminutes ambulatoryminutes,
-	a1.visitcount ambulatoryvisits,
-	a1.visitsitedays ambulatorysitedays,
-	a1.visitdays ambulatorydays,
-	a2.staydays inpatientdays,
-	a2.admissioncount inpatientadmissions,
-	a2.dischargecount inpatientdischarges,
-	a2.intersectingstays inpatientstays,
-	a2.assaycount laboratoryassays,
-	a3.collectsitedays laboratorysitedays,
-	a3.collectdays laboratorydays,
-	a4.staydays longtermcarestays,
-	a4.admissioncount longtermcareadmissions,
-	a4.dischargecount longtermcaredischarges,
-	a4.intersectingstays longtermcarestays,
-	a5.standardtherapeutics pharmacystandardtherapeutics,
-	a5.controlledtherapeutics pharmacycontrolledtherapeutics,
-	a5.alltherapeutics pharmacytherapeutics,
-	a5.standardsitedays pharmacystandardsitedays,
-	a5.controlledsitedays pharmacycontrolledsitedays,
-	a5.allsitedays pharmacysitedays,
-	a5.standarddays pharmacystandarddays,
-	a5.controlleddays pharmacycontrolleddays,
-	a5.alldays pharmacydays,
-	a6.anesthesiologyprocedures,
-	a6.generalpracticeprocedures,
-	a6.pathologyprocedures,
-	a6.radiologyprocedures,
-	a6.specialtyprocedures,
-	a6.allprocedures primarycareprocedures,
-	a6.anesthesiologistsdays,
-	a6.generalpractitionersdays,
-	a6.pathologistsdays,
-	a6.radiologistsdays,
-	a6.specialistsdays,
-	a6.allproviderdays primarycareproviderdays,
-	a6.anesthesiologydays,
-	a6.generalpracticedays,
-	a6.pathologydays,
-	a6.radiologydays,
-	a6.specialtydays,
-	a6.alldays primarycaredays,
-	a7.staydays supportivelivingdays,
-	a7.admissioncount supportivelivingadmissions,
-	a7.dischargecount supportivelivingdischarges,
-	a7.intersectingstays supportivelivingstays
+	COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+	COALESCE(a0.cornercase, a1.cornercase) cornercase,
+	COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+	COALESCE(a0.intervalend, a1.intervalend) intervalend,
+	COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+	COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+	COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+	COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+	COALESCE(a0.inpatientdays, 0) inpatientdays,
+	COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+	COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+	COALESCE(a0.inpatientstays, 0) inpatientstays,
+	COALESCE(a0.laboratoryassays, 0) laboratoryassays,
+	COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
+	COALESCE(a0.laboratorydays, 0) laboratorydays,
+	COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
+	COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
+	COALESCE(a0.longtermcarestays, 0) longtermcarestays,
+	COALESCE(a0.pharmacystandardtherapeutics, 0) pharmacystandardtherapeutics,
+	COALESCE(a0.pharmacycontrolledtherapeutics, 0) pharmacycontrolledtherapeutics,
+	COALESCE(a0.pharmacytherapeutics, 0) pharmacytherapeutics,
+	COALESCE(a0.pharmacystandardsitedays, 0) pharmacystandardsitedays,
+	COALESCE(a0.pharmacycontrolledsitedays, 0) pharmacycontrolledsitedays,
+	COALESCE(a0.pharmacysitedays, 0) pharmacysitedays,
+	COALESCE(a0.pharmacystandarddays, 0) pharmacystandarddays,
+	COALESCE(a0.pharmacycontrolleddays, 0) pharmacycontrolleddays,
+	COALESCE(a0.pharmacydays, 0) pharmacydays,
+	COALESCE(a0.anesthesiologyprocedures, 0) anesthesiologyprocedures,
+	COALESCE(a0.generalpracticeprocedures, 0) generalpracticeprocedures,
+	COALESCE(a0.pathologyprocedures, 0) pathologyprocedures,
+	COALESCE(a0.radiologyprocedures, 0) radiologyprocedures,
+	COALESCE(a0.specialtyprocedures, 0) specialtyprocedures,
+	COALESCE(a0.primarycareprocedures, 0) primarycareprocedures,
+	COALESCE(a0.anesthesiologistsdays, 0) anesthesiologistsdays,
+	COALESCE(a0.generalpractitionersdays, 0) generalpractitionersdays,
+	COALESCE(a0.pathologistsdays, 0) pathologistsdays,
+	COALESCE(a0.radiologistsdays, 0) radiologistsdays,
+	COALESCE(a0.specialistsdays, 0) specialistsdays,
+	COALESCE(a0.primarycareproviderdays, 0) primarycareproviderdays,
+	COALESCE(a0.anesthesiologydays, 0) anesthesiologydays,
+	COALESCE(a0.generalpracticedays, 0) generalpracticedays,
+	COALESCE(a0.pathologydays, 0) pathologydays,
+	COALESCE(a0.radiologydays, 0) radiologydays,
+	COALESCE(a0.specialtydays, 0) specialtydays,
+	COALESCE(a0.primarycaredays, 0) primarycaredays,
+	COALESCE(a1.staydays, 0) supportivelivingdays,
+	COALESCE(a1.admissioncount, 0) supportivelivingadmissions,
+	COALESCE(a1.dischargecount, 0) supportivelivingdischarges,
+	COALESCE(a1.intersectingstays, 0) supportivelivingstays
 FROM
-	personcensus a0
-	LEFT JOIN
-	censusambulatorycare a1
+	addprimarycare a0
+	FULL JOIN
+	censussupportiveliving a1
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
@@ -64,67 +273,7 @@ FROM
 		AND
 		a0.intervalstart = a1.intervalstart
 		AND
-		a0.intervalend = a1.intervalend
-	LEFT JOIN
-	censusinpatientcare a2
-	ON
-		a0.uliabphn = a2.uliabphn
-		AND
-		a0.cornercase = a2.cornercase
-		AND
-		a0.intervalstart = a2.intervalstart
-		AND
-		a0.intervalend = a2.intervalend
-	LEFT JOIN
-	censuslaboratorycollection a3
-	ON
-		a0.uliabphn = a3.uliabphn
-		AND
-		a0.cornercase = a3.cornercase
-		AND
-		a0.intervalstart = a3.intervalstart
-		AND
-		a0.intervalend = a3.intervalend
-	LEFT JOIN
-	censuslongtermcare a4
-	ON
-		a0.uliabphn = a4.uliabphn
-		AND
-		a0.cornercase = a4.cornercase
-		AND
-		a0.intervalstart = a4.intervalstart
-		AND
-		a0.intervalend = a4.intervalend
-	LEFT JOIN
-	censuspharmacydispense a5
-	ON
-		a0.uliabphn = a5.uliabphn
-		AND
-		a0.cornercase = a5.cornercase
-		AND
-		a0.intervalstart = a5.intervalstart
-		AND
-		a0.intervalend = a5.intervalend
-	LEFT JOIN
-	censusprimarycare a6
-	ON
-		a0.uliabphn = a6.uliabphn
-		AND
-		a0.cornercase = a6.cornercase
-		AND
-		a0.intervalstart = a6.intervalstart
-		AND
-		a0.intervalend = a6.intervalend
-	LEFT JOIN
-	censussupportiveliving a7
-	ON
-		a0.uliabphn = a7.uliabphn
-		AND
-		a0.cornercase = a7.cornercase
-		AND
-		a0.intervalstart = a7.intervalstart
-		AND
-		a0.intervalend = a7.intervalend;
+		a0.intervalend = a1.intervalend;
 		
 COMMENT ON MATERIALIZED VIEW personutilization IS 'For every person that at any time was covered by Alberta Healthcare Insurance partition the surviellance interval by the intersections of fiscal years and age years, rectified by the start and end of the surveillance interval.';
 COMMENT ON COLUMN personutilization.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
