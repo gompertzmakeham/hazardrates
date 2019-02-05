@@ -1,4 +1,7 @@
 CREATE OR REPLACE PACKAGE hazardutilities AS
+/*
+ *  Deterministic data processing functions.
+ */
 
 	/*
 	 *  A single census interval division of an event.

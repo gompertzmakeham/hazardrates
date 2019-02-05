@@ -1,4 +1,7 @@
 CREATE OR REPLACE PACKAGE maintenanceutilities AUTHID CURRENT_USER AS
+/*
+ *  Refresh job chain initiation, launching, and cleanup.
+ */
 
 	/*
 	 *  Build and dispatch the chain of jobs to refresh the data.

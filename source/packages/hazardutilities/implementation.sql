@@ -1,4 +1,7 @@
 CREATE OR REPLACE PACKAGE BODY hazardutilities AS
+/*
+ *  Deterministic data processing functions.
+ */
 
 	/*
 	 *  Partition an event into fiscal years, subpartitioned by the birthday.

@@ -1,4 +1,7 @@
 CREATE OR REPLACE PACKAGE surveillanceutilities AS
+/*
+ *  Generate extremum surveillance intervals.
+ */
 
 	/*
 	 *  A representation of a single person reduced from events.

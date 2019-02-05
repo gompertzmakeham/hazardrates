@@ -1,4 +1,7 @@
 CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
+/*
+ *  Refresh job chain initiation, launching, and cleanup.
+ */
 
 	/*
 	 *  Current schema name.

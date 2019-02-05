@@ -86,6 +86,7 @@ WITH
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
 			COALESCE(a0.laboratorydays, 0) laboratorydays,
+			COALESCE(a1.staydays, 0) longtermcaredays,
 			COALESCE(a1.admissioncount, 0) longtermcareadmissions,
 			COALESCE(a1.dischargecount, 0) longtermcaredischarges,
 			COALESCE(a1.intersectingstays, 0) longtermcarestays
@@ -124,6 +125,7 @@ WITH
 			COALESCE(a0.laboratorydays, 0) laboratorydays,
 			COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
 			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
+			COALESCE(a0.longtermcaredays, 0) longtermcaredays,
 			COALESCE(a0.longtermcarestays, 0) longtermcarestays,
 			COALESCE(a1.standardtherapeutics, 0) pharmacystandardtherapeutics,
 			COALESCE(a1.controlledtherapeutics, 0) pharmacycontrolledtherapeutics,
@@ -167,6 +169,7 @@ WITH
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
 			COALESCE(a0.laboratorydays, 0) laboratorydays,
+			COALESCE(a0.longtermcaredays, 0) longtermcaredays,
 			COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
 			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
 			COALESCE(a0.longtermcarestays, 0) longtermcarestays,
@@ -228,6 +231,7 @@ SELECT
 	COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 	COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
 	COALESCE(a0.laboratorydays, 0) laboratorydays,
+	COALESCE(a0.longtermcaredays, 0) longtermcaredays,
 	COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
 	COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
 	COALESCE(a0.longtermcarestays, 0) longtermcarestays,
@@ -280,21 +284,21 @@ COMMENT ON COLUMN personutilization.uliabphn IS 'Unique lifetime identifier of t
 COMMENT ON COLUMN personutilization.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN personutilization.intervalstart IS 'Closed start of the intersection of the fiscal year and the age interval.';
 COMMENT ON COLUMN personutilization.intervalend IS 'Closed end of the intersection of the fiscal year and the age interval.';
-COMMENT ON COLUMN personutilization.ambulatoryminutes IS 'Naive sum of minutes that intersected with the census interval, including overlapping visits.';
-COMMENT ON COLUMN personutilization.ambulatoryvisits IS 'Visits in the census interval.';
-COMMENT ON COLUMN personutilization.ambulatorysitedays IS 'Unique combinations of days and sites visited in the census interval.';
-COMMENT ON COLUMN personutilization.ambulatorydays IS 'Unique days of visits in the census interval.';
-COMMENT ON COLUMN personutilization.inpatientdays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN personutilization.inpatientadmissions IS 'Admissions in the census interval.';
-COMMENT ON COLUMN personutilization.inpatientdischarges IS 'Discharges in the census interval.';
-COMMENT ON COLUMN personutilization.inpatientstays IS 'Stays intersecting with the census interval.';
-COMMENT ON COLUMN personutilization.laboratoryassays IS 'Number assays done of samples collected in the census interval.';
-COMMENT ON COLUMN personutilization.laboratorysitedays IS 'Number unique combinations of sites and days in the census interval where the person had a collection taken.';
-COMMENT ON COLUMN personutilization.laboratorydays IS 'Number of unique days in the census interval when the person had a collection taken.';
-COMMENT ON COLUMN personutilization.longtermcarestays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN personutilization.longtermcareadmissions IS 'Admissions in the census interval.';
-COMMENT ON COLUMN personutilization.longtermcaredischarges IS 'Discharges in the census interval.';
-COMMENT ON COLUMN personutilization.longtermcarestays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.ambulatoryminutes IS 'Naive sum of ambulatory care minutes that intersected with the census interval, including overlapping visits.';
+COMMENT ON COLUMN personutilization.ambulatoryvisits IS 'Ambulatory care visits in the census interval.';
+COMMENT ON COLUMN personutilization.ambulatorysitedays IS 'Unique combinations of days and ambulatory care sites visited in the census interval.';
+COMMENT ON COLUMN personutilization.ambulatorydays IS 'Unique days of ambulatory care visits in the census interval.';
+COMMENT ON COLUMN personutilization.inpatientdays IS 'Naive sum of inpatient care days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.inpatientadmissions IS 'Inpatient care admissions in the census interval.';
+COMMENT ON COLUMN personutilization.inpatientdischarges IS 'Inpatient care discharges in the census interval.';
+COMMENT ON COLUMN personutilization.inpatientstays IS 'Inpatient care stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.laboratoryassays IS 'Number assays done of laboratory samples collected in the census interval.';
+COMMENT ON COLUMN personutilization.laboratorysitedays IS 'Number unique combinations of laboratory collection sites and days in the census interval where the person had a collection taken.';
+COMMENT ON COLUMN personutilization.laboratorydays IS 'Number of unique days in the census interval when the person had a laboratory collection taken.';
+COMMENT ON COLUMN personutilization.longtermcaredays IS 'Naive sum of long term care days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.longtermcareadmissions IS 'Long term care admissions in the census interval.';
+COMMENT ON COLUMN personutilization.longtermcaredischarges IS 'Long term care discharges in the census interval.';
+COMMENT ON COLUMN personutilization.longtermcarestays IS 'Long term care stays intersecting with the census interval.';
 COMMENT ON COLUMN personutilization.pharmacystandardtherapeutics IS 'Number of distinct dispensed therapeutics not subject to controlled substances regulations.';
 COMMENT ON COLUMN personutilization.pharmacycontrolledtherapeutics IS 'Number of distinct dispensed therapeutics subject to controlled substances regulations.';
 COMMENT ON COLUMN personutilization.pharmacytherapeutics IS 'Number of distinct dispensed therapeutics.';
@@ -322,7 +326,7 @@ COMMENT ON COLUMN personutilization.pathologydays IS 'Number of unique days in t
 COMMENT ON COLUMN personutilization.radiologydays IS 'Number of unique days in the census interval when a radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.specialtydays IS 'Number of unique days in the census interval when a specialist other than an anesthesiologist, general practitioner, pathologist or radiologist was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
 COMMENT ON COLUMN personutilization.primarycaredays IS 'Number of unique days in the census interval when the person visited primary care in the community.';
-COMMENT ON COLUMN personutilization.supportivelivingdays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN personutilization.supportivelivingadmissions IS 'Admissions in the census interval.';
-COMMENT ON COLUMN personutilization.supportivelivingdischarges IS 'Discharges in the census interval.';
-COMMENT ON COLUMN personutilization.supportivelivingstays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingdays IS 'Naive sum of supportive living days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.supportivelivingadmissions IS 'Supportive living admissions in the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingdischarges IS 'Supportive living discharges in the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingstays IS 'Supportive living stays intersecting with the census interval.';
