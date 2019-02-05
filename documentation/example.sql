@@ -220,13 +220,13 @@ FROM
 
 	-- Every person has two surveillance intervals, representing the extermums of the 
 	-- possible observations of age.
-	aaronsheldon.personsurveillance a0
+	hazardrates.personsurveillance a0
 	INNER JOIN
 	
 	-- Each surveillance interval is partitioned into census intervals, a pair for each fiscal
 	-- year, the interval before the birthday, and the interval after. This is the denominator
 	-- data in the hazard rates.
-	aaronsheldon.personcensus a1
+	hazardrates.personcensus a1
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
@@ -235,7 +235,7 @@ FROM
 	
 	-- Most, but not all, census intervals will have some form of utilization. This is the
 	-- numerator in the hazard rates.
-	aaronsheldon.personutilization a2
+	hazardrates.personutilization a2
 	ON
 		a1.uliabphn = a2.uliabphn
 		AND
