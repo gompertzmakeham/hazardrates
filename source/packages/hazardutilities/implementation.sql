@@ -59,10 +59,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		WHILE returnfiscal.censusstart <= lastfiscal LOOP
 
 			-- Birthday interval
-			returnfiscal.agestart := add_months(yearanniversary(birthdate, returnfiscal.censusstart), -12);
+			returnfiscal.agestart := yearanniversary(birthdate, add_months(returnfiscal.censusstart, -12));
 			returnfiscal.ageend := yearend(returnfiscal.agestart);
+			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.agestart);
 			returnbirth.agestart := yearanniversary(birthdate, returnbirth.censusstart);
 			returnbirth.ageend := yearend(returnbirth.agestart);
+			returnbirth.intervalage := ageyears(birthdate, returnbirth.agestart);
 
 			-- Intersection of fiscal and age intervals
 			returnfiscal.intervalstart := greatest(returnfiscal.censusstart, returnfiscal.agestart);
@@ -75,10 +77,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			returnfiscal.durationend := least(eventend, returnfiscal.intervalend);
 			returnbirth.durationstart := greatest(eventstart, returnbirth.intervalstart);
 			returnbirth.durationend := least(eventend, returnbirth.intervalend);
-
-			-- Age at interval start
-			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.intervalstart);
-			returnbirth.intervalage := ageyears(birthdate, returnbirth.intervalstart);
 
 			-- Fiscal start and event start flag
 			CASE returnfiscal.durationstart
@@ -213,7 +211,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION yearend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN add_months(inputdate, 12) - 1;
+		RETURN least(add_months(inputdate - 1, 12), add_months(inputdate, 12) - 1);
 	END yearend;
 
 	/*
@@ -221,7 +219,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION yearanniversary(startdate IN DATE, enddate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN add_months(startdate, 12 * ceil(months_between(enddate, startdate) / 12));
+		RETURN 1 + least
+		(
+			add_months(startdate - 1, 12 * ceil(months_between(enddate, startdate) / 12)),
+			add_months(startdate, 12 * ceil(months_between(enddate, startdate) / 12)) - 1
+		);
 	END yearanniversary;
 
 	/*
