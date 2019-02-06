@@ -5,7 +5,7 @@ SELECT
 	a0.uliabphn,
 	a0.sex,
 	a0.firstnations,
-	
+
 	/****************************************************************************************
 	 *                                                                                      *
 	 * CAUTION! CORNER CASE MUST BE INCLUDED AS A DIMENSION IN ANY AGGREGATE, GROUP BY,     *
@@ -26,22 +26,6 @@ SELECT
 	-- Surveillance interval rectified by birth, deceased, and censored dates
 	a0.extremumstart,
 	a0.extremumend,
-
-	/*
-	 *  Properties of the specific surveillance extremum, as identified by the corner case.
-	 */
-
-	-- Birth was observed
-	a0.surveillancebirth,
-
-	-- Death was observed
-	a0.surveillancedeceased,
-
-	-- In migration was observed
-	a0.surveillanceimmigrate,
-
-	-- Out migration was observed
-	a0.surveillanceemigrate,
 
 	/*
 	 *  Comparisons of the two surveillance extremums within the same person.
@@ -78,6 +62,12 @@ SELECT
 	 *  Census interval properties, the duration is used as the denominator.
 	 */
 
+	-- Does the unrectified intersection start on the birthday
+	a1.agecoincideinterval,
+
+	-- Does the birthday fall on the start of the fiscal year
+	a1.agecoincidecensus,
+
 	-- The start and end of the fiscal year
 	a1.censusstart,
 	a1.censusend,
@@ -103,20 +93,26 @@ SELECT
 	 ****************************************************************************************/
 	a1.durationdays,
 
-	-- The age of the person's age year
+	-- The age of the person's age year that intersects with the interval
 	a1.intervalage,
 
-	-- Does the unrectified intersection start on the birthday
-	a1.agecoincideinterval,
+	-- Birth was observed
+	a1.intervalbirth,
 
-	-- Does the birthday fall on the start of the fiscal year
-	a1.agecoincidecensus,
+	-- Death was observed
+	a1.intervaldeceased,
+
+	-- In migration was observed
+	a1.intervalimmigrate,
+
+	-- Out migration was observed
+	a1.intervalemigrate,
 
 	-- Is this the first census interval
-	a1.evententry,
+	a1.intervalfirst,
 
 	-- Is this the last census interval
-	a1.eventexit,
+	a1.intervallast,
 
 	-- Total number of census intervals in the partition of the surveillance interval
 	a1.intervalcount,
