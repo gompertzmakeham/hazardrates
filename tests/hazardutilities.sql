@@ -29,9 +29,29 @@ SELECT 'hazardutilities.calendarend(''20181121'', ''YYYYMMDD'')' functioncall, h
 SELECT 'hazardutilities.calendarend(''abcd'')' functioncall, hazardutilities.calendarend('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.calendarend(''20181121'')' functioncall, hazardutilities.calendarend('20181121') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE)' functioncall, hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE + 1)' functioncall, hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE + 1) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.yearanniversary(TRUNC(SYSDATE) - 1000, SYSDATE)' functioncall, hazardutilities.yearanniversary(TRUNC(SYSDATE) - 1000, SYSDATE) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20100512'', ''YYYYMMDD''), SYSDATE)' functioncall, hazardutilities.yearanniversary(TO_DATE('20100512', 'YYYYMMDD'), SYSDATE) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TRUNC(SYSDATE))' functioncall, hazardutilities.yearend(TRUNC(SYSDATE)) callresult FROM dual;
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TRUNC(SYSDATE))' functioncall, hazardutilities.yearend(TRUNC(SYSDATE)) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20000229'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20000229', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20000228'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20000228', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20010228'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20010228', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20030228'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20030228', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.yearend(TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual;
 
 -- Number utilities
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360), SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -360), SYSDATE) callresult FROM dual UNION ALL
@@ -72,6 +92,8 @@ SELECT 'hazardutilities.cleansex(''abfmcd'')' functioncall, hazardutilities.clea
 WITH
 	testdata AS
 	(
+		SELECT hazardutilities.fiscalstart(SYSDATE) -275 birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
+		SELECT add_months(hazardutilities.fiscalstart(SYSDATE) - 275, -360) birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
 		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
 		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) - 315 birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
 		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) - 182 birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual
