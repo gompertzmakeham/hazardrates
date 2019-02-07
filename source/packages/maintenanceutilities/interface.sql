@@ -4,7 +4,7 @@ CREATE OR REPLACE PACKAGE maintenanceutilities AUTHID CURRENT_USER AS
  */
 
 	/*
-	 *  Build and dispatch the chain of jobs to refresh the data.
+	 *  Build and dispatch asynchronous jobs to refresh the data.
 	 */
 	PROCEDURE dispatchjobs(sectionname VARCHAR2);
 

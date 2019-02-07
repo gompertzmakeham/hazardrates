@@ -20,7 +20,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	CURSOR tableexists(localtable IN VARCHAR2) IS
 	SELECT 
 		COUNT(a0.table_name) foundcount 
-  FROM 
+	FROM 
 		dual
 		LEFT JOIN 
 		sys.user_tables a0
