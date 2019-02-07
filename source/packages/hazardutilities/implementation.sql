@@ -19,40 +19,40 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 
 		-- Fiscal interval
 		returnfiscal.censusstart := fiscalstart(eventstart);
-		returnfiscal.censusend := yearend(returnfiscal.censusstart);
+		returnfiscal.censusend := fiscalend(eventstart);
 		returnbirth.censusstart := fiscalstart(eventstart);
-		returnbirth.censusend := yearend(returnbirth.censusstart);
+		returnbirth.censusend := fiscalend(eventstart);
 		
-		-- Determine if the birthday interval coincides with the fiscal interval
-		CASE birthdate 
-			WHEN fiscalstart(birthdate) THEN
+		-- Determine the number of intervals if the birthday interval coincides with the fiscal interval
+		CASE
+
+			-- Birthday interval coincides with the fiscal interval
+			WHEN birthdate = fiscalstart(birthdate) THEN
 				returnfiscal.agecoincidecensus := 1;
 				returnbirth.agecoincidecensus := 1;
-				returnfiscal.intervalcount := 1 + floor(months_between(lastfiscal, returnfiscal.censusstart) / 12);
-				returnbirth.intervalcount := 1 + floor(months_between(lastfiscal, returnbirth.censusstart) / 12);
+				returnfiscal.intervalcount := 1 + ageyears(returnfiscal.censusstart, lastfiscal);
+				returnbirth.intervalcount := 1 + ageyears(returnbirth.censusstart, lastfiscal);
+			
+			-- No first fiscal interval and no last birthday interval
+			WHEN yearanniversary(birthdate, returnfiscal.censusstart) <= eventstart AND eventend < yearanniversary(birthdate, lastfiscal) THEN
+				returnfiscal.agecoincidecensus := 0;
+				returnbirth.agecoincidecensus := 0;
+				returnfiscal.intervalcount := 2 * ageyears(returnfiscal.censusstart, lastfiscal);
+				returnbirth.intervalcount := 2 * ageyears(returnbirth.censusstart, lastfiscal);
+			
+			-- Only no first fiscal interval or only no birthday interval
+			WHEN yearanniversary(birthdate, returnfiscal.censusstart) <= eventstart OR eventend < yearanniversary(birthdate, lastfiscal) THEN
+				returnfiscal.agecoincidecensus := 0;
+				returnbirth.agecoincidecensus := 0;
+				returnfiscal.intervalcount := 1 + 2 * ageyears(returnfiscal.censusstart, lastfiscal);
+				returnbirth.intervalcount := 1 + 2 * ageyears(returnbirth.censusstart, lastfiscal);
+			
+			-- All fiscal and birthday intervals
 			ELSE
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
-				returnfiscal.intervalcount := 2 * (1 + floor(months_between(lastfiscal, returnfiscal.censusstart) / 12));
-				returnbirth.intervalcount := 2 * (1 + floor(months_between(lastfiscal, returnbirth.censusstart) / 12));
-		END CASE;
-
-		-- Check for no initial fiscal interval
-		CASE
-			WHEN yearanniversary(birthdate, returnfiscal.censusstart) <= eventstart THEN
-				returnfiscal.intervalcount := returnfiscal.intervalcount - 1;
-				returnbirth.intervalcount := returnbirth.intervalcount - 1;
-			ELSE
-				NULL;
-		END CASE;
-
-		-- Check for no final age interval
-		CASE
-			WHEN eventend < yearanniversary(birthdate, lastfiscal) THEN
-				returnfiscal.intervalcount := returnfiscal.intervalcount - 1;
-				returnbirth.intervalcount := returnbirth.intervalcount - 1;
-			ELSE
-				NULL;
+				returnfiscal.intervalcount := 2 * (1 + ageyears(returnfiscal.censusstart, lastfiscal));
+				returnbirth.intervalcount := 2 * (1 + ageyears(returnbirth.censusstart, lastfiscal));
 		END CASE;
 
 		-- Partition the event
@@ -60,10 +60,10 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 
 			-- Birthday interval
 			returnfiscal.agestart := yearanniversary(birthdate, add_months(returnfiscal.censusstart, -12));
-			returnfiscal.ageend := yearend(returnfiscal.agestart);
+			returnfiscal.ageend := yearanniversary(birthdate, returnfiscal.censusstart) - 1;
 			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.agestart);
 			returnbirth.agestart := yearanniversary(birthdate, returnbirth.censusstart);
-			returnbirth.ageend := yearend(returnbirth.agestart);
+			returnbirth.ageend := yearanniversary(birthdate, add_months(returnbirth.censusstart, 12)) - 1;
 			returnbirth.intervalage := ageyears(birthdate, returnbirth.agestart);
 
 			-- Intersection of fiscal and age intervals
@@ -151,7 +151,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 
 		-- Fiscal interval
 		returncensus.censusstart := fiscalstart(eventdate);
-		returncensus.censusend := yearend(returncensus.censusstart);
+		returncensus.censusend := fiscalend(eventdate);
 
 		-- Order and count
 		returncensus.intervalcount := 1;
@@ -166,22 +166,24 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				returncensus.agecoincidecensus := 1;
 				returncensus.agecoincideinterval := 1;
 				returncensus.agestart := localbirth;
+				returncensus.ageend := yearanniversary(birthdate, add_months(returncensus.censusstart, 12)) - 1;
 
 			-- Interval starting on the fiscal year start
 			WHEN eventdate < localbirth THEN
 				returncensus.agecoincidecensus := 0;
 				returncensus.agecoincideinterval := 0;
-				returncensus.agestart := add_months(localbirth, -12);
+				returncensus.agestart := yearanniversary(birthdate, add_months(returncensus.censusstart, -12));
+				returncensus.ageend := localbirth - 1;
 
 			-- Interval starting on the birthday
 			ELSE
 				returncensus.agecoincidecensus := 0;
 				returncensus.agecoincideinterval := 1;
 				returncensus.agestart := localbirth;
+				returncensus.ageend := yearanniversary(birthdate, add_months(returncensus.censusstart, 12)) - 1;
 		END CASE;
 
 		-- Final interval boundaries
-		returncensus.ageend := yearend(returncensus.agestart);
 		returncensus.intervalstart := greatest(returncensus.censusstart, returncensus.agestart);
 		returncensus.intervalend := least(returncensus.censusend, returncensus.ageend);
 		returncensus.durationstart := eventdate;
@@ -207,22 +209,15 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	END ageyears;
 
 	/*
-	 *  Last day of the year starting on the date.
-	 */
-	FUNCTION yearend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
-	BEGIN
-		RETURN least(add_months(inputdate - 1, 12), add_months(inputdate, 12) - 1);
-	END yearend;
-
-	/*
 	 *  The anniversary of the start date in the year following the end date.
 	 */
 	FUNCTION yearanniversary(startdate IN DATE, enddate IN DATE) RETURN DATE DETERMINISTIC AS
+		localmonths INTEGER := 12 * (1 + ageyears(startdate, enddate));
 	BEGIN
-		RETURN 1 + least
+		RETURN least
 		(
-			add_months(startdate - 1, 12 * ceil(months_between(enddate, startdate) / 12)),
-			add_months(startdate, 12 * ceil(months_between(enddate, startdate) / 12)) - 1
+			1 + add_months(startdate - 1, localmonths),
+			add_months(startdate, localmonths)
 		);
 	END yearanniversary;
 
@@ -239,7 +234,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION fiscalend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN yearend(fiscalstart(inputdate));
+		RETURN add_months(fiscalstart(inputdate), 12) - 1;
 	END fiscalend;
 
 	/*
@@ -287,7 +282,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION calendarend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
 	BEGIN
-		RETURN yearend(calendarstart(inputdate));
+		RETURN add_months(calendarstart(inputdate), 12) - 1;
 	END calendarend;
 
 	/*

@@ -43,15 +43,7 @@ SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_
 SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TRUNC(SYSDATE))' functioncall, hazardutilities.yearend(TRUNC(SYSDATE)) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20000229'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20000229', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20000228'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20000228', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20010228'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20010228', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20030228'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20030228', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearend(TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearend(TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual;
+SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual;
 
 -- Number utilities
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360), SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -360), SYSDATE) callresult FROM dual UNION ALL
@@ -104,6 +96,22 @@ SELECT
 FROM
 	testdata a0
 	CROSS JOIN
-	TABLE(hazardutilities.generatecensus(eventdate, birthdate)) a1;
+	TABLE(hazardutilities.generatecensus(a0.eventdate, a0.birthdate)) a1;
 	
--- To do: Interval event census generation
+-- A few conditions taken from problematic cases
+WITH
+	testdata AS
+	(
+		SELECT TO_DATE('20080228', 'yyyymmdd') eventstart, TO_DATE('20180331', 'yyyymmdd') eventend, TO_DATE('19920229', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('20070401', 'yyyymmdd') eventstart, TO_DATE('20180331', 'yyyymmdd') eventend, TO_DATE('19920229', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('20070401', 'yyyymmdd') eventstart, TO_DATE('20180331', 'yyyymmdd') eventend, TO_DATE('20070401', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('19990331', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('19980401', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual
+	)
+SELECT
+	a0.*,
+	a1.*
+FROM
+	testdata a0
+	CROSS JOIN
+	TABLE(hazardutilities.generatecensus(a0.eventstart, a0.eventend, a0.birthdate)) a1;

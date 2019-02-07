@@ -6,12 +6,17 @@ CREATE OR REPLACE PACKAGE maintenanceutilities AUTHID CURRENT_USER AS
 	/*
 	 *  Build and dispatch the chain of jobs to refresh the data.
 	 */
-	PROCEDURE dispatchchain;
+	PROCEDURE dispatchjobs(sectionname VARCHAR2);
+
+	/*
+	 *  Build and dispatch a single job to refresh the data.
+	 */
+	PROCEDURE dispatchjob(tablename VARCHAR2);
 	
 	/*
 	 *  Drop chain and all jobs
 	 */
-	PROCEDURE dropchain;
+	PROCEDURE dropjobs;
 
 	/*
 	 *  Refresh and optimize tables. Validate the table existence to prevent injection

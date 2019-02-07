@@ -47,11 +47,6 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	FUNCTION ageyears(startdate IN DATE, enddate IN DATE) RETURN INTEGER DETERMINISTIC;
 
 	/*
-	 *  Last day of the year starting on the date.
-	 */
-	FUNCTION yearend(inputdate IN DATE) RETURN DATE DETERMINISTIC;
-
-	/*
 	 *  The anniversary of the start date in the year following the end date.
 	 */
 	FUNCTION yearanniversary(startdate IN DATE, enddate IN DATE) RETURN DATE DETERMINISTIC;

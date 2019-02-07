@@ -47,156 +47,89 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	FROM 
 		sys.user_scheduler_jobs a0;
 
-	/*
-	 *  List all chains
-	 */
-	CURSOR getchains IS
-	SELECT 
-		a0.chain_name chainname
-	FROM 
-		sys.user_scheduler_chains a0;
-
-	/*
-	 *  List all the programs
-	 */
-	CURSOR getprograms IS
-	SELECT 
-		a0.job_name programname
-	FROM 
-		sys.user_scheduler_programs a0;
-
-	CURSOR gettables IS
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveyambulatorycare' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveyannualregistry' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveycontinuingcare' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveyinpatientcare' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveylaboratorycollection' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveypharmacydispense' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveyprimarycare' tablename FROM dual UNION ALL
-	SELECT 1 ruleset, 0 dependency, 0 endrule, 'surveyvitalstatistcs' tablename FROM dual UNION ALL
-	SELECT 2 ruleset, 1 dependency, 6 endrule, 'personsurveillance' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censusambulatorycare' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censusinpatientcare' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censuslaboratorycollection' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censuslongtermcare' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censuspharmacydispense' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censusprimarycare' tablename FROM dual UNION ALL
-	SELECT 3 ruleset, 2 dependency, 0 endrule, 'censussupportiveliving' tablename FROM dual UNION ALL
-	SELECT 4 ruleset, 3 dependency, 6 endrule, 'personutilization' tablename FROM dual UNION ALL
-	SELECT 5 ruleset, 2 dependency, 6 endrule, 'personcensus' tablename FROM dual;
-
-	/*
-	 *  Build and dispatch the chain of jobs to refresh the data.
-	 */
-	PROCEDURE dispatchchain IS
-		TYPE rulesarray IS VARRAY(6) OF VARCHAR2(30);
-		localrules rulesarray := rulesarray();
-		localchain VARCHAR2(30) := rpad('REFRESH', 22, '0') || TRIM(to_char(MOD(to_number(sys.dbms_scheduler.generate_job_name('')), 4294967296), '0XXXXXXX'));
-		localprogram VARCHAR2(30);
-	BEGIN
-
-		-- Initialize the chain
-		sys.dbms_scheduler.create_chain
+	CURSOR gettables(localsection VARCHAR2) IS
+	WITH
+		tablelist AS
 		(
-			chain_name => localchain,
-			comments => 'Refresh hazardrates schema'
-		);
+			SELECT 'surveillance' sectionname, 'surveyambulatorycare' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveyannualregistry' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveycontinuingcare' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveyinpatientcare' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveylaboratorycollection' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveypharmacydispense' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveyprimarycare' tablename FROM dual UNION ALL
+			SELECT 'surveillance' sectionname, 'surveyvitalstatistics' tablename FROM dual UNION ALL
+			SELECT 'extremums' sectionname, 'personsurveillance' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'personcensus' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censusambulatorycare' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censusinpatientcare' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censuslaboratorycollection' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censuslongtermcare' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censuspharmacydispense' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censusprimarycare' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censussupportiveliving' tablename FROM dual UNION ALL
+			SELECT 'utilization' sectionname, 'personutilization' tablename FROM dual
+		)
+	SELECT
+		UPPER(a0.tablename) tablename
+	FROM
+		tablelist a0
+	WHERE
+		a0.sectionname = localsection;
 
-		-- Build the chain
-		FOR localrow IN gettables LOOP
-
-			--Set the identifier of the job and the step
-			localprogram := rpad(substr(localrow.tablename, 1, 22), 22, '0') || TRIM(to_char(MOD(to_number(sys.dbms_scheduler.generate_job_name('')), 4294967296), '0XXXXXXX'));
-
-			-- Initialize the program
-			sys.dbms_scheduler.create_program 
-			(
-				program_name => localprogram,
-				program_type => 'STORED_PROCEDURE',
-				program_action => 'MAINTENANCEUTILITIES.REFRESHTABLE',
-				number_of_arguments => 1,
-				enabled => FALSE,
-				comments => 'maintenanceutilities.refreshtable(''' || UPPER(localrow.tablename) || ''')'
-			);
-
-			-- Set the table name
-			sys.dbms_scheduler.define_program_argument
-			( 
-				program_name => localprogram, 
-				argument_position => 1,
-				argument_name => 'tablename',
-				default_value => localrow.tablename
-			);
-
-			-- Enable the program
-			sys.dbms_scheduler.enable(localprogram);
-
-			-- Wrap the program in a step
-			sys.dbms_scheduler.define_chain_step
-			(
-				chain_name => localchain,
-				step_name => localprogram,
-				program_name => localprogram
-			);
-
-			-- Extend the depdency rules
-			localrules(localrow.ruleset) := localrules(localrow.ruleset) || 'SUCCEEDED AND ';
-			
-			-- End conditions
-			CASE localrow.endrule
-				WHEN 0 THEN
-					NULL;
-				ELSE
-					localrules(localrow.endrule) := localrules(localrow.endrule) || 'SUCCEEDED AND ';
-			END CASE;
+	/*
+	 *  Build and dispatch asynchronous jobs to refresh the data.
+	 */
+	PROCEDURE dispatchjobs(sectionname VARCHAR2) IS
+	BEGIN
+		FOR localrow IN gettables(sectionname) LOOP
+			dispatchjob(localrow.tablename);
 		END LOOP;
+	END dispatchjobs;
 
-		-- Loop again building the rules
-		FOR localrow IN gettables LOOP
-			
-			-- Start conditions
-			CASE localrow.dependency
-				WHEN 0 THEN
-					sys.dbms_scheduler.define_chain_rule
-					(
-						chain_name => localchain,
-						condition => 'TRUE'
-					);
-				ELSE
-					NULL;
-			END CASE;
-		END LOOP;
-
-		-- Enable the chain
-		sys.dbms_scheduler.enable(localchain);
+	/*
+	 *  Build and dispatch a single job to refresh the data.
+	 */
+	PROCEDURE dispatchjob(tablename VARCHAR2) IS
+		localjob VARCHAR2(30) := rpad(substr(tablename, 1, 22), 22, '0') || TRIM(to_char(MOD(to_number(sys.dbms_scheduler.generate_job_name('')), 4294967296), '0XXXXXXX'));
+	BEGIN
 
 		-- Initialize the job
 		sys.dbms_scheduler.create_job 
 		(
-			job_name => localchain,
-			job_type => 'CHAIN',
-			job_action => localchain,
+			job_name => localjob,
+			job_type => 'STORED_PROCEDURE',
+			job_action => 'MAINTENANCEUTILITIES.REFRESHTABLE',
+			number_of_arguments => 1,
 			enabled => FALSE,
 			auto_drop => FALSE,
-			comments => 'Refresh hazardrates schema'
+			comments => 'MAINTENANCEUTILITIES.REFRESHTABLE(''' || tablename || ''')'
 		);
-
+		
+		-- Set the table name
+		sys.dbms_scheduler.set_job_argument_value
+		( 
+			job_name => localjob, 
+			argument_position => 1,
+			argument_value => tablename
+		);
+		
 		-- Log all activity
 		sys.dbms_scheduler.set_attribute
 		( 
-			name => localchain, 
+			name => localjob, 
 			attribute => 'logging_level', 
 			value => sys.dbms_scheduler.logging_full
 		);
 		
 		-- Run the job
-		sys.dbms_scheduler.enable(name => localchain);
-	END dispatchchain;
+		sys.dbms_scheduler.enable(name => localjob);
+	END dispatchjob;
 	
 	/*
-	 *  Drop chain in reverse dependency order
+	 *  Drop jobs
 	 */
-	PROCEDURE dropchain IS
+	PROCEDURE dropjobs IS
 	BEGIN
 		FOR localrow IN getjobs LOOP
 			sys.dbms_scheduler.drop_job
@@ -205,21 +138,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 				force => TRUE
 			);
 		END LOOP;
-		FOR localrow IN getchains LOOP
-			sys.dbms_scheduler.drop_chain
-			(
-				chain_name => localrow.chainname,
-				force => TRUE
-			);
-		END LOOP;
-		FOR localrow IN getprograms LOOP
-			sys.dbms_scheduler.drop_program
-			(
-				program_name => localrow.programname,
-				force => TRUE
-			);
-		END LOOP;
-	END dropchain;
+	END dropjobs;
 
 	/*
 	 *  Refresh and optimize tables. Validate the table existence to prevent injection
@@ -236,6 +155,14 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		localstate VARCHAR2(4096);
 	BEGIN
 
+		-- Run parallel
+		localquery := 'ALTER SESSION FORCE PARALLEL DDL PARALLEL 8';
+		EXECUTE IMMEDIATE localquery;
+		localquery := 'ALTER SESSION FORCE PARALLEL DML PARALLEL 8';
+		EXECUTE IMMEDIATE localquery;
+		localquery := 'ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8';
+		EXECUTE IMMEDIATE localquery;
+
 		-- Get the current schema name
 		OPEN getschema;
 			FETCH getschema INTO localschema;
@@ -250,14 +177,6 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		IF localcount <> 1 THEN
 			RETURN;
 		END IF;
-
-		-- Run parallel
-		localquery := 'ALTER SESSION FORCE PARALLEL DDL PARALLEL 8';
-		EXECUTE IMMEDIATE localquery;
-		localquery := 'ALTER SESSION FORCE PARALLEL DML PARALLEL 8';
-		EXECUTE IMMEDIATE localquery;
-		localquery := 'ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8';
-		EXECUTE IMMEDIATE localquery;
 
 		-- Preemptively recompile
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
