@@ -103,13 +103,13 @@ WITH
 SELECT
 
 	/*+ cardinality(a2, 1) */
-	a0.uliabphn,
-	a0.cornercase,
-	a2.intervalstart,
-	a2.intervalend,
-	SUM(a1.assaycount) assaycount,
-	SUM(a1.sitecount) collectsitedays,
-	COUNT(*) collectdays
+	CAST(a0.uliabphn AS INTEGER) uliabphn,
+	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
+	CAST(a2.intervalstart AS DATE) intervalstart,
+	CAST(a2.intervalend AS DATE) intervalend,
+	CAST(SUM(a1.assaycount) AS INTEGER) assaycount,
+	CAST(SUM(a1.sitecount) AS INTEGER) collectsitedays,
+	CAST(COUNT(*) AS INTEGER) collectdays
 FROM
 	personsurveillance a0
 	INNER JOIN

@@ -2,14 +2,14 @@ CREATE MATERIALIZED VIEW censuslongtermcare NOLOGGING NOCOMPRESS PARALLEL 8 BUIL
 SELECT
 
 	/*+ cardinality(a2, 1) */
-	a0.uliabphn,
-	a0.cornercase,
-	a2.intervalstart,
-	a2.intervalend,
-	SUM(a2.durationdays) staydays,
-	SUM(a2.evententry) admissioncount,
-	SUM(a2.eventexit) dischargecount,
-	COUNT(*) intersectingstays
+	CAST(a0.uliabphn AS INTEGER) uliabphn,
+	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
+	CAST(a2.intervalstart AS DATE) intervalstart,
+	CAST(a2.intervalend AS DATE) intervalend,
+	CAST(SUM(a2.durationdays) AS INTEGER) staydays,
+	CAST(SUM(a2.evententry) AS INTEGER) admissioncount,
+	CAST(SUM(a2.eventexit) AS INTEGER) dischargecount,
+	CAST(COUNT(*) AS INTEGER) intersectingstays
 FROM
 	personsurveillance a0
 	INNER JOIN

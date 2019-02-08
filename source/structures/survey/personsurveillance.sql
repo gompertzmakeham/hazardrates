@@ -1,6 +1,29 @@
 CREATE MATERIALIZED VIEW personsurveillance NOLOGGING NOCOMPRESS PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 SELECT
-	a0.*
+	CAST(a0.uliabphn AS INTEGER) uliabphn,
+	CAST(a0.sex AS VARCHAR2(1)) sex,
+	CAST(a0.firstnations AS INTEGER) firstnations,
+	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
+	CAST(a0.birthdateequipoise AS INTEGER) birthdateequipoise,
+	CAST(a0.deceaseddateequipoise AS INTEGER) deceaseddateequipoise,
+	CAST(a0.birthequipoise AS INTEGER) birthequipoise,
+	CAST(a0.deceasedequipoise AS INTEGER) deceasedequipoise,
+	CAST(a0.immigrateequipoise AS INTEGER) immigrateequipoise,
+	CAST(a0.emigrateequipoise AS INTEGER) emigrateequipoise,
+	CAST(a0.startequipoise AS INTEGER) startequipoise,
+	CAST(a0.endequipoise AS INTEGER) endequipoise,
+	CAST(a0.ageequipoise AS INTEGER) ageequipoise,
+	CAST(a0.birthdate AS DATE) birthdate,
+	CAST(a0.deceaseddate AS DATE) deceaseddate,
+	CAST(a0.surveillancestart AS DATE) surveillancestart,
+	CAST(a0.surveillanceend AS DATE) surveillanceend,
+	CAST(a0.extremumstart AS DATE) extremumstart,
+	CAST(a0.extremumend AS DATE) extremumend,
+	CAST(a0.surveillancebirth AS INTEGER) surveillancebirth,
+	CAST(a0.surveillancedeceased AS INTEGER) surveillancedeceased,
+	CAST(a0.surveillanceimmigrate AS INTEGER) surveillanceimmigrate,
+	CAST(a0.surveillanceemigrate AS INTEGER) surveillanceemigrate,
+	CAST(a0.censoreddate AS DATE) censoreddate
 FROM
 	TABLE(surveillanceutilities.generateoutput) a0;
 

@@ -82,14 +82,14 @@ WITH
 SELECT
 
 	/*+ cardinality(a2, 1) */
-	a0.uliabphn,
-	a0.cornercase,
-	a2.intervalstart,
-	a2.intervalend,
-	SUM(a1.visitminutes) visitminutes,
-	SUM(a1.visitcount) visitcount,
-	SUM(a1.sitecount) visitsitedays,
-	COUNT(*) visitdays
+	CAST(a0.uliabphn AS INTEGER) uliabphn,
+	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
+	CAST(a2.intervalstart AS DATE) intervalstart,
+	CAST(a2.intervalend AS DATE) intervalend,
+	CAST(SUM(a1.visitminutes) AS INTEGER) visitminutes,
+	CAST(SUM(a1.visitcount) AS INTEGER) visitcount,
+	CAST(SUM(a1.sitecount) AS INTEGER) visitsitedays,
+	CAST(COUNT(*) AS INTEGER) visitdays
 FROM
 	personsurveillance a0
 	INNER JOIN

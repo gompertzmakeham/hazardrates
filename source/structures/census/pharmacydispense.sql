@@ -75,19 +75,19 @@ WITH
 SELECT
 
 	/*+ cardinality(a2, 1) */
-	a0.uliabphn,
-	a0.cornercase,
-	a2.intervalstart,
-	a2.intervalend,
-	SUM(a1.standardtherapeutics) standardtherapeutics,
-	SUM(a1.controlledtherapeutics) controlledtherapeutics,
-	SUM(a1.alltherapeutics) alltherapeutics,
-	SUM(a1.standardsites) standardsitedays,
-	SUM(a1.controlledsites) controlledsitedays,
-	SUM(a1.allsites) allsitedays,
-	SUM(a1.standardtherapeutic) standarddays,
-	SUM(a1.controlledtherapeutic) controlleddays,
-	COUNT(*) alldays
+	CAST(a0.uliabphn AS INTEGER) uliabphn,
+	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
+	CAST(a2.intervalstart AS DATE) intervalstart,
+	CAST(a2.intervalend AS DATE) intervalend,
+	CAST(SUM(a1.standardtherapeutics) AS INTEGER) standardtherapeutics,
+	CAST(SUM(a1.controlledtherapeutics) AS INTEGER) controlledtherapeutics,
+	CAST(SUM(a1.alltherapeutics) AS INTEGER) alltherapeutics,
+	CAST(SUM(a1.standardsites) AS INTEGER) standardsitedays,
+	CAST(SUM(a1.controlledsites) AS INTEGER) controlledsitedays,
+	CAST(SUM(a1.allsites) AS INTEGER) allsitedays,
+	CAST(SUM(a1.standardtherapeutic) AS INTEGER) standarddays,
+	CAST(SUM(a1.controlledtherapeutic) AS INTEGER) controlleddays,
+	CAST(COUNT(*) AS INTEGER) alldays
 FROM
 	personsurveillance a0
 	INNER JOIN
