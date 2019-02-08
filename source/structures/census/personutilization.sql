@@ -193,8 +193,8 @@ WITH
 			COALESCE(a1.allproviderdays, 0) primarycareproviderdays,
 			COALESCE(a1.anesthesiologydays, 0) anesthesiologydays,
 			COALESCE(a1.generalpracticedays, 0) generalpracticedays,
-			COALESCE(a1.pahtologydays, 0) pathologydays,
-			COALESCE(a1.radiologistdays, 0) radiologydays,
+			COALESCE(a1.pathologydays, 0) pathologydays,
+			COALESCE(a1.radiologydays, 0) radiologydays,
 			COALESCE(a1.specialtydays, 0) specialtydays,
 			COALESCE(a1.alldays, 0) primarycaredays
 		FROM

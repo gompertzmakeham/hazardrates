@@ -30,12 +30,14 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	/*
 	 *  Refresh state of a single materialized view.
 	 */
-	CURSOR getstate(localtable VARCHAR2) IS
+	CURSOR getstate(localschema VARCHAR2, localtable VARCHAR2) IS
 	SELECT 
-		a0.staleness 
+		UPPER(a0.staleness) staleness 
 	FROM 
 		sys.user_mviews a0
-	WHERE 
+	WHERE
+		a0.owner = localschema
+		AND
 		a0.mview_name = localtable;
 
 	/*
@@ -43,7 +45,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	 */
 	CURSOR getjobs IS
 	SELECT 
-		a0.job_name jobname
+		UPPER(a0.job_name) jobname
 	FROM 
 		sys.user_scheduler_jobs a0;
 
@@ -60,7 +62,6 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			SELECT 'surveillance' sectionname, 'surveyprimarycare' tablename FROM dual UNION ALL
 			SELECT 'surveillance' sectionname, 'surveyvitalstatistics' tablename FROM dual UNION ALL
 			SELECT 'extremums' sectionname, 'personsurveillance' tablename FROM dual UNION ALL
-			SELECT 'census' sectionname, 'personcensus' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censusambulatorycare' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censusinpatientcare' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censuslaboratorycollection' tablename FROM dual UNION ALL
@@ -68,6 +69,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			SELECT 'census' sectionname, 'censuspharmacydispense' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censusprimarycare' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censussupportiveliving' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'personcensus' tablename FROM dual UNION ALL
 			SELECT 'utilization' sectionname, 'personutilization' tablename FROM dual
 		)
 	SELECT
@@ -95,7 +97,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	BEGIN
 
 		-- Initialize the job
-		sys.dbms_scheduler.create_job 
+		sys.dbms_scheduler.create_job
 		(
 			job_name => localjob,
 			job_type => 'STORED_PROCEDURE',
@@ -149,7 +151,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	PROCEDURE refreshtable(tablename IN VARCHAR2) IS
 	PRAGMA AUTONOMOUS_TRANSACTION;
 		localschema VARCHAR2(30);
-		localtable VARCHAR2(30) := UPPER(tablename);
+		localtable VARCHAR2(61);
 		localcount INTEGER;
 		localquery VARCHAR2(4096);
 		localstate VARCHAR2(4096);
@@ -169,14 +171,17 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		CLOSE getschema;
 
 		-- Test for valid table name, to prevent injection attacks
-		OPEN tableexists(localtable);
+		OPEN tableexists(tablename);
 			FETCH tableexists INTO localcount;
 		CLOSE tableexists;
 
 		-- Exit if table is not found
-		IF localcount <> 1 THEN
-			RETURN;
-		END IF;
+		CASE localcount
+			WHEN 1 THEN
+				localtable := localschema || '.' || tablename;
+			ELSE
+				RETURN;
+		END CASE;
 
 		-- Preemptively recompile
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
@@ -208,14 +213,14 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		sys.dbms_stats.gather_table_stats
 		(
 			ownname => localschema,
-			tabname => localtable,
+			tabname => tablename,
 			estimate_percent => 100,
 			degree => 8,
 			granularity => 'ALL'
 		);
 
 		-- Get the refresh state
-		OPEN getstate(localtable);
+		OPEN getstate(localschema, tablename);
 			FETCH getstate INTO localstate;
 		CLOSE getstate;
 
