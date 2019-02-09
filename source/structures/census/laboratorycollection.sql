@@ -8,11 +8,11 @@ WITH
 		SELECT
 			'Fusion' sourcesystem,
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
-			a0.clct_dt collectdate,
+			a0.collect_dt collectdate,
 			'MDHL' siteidentifier,
 			'Medicine Hat Diagnostic Laboratories' sitedescription
 		FROM
-			ahsdata.lab_lf a0
+			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
 			a0.clnt_type = 'OP'
 		UNION ALL
@@ -25,7 +25,7 @@ WITH
 			a0.clct_loc_cd siteidentifier,
 			a0.clct_loc_nm sitedescription
 		FROM
-			ahsdata.lab_mt a0
+			ahsdrrconform.lab_mt a0
 		WHERE
 			a0.clnt_type IN ('Outpatient', 'Recurring', 'Referred', 'Surgical Day Care')
 			AND
@@ -38,15 +38,15 @@ WITH
 		SELECT
 			'Millenium' sourcesystem,
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
-			a0.clct_dt collectdate,
-			a0.clct_loc_cd siteidentifier,
-			a0.clct_loc_nm sitedescription
+			a0.collect_dt collectdate,
+			a0.collect_location_id siteidentifier,
+			a0.collect_location_desc sitedescription
 		FROM
-			ahsdata.lab_ml a0
+			ahsdrrconform.cf_lab_millennium a0
 		WHERE
 			a0.clnt_type IN ('Community', 'Day Surgery', 'Home Visit', 'Outpatient', 'Pre - Admit', 'Pre Day Care', 'Prereg', 'Recurring', 'Referred-In Specimen', 'Waitlist Outpatient')
 			AND
-			a0.clct_loc_cd IS NOT NULL
+			a0.collect_location_id IS NOT NULL
 		UNION ALL
 
 		-- Laboratory Sunquest
@@ -57,7 +57,7 @@ WITH
 			a0.clnt_fac_cd siteidentifier,
 			a0.clnt_fac_nm sitedescription
 		FROM
-			ahsdata.lab_sq a0
+			ahsdrrconform.lab_sq a0
 		WHERE
 			a0.clnt_type IN ('Home Care', 'Outpatient', 'Outpatient NL')
 			AND

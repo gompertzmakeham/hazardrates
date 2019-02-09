@@ -8,23 +8,23 @@ WITH
 		-- Laboratory Fusion
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
-			hazardutilities.cleansex(a0.clnt_gndr) sex,
+			hazardutilities.cleansex(a0.clnt_gender) sex,
 			a0.clnt_birth_dt birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			a0.clct_dt servicestart,
-			a0.clct_dt serviceend,
+			a0.collect_dt servicestart,
+			a0.collect_dt serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
+			hazardutilities.fiscalstart(a0.collect_dt) surveillancestart,
+			hazardutilities.fiscalend(a0.collect_dt) surveillanceend,
 
 			-- Postal code determines residency
 			CASE
-				WHEN substr(UPPER(a0.clnt_bill_cd), 1, 2) = 'AB' THEN
+				WHEN substr(UPPER(a0.clnt_bill_id), 1, 2) = 'AB' THEN
 					1
-				WHEN substr(UPPER(a0.clnt_bill_cd), 1, 1) = '0' THEN
+				WHEN substr(UPPER(a0.clnt_bill_id), 1, 1) = '0' THEN
 					1
 				WHEN substr(UPPER(a0.clnt_postal_code), 1, 1) = 'T' THEN
 					1
@@ -35,7 +35,7 @@ WITH
 			
 			-- Birth observation
 			CASE
-				WHEN a0.clct_dt = a0.clnt_birth_dt THEN
+				WHEN a0.collect_dt = a0.clnt_birth_dt THEN
 					1
 				ELSE
 					0
@@ -44,9 +44,9 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.lab_lf a0
+			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
-			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
+			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 		
 		-- Laboratory Meditech
@@ -86,7 +86,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.lab_mt a0
+			ahsdrrconform.lab_mt a0
 		WHERE
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -94,21 +94,21 @@ WITH
 		-- Laboratory Millenium
 		SELECT
 			hazardutilities.cleanphn(a0.clnt_phn) uliabphn,
-			hazardutilities.cleansex(a0.clnt_gndr) sex,
+			hazardutilities.cleansex(a0.clnt_gender) sex,
 			a0.clnt_birth_dt birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			a0.clct_dt servicestart,
-			a0.clct_dt serviceend,
+			a0.collect_dt servicestart,
+			a0.collect_dt serviceend,
 
 			-- Fiscal year boundaries
-			hazardutilities.fiscalstart(a0.clct_dt) surveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) surveillanceend,
+			hazardutilities.fiscalstart(a0.collect_dt) surveillancestart,
+			hazardutilities.fiscalend(a0.collect_dt) surveillanceend,
 
 			-- Postal code determines residency
 			CASE
-				WHEN UPPER(a0.clnt_bill_cd) IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES') THEN
+				WHEN UPPER(a0.clnt_bill_id) IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES') THEN
 					1
 				ELSE
 					0
@@ -117,7 +117,7 @@ WITH
 			
 			-- Birth observation
 			CASE
-				WHEN a0.clct_dt = a0.clnt_birth_dt THEN
+				WHEN a0.collect_dt = a0.clnt_birth_dt THEN
 					1
 				ELSE
 					0
@@ -126,9 +126,9 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.lab_ml a0
+			ahsdrrconform.cf_lab_millennium a0
 		WHERE
-			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
+			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Laboratory Sunquest
@@ -166,7 +166,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.lab_sq a0
+			ahsdrrconform.lab_sq a0
 		WHERE
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 	)

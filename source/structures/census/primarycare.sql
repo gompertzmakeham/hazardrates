@@ -55,9 +55,9 @@ WITH
 					0
 			END primaryskill
 		FROM
-			ahsdata.ab_claims a0
+			ahsdrrconform.ab_claims a0
 			LEFT JOIN
-			ahsdata.ab_claim_ah_ref_rnd_id a1
+			ahsdrrconform.ab_claim_ah_ref_rnd_id a1
 			ON
 				a0.rnd_id = a1.rnd_id
 		WHERE

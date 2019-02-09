@@ -76,7 +76,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.ahs_ambulatory a0
+			ahsdrrdeliver.ahs_ambulatory a0
 		WHERE
 			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
 			AND
@@ -162,7 +162,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.ahs_nacrs_main a0
+			ahsdrrdeliver.ahs_nacrs_tab a0
 		WHERE
 			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')
 			AND

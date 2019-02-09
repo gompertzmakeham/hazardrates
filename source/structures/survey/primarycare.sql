@@ -38,7 +38,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.ab_claims a0
+			ahsdrrconform.ab_claims a0
 		WHERE
 			a0.se_end_date BETWEEN a0.se_start_date AND TRUNC(SYSDATE, 'MM')
 			AND

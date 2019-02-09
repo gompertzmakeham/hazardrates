@@ -6,7 +6,7 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 	/*
 	 *  An individual person reduced from events.
 	 */
-	CURSOR generateinput RETURN inputinterval IS
+	CURSOR generateinput IS
 	WITH
 
 		-- Ingest all sources of person events

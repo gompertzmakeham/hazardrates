@@ -13,7 +13,7 @@ SELECT
 FROM
 	personsurveillance a0
 	INNER JOIN
-	ahsdata.ahs_ip_doc_dx_w_lloyd a1
+	ahsdrrdeliver.ahs_ip_doctor_dx a1
 	ON
 		a0.uliabphn = hazardutilities.cleanphn(a1.phn)
 		AND

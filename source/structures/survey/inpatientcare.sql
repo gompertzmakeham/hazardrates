@@ -94,7 +94,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdata.ahs_ip_doc_dx_w_lloyd a0
+			ahsdrrdeliver.ahs_ip_doctor_dx a0
 		WHERE
 			hazardutilities.cleandate(a0.disdate) BETWEEN hazardutilities.cleandate(a0.admitdate) AND TRUNC(SYSDATE, 'MM')
 			AND

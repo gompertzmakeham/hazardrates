@@ -11,7 +11,7 @@ WITH
 			CASE a0.dspn_triplicate_boo WHEN 'T' THEN 0 ELSE 1 END standardtherapeutic,
 			CASE a0.dspn_triplicate_boo WHEN 'T' THEN 1 ELSE 0 END controlledtherapeutic
 		FROM
-			ahsdata.pin_dspn a0
+			ahsdrrconform.cf_pin_dspn a0
 		WHERE
 			hazardutilities.cleanprid(a0.prscb_prid) IS NOT NULL
 			AND
