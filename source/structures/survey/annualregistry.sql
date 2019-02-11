@@ -90,7 +90,7 @@ WITH
 			CASE in_migration_ind WHEN '1' THEN 1 ELSE 0 END surveillanceimmigrate,
 			CASE out_migration_ind WHEN '1' THEN 1 ELSE 0 END surveillanceemigrate
 		FROM
-			ahsdrrconform.provincial_registry a0
+			ahsdrrconform.provincial_registry@local.world a0
 		WHERE
 			COALESCE(a0.pers_reap_end_date, a0.birth_dt, TRUNC(SYSDATE, 'MM')) BETWEEN COALESCE(a0.birth_dt, a0.pers_reap_end_date, TRUNC(SYSDATE, 'MM')) AND TRUNC(SYSDATE, 'MM')
 	)

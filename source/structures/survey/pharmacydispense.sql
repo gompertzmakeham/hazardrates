@@ -38,7 +38,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrconform.cf_pin_dspn a0
+			ahsdrrconform.cf_pin_dspn@local.world a0
 		WHERE
 			a0.dspn_date BETWEEN COALESCE(a0.rcpt_dob, a0.dspn_date) AND TRUNC(SYSDATE, 'MM')
 	)

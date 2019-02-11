@@ -9,8 +9,14 @@ ALTER PACKAGE maintenanceutilities COMPILE PACKAGE
 	PLSQL_OPTIMIZE_LEVEL = 3
 	PLSQL_CODE_TYPE = NATIVE
 	PLSQL_DEBUG = FALSE;
+	
+-- Step 2: Clean up extermum aggregation utilities
+ALTER PACKAGE surveillanceutilities COMPILE PACKAGE
+	PLSQL_OPTIMIZE_LEVEL = 3
+	PLSQL_CODE_TYPE = NATIVE
+	PLSQL_DEBUG = FALSE;
 
--- Step 2: Refresh person surveillance sources
+-- Step 3: Refresh person surveillance sources
 SET SERVEROUTPUT ON;
 BEGIN
 	maintenanceutilities.dispatchjobs('surveillance');
@@ -18,12 +24,6 @@ EXCEPTION
 	WHEN OTHERS THEN
 		sys.dbms_output.put_line(SQLERRM);
 END;
-	
--- Step 3: Clean up extermum aggregation utilities
-ALTER PACKAGE surveillanceutilities COMPILE PACKAGE
-	PLSQL_OPTIMIZE_LEVEL = 3
-	PLSQL_CODE_TYPE = NATIVE
-	PLSQL_DEBUG = FALSE;
 
 -- Step 4: Refresh person surveillance extremums
 SET SERVEROUTPUT ON;

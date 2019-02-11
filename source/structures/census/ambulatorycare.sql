@@ -12,7 +12,7 @@ WITH
 			hazardutilities.cleanambulatory(a0.inst) siteidentifier,
 			a0.los_minutes visitminutes
 		FROM
-			ahsdrrdeliver.ahs_ambulatory a0
+			ahsdrrdeliver.ahs_ambulatory@local.world a0
 		WHERE
 			hazardutilities.cleanambulatory(a0.inst) IS NOT NULL
 			AND
@@ -32,7 +32,7 @@ WITH
 			hazardutilities.cleanambulatory(a0.inst) siteidentifier,
 			a0.visit_los_minutes visitminutes
 		FROM
-			ahsdrrdeliver.ahs_nacrs_tab a0
+			ahsdrrdeliver.ahs_nacrs_tab@local.world a0
 		WHERE
 			hazardutilities.cleanambulatory(a0.inst) IS NOT NULL
 			AND

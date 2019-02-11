@@ -83,9 +83,11 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	 *  Build and dispatch asynchronous jobs to refresh the data.
 	 */
 	PROCEDURE dispatchjobs(sectionname VARCHAR2) IS
+		PRAGMA AUTONOMOUS_TRANSACTION;
 	BEGIN
 		FOR localrow IN gettables(sectionname) LOOP
 			dispatchjob(localrow.tablename);
+			COMMIT;
 		END LOOP;
 	END dispatchjobs;
 
@@ -93,6 +95,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	 *  Build and dispatch a single job to refresh the data.
 	 */
 	PROCEDURE dispatchjob(tablename VARCHAR2) IS
+		PRAGMA AUTONOMOUS_TRANSACTION;
 		localjob VARCHAR2(30) := rpad(substr(tablename, 1, 22), 22, '0') || TRIM(to_char(MOD(to_number(sys.dbms_scheduler.generate_job_name('')), 4294967296), '0XXXXXXX'));
 	BEGIN
 
@@ -107,6 +110,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			auto_drop => FALSE,
 			comments => 'MAINTENANCEUTILITIES.REFRESHTABLE(''' || tablename || ''')'
 		);
+		COMMIT;
 		
 		-- Set the table name
 		sys.dbms_scheduler.set_job_argument_value
@@ -115,6 +119,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			argument_position => 1,
 			argument_value => tablename
 		);
+		COMMIT;
 		
 		-- Log all activity
 		sys.dbms_scheduler.set_attribute
@@ -123,9 +128,11 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			attribute => 'logging_level', 
 			value => sys.dbms_scheduler.logging_full
 		);
+		COMMIT;
 		
 		-- Run the job
 		sys.dbms_scheduler.enable(name => localjob);
+		COMMIT;
 	END dispatchjob;
 	
 	/*
@@ -149,7 +156,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 	 *  asynchronous job submission.
 	 */
 	PROCEDURE refreshtable(tablename IN VARCHAR2) IS
-	PRAGMA AUTONOMOUS_TRANSACTION;
+		PRAGMA AUTONOMOUS_TRANSACTION;
 		localschema VARCHAR2(30);
 		localtable VARCHAR2(61);
 		localcount INTEGER;
@@ -160,10 +167,13 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		-- Run parallel
 		localquery := 'ALTER SESSION FORCE PARALLEL DDL PARALLEL 8';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 		localquery := 'ALTER SESSION FORCE PARALLEL DML PARALLEL 8';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 		localquery := 'ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 
 		-- Get the current schema name
 		OPEN getschema;
@@ -186,28 +196,35 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		-- Preemptively recompile
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 
 		-- On demand table refresh, all rows
 		sys.dbms_snapshot.refresh
 		(
 			localtable,
 			purge_option => 2,
+			refresh_after_errors => TRUE,
 			parallelism => 8,
 			method => 'C',
 			atomic_refresh => FALSE
 		);
+		COMMIT;
 
 		-- Compact the table
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' ENABLE ROW MOVEMENT';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' SHRINK SPACE COMPACT';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' DISABLE ROW MOVEMENT';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 
 		-- Recompile after row movement
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
 		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 
 		-- Analyze the table
 		sys.dbms_stats.gather_table_stats
@@ -218,6 +235,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			degree => 8,
 			granularity => 'ALL'
 		);
+		COMMIT;
 
 		-- Get the refresh state
 		OPEN getstate(localschema, tablename);
@@ -228,9 +246,7 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		IF localstate = 'STALE' THEN
 			localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' CONSIDER FRESH';
 			EXECUTE IMMEDIATE localquery;
+			COMMIT;
 		END IF;
-
-		-- Finalize
-		COMMIT;
 	END refreshtable;
 END maintenanceutilities;
