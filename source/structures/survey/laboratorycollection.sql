@@ -44,7 +44,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrconform.cf_lab_labfusion@local.world a0
+			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -86,7 +86,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrconform.lab_mt@local.world a0
+			ahsdrrconform.lab_mt a0
 		WHERE
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -126,7 +126,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrconform.cf_lab_millennium@local.world a0
+			ahsdrrconform.cf_lab_millennium a0
 		WHERE
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -166,7 +166,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrconform.lab_sq@local.world a0
+			ahsdrrconform.lab_sq a0
 		WHERE
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 	)

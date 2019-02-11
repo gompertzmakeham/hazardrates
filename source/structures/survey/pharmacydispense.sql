@@ -5,6 +5,8 @@ WITH
 	eventdata AS
 	(
 		SELECT
+		
+			/*+ parallel(a0, 8) */
 			hazardutilities.cleanphn(a0.rcpt_uli) uliabphn,
 			hazardutilities.cleansex(a0.rcpt_gender_cd) sex,
 			a0.rcpt_dob birthdate,

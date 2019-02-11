@@ -1,7 +1,5 @@
 CREATE MATERIALIZED VIEW censusinpatientcare NOLOGGING NOCOMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 SELECT
-
-	/*+ cardinality(a2, 1) */
 	CAST(a0.uliabphn AS INTEGER) uliabphn,
 	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
 	CAST(a2.intervalstart AS DATE) intervalstart,
@@ -13,7 +11,7 @@ SELECT
 FROM
 	personsurveillance a0
 	INNER JOIN
-	ahsdrrdeliver.ahs_ip_doctor_dx@local.world a1
+	ahsdrrdeliver.ahs_ip_doctor_dx a1
 	ON
 		a0.uliabphn = hazardutilities.cleanphn(a1.phn)
 		AND

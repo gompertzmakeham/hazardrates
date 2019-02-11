@@ -12,7 +12,7 @@ WITH
 			'MDHL' siteidentifier,
 			'Medicine Hat Diagnostic Laboratories' sitedescription
 		FROM
-			ahsdrrconform.cf_lab_labfusion@local.world a0
+			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
 			a0.clnt_type = 'OP'
 		UNION ALL
@@ -25,7 +25,7 @@ WITH
 			a0.clct_loc_cd siteidentifier,
 			a0.clct_loc_nm sitedescription
 		FROM
-			ahsdrrconform.lab_mt@local.world a0
+			ahsdrrconform.lab_mt a0
 		WHERE
 			a0.clnt_type IN ('Outpatient', 'Recurring', 'Referred', 'Surgical Day Care')
 			AND
@@ -42,7 +42,7 @@ WITH
 			a0.collect_location_id siteidentifier,
 			a0.collect_location_desc sitedescription
 		FROM
-			ahsdrrconform.cf_lab_millennium@local.world a0
+			ahsdrrconform.cf_lab_millennium a0
 		WHERE
 			a0.clnt_type IN ('Community', 'Day Surgery', 'Home Visit', 'Outpatient', 'Pre - Admit', 'Pre Day Care', 'Prereg', 'Recurring', 'Referred-In Specimen', 'Waitlist Outpatient')
 			AND
@@ -57,7 +57,7 @@ WITH
 			a0.clnt_fac_cd siteidentifier,
 			a0.clnt_fac_nm sitedescription
 		FROM
-			ahsdrrconform.lab_sq@local.world a0
+			ahsdrrconform.lab_sq a0
 		WHERE
 			a0.clnt_type IN ('Home Care', 'Outpatient', 'Outpatient NL')
 			AND

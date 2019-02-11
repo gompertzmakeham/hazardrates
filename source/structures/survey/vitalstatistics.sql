@@ -48,7 +48,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			vital_stats_dsp.ex_ah_bth_2000_2016@local.world a0
+			vital_stats_dsp.ex_ah_bth_2000_2016 a0
 		WHERE
 			COALESCE(a0.oop_death_, TRUNC(SYSDATE, 'MM')) BETWEEN a0.birth_date AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -81,7 +81,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			vital_stats_dsp.ahs_bth_2015_2017@local.world a0
+			vital_stats_dsp.ahs_bth_2015_2017 a0
 		WHERE
 			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -114,7 +114,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			vital_stats_dsp.ex_vs_bth_2000_2015@local.world a0
+			vital_stats_dsp.ex_vs_bth_2000_2015 a0
 		WHERE
 			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -193,7 +193,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			vital_stats_dsp.ex_ah_dth_2010_2016@local.world a0
+			vital_stats_dsp.ex_ah_dth_2010_2016 a0
 		WHERE
 			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -272,7 +272,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			vital_stats_dsp.ahs_dth_2015_2017@local.world a0
+			vital_stats_dsp.ahs_dth_2015_2017 a0
 		WHERE
 			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
@@ -351,7 +351,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			vital_stats_dsp.ex_vs_deaths_phn@local.world a0
+			vital_stats_dsp.ex_vs_deaths_phn a0
 		WHERE
 			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 	)
