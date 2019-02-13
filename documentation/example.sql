@@ -160,13 +160,13 @@ SELECT
 	COALESCE(a2.pharmacydays, 0) pharmacydays,
 
 	-- Pharmacy dispensing standard behind the counter prescription therapeutics
-	COALESCE(a2.pharmacydailydoses, 0) pharmacystandarddailydoses,
+	COALESCE(a2.pharmacystandarddailydoses, 0) pharmacystandarddailydoses,
 	COALESCE(a2.pharmacystandardtherapeutics, 0) pharmacystandardtherapeutics,
 	COALESCE(a2.pharmacystandardsitedays, 0) pharmacystandardsitedays,
 	COALESCE(a2.pharmacystandarddays, 0) pharmacystandarddays,
 
 	-- Pharmacy dispensing triple pad prescription controlled or regulated therpeutics
-	COALESCE(a2.pharmacydailydoses, 0) pharmacycontrolleddailydoses,
+	COALESCE(a2.pharmacycontrolleddailydoses, 0) pharmacycontrolleddailydoses,
 	COALESCE(a2.pharmacycontrolledtherapeutics, 0) pharmacycontrolledtherapeutics,
 	COALESCE(a2.pharmacycontrolledsitedays, 0) pharmacycontrolledsitedays,
 	COALESCE(a2.pharmacycontrolleddays, 0) pharmacycontrolleddays,
