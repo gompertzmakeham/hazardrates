@@ -124,6 +124,9 @@ WITH
 			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
 			COALESCE(a0.longtermcaredays, 0) longtermcaredays,
 			COALESCE(a0.longtermcarestays, 0) longtermcarestays,
+			COALESCE(a1.standarddailydoses, 0) pharmacystandarddailydoses,
+			COALESCE(a1.controlleddailydoses, 0) pharmacycontrolleddailydoses,
+			COALESCE(a1.alldailydoses, 0) pharmacydailydoses,
 			COALESCE(a1.standardtherapeutics, 0) pharmacystandardtherapeutics,
 			COALESCE(a1.controlledtherapeutics, 0) pharmacycontrolledtherapeutics,
 			COALESCE(a1.alltherapeutics, 0) pharmacytherapeutics,
@@ -170,6 +173,9 @@ WITH
 			COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
 			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
 			COALESCE(a0.longtermcarestays, 0) longtermcarestays,
+			COALESCE(a0.pharmacystandarddailydoses, 0) pharmacystandarddailydoses,
+			COALESCE(a0.pharmacycontrolleddailydoses, 0) pharmacycontrolleddailydoses,
+			COALESCE(a0.pharmacydailydoses, 0) pharmacydailydoses,
 			COALESCE(a0.pharmacystandardtherapeutics, 0) pharmacystandardtherapeutics,
 			COALESCE(a0.pharmacycontrolledtherapeutics, 0) pharmacycontrolledtherapeutics,
 			COALESCE(a0.pharmacytherapeutics, 0) pharmacytherapeutics,
@@ -232,6 +238,9 @@ SELECT
 	CAST(COALESCE(a0.longtermcareadmissions, 0) AS INTEGER) longtermcareadmissions,
 	CAST(COALESCE(a0.longtermcaredischarges, 0) AS INTEGER) longtermcaredischarges,
 	CAST(COALESCE(a0.longtermcarestays, 0) AS INTEGER) longtermcarestays,
+	CAST(COALESCE(a0.pharmacystandarddailydoses, 0) AS INTEGER) pharmacystandarddailydoses,
+	CAST(COALESCE(a0.pharmacycontrolleddailydoses, 0) AS INTEGER) pharmacycontrolleddailydoses,
+	CAST(COALESCE(a0.pharmacydailydoses, 0) AS INTEGER) pharmacydailydoses,
 	CAST(COALESCE(a0.pharmacystandardtherapeutics, 0) AS INTEGER) pharmacystandardtherapeutics,
 	CAST(COALESCE(a0.pharmacycontrolledtherapeutics, 0) AS INTEGER) pharmacycontrolledtherapeutics,
 	CAST(COALESCE(a0.pharmacytherapeutics, 0) AS INTEGER) pharmacytherapeutics,
@@ -296,6 +305,9 @@ COMMENT ON COLUMN personutilization.longtermcaredays IS 'Naive sum of long term 
 COMMENT ON COLUMN personutilization.longtermcareadmissions IS 'Long term care admissions in the census interval.';
 COMMENT ON COLUMN personutilization.longtermcaredischarges IS 'Long term care discharges in the census interval.';
 COMMENT ON COLUMN personutilization.longtermcarestays IS 'Long term care stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.pharmacystandarddailydoses IS 'Number of daily doses dispensed of therapeutics not subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacycontrolleddailydoses IS 'Number of daily doses dispensed of therapeutics subject to controlled substances regulations.';
+COMMENT ON COLUMN personutilization.pharmacydailydoses IS 'Number of daily doses dispensed of all therapeutics.';
 COMMENT ON COLUMN personutilization.pharmacystandardtherapeutics IS 'Number of distinct dispensed therapeutics not subject to controlled substances regulations.';
 COMMENT ON COLUMN personutilization.pharmacycontrolledtherapeutics IS 'Number of distinct dispensed therapeutics subject to controlled substances regulations.';
 COMMENT ON COLUMN personutilization.pharmacytherapeutics IS 'Number of distinct dispensed therapeutics.';
