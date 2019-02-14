@@ -187,6 +187,11 @@ SELECT
 	COALESCE(a2.anesthesiologistsdays, 0) anesthesiologistsdays,
 	COALESCE(a2.anesthesiologydays, 0) anesthesiologydays,
 
+	-- Primary care consult utilization
+	COALESCE(a2.consultprocedures, 0) consultprocedures,
+	COALESCE(a2.consultprovidersdays, 0) consultprovidersdays,
+	COALESCE(a2.consultdays, 0) consultdays,
+
 	-- Primary care general practice utilization
 	COALESCE(a2.generalpracticeprocedures, 0) generalpracticeprocedures,
 	COALESCE(a2.generalpractitionersdays, 0) generalpractitionersdays,
@@ -206,6 +211,11 @@ SELECT
 	COALESCE(a2.specialtyprocedures, 0) specialtyprocedures,
 	COALESCE(a2.specialistsdays, 0) specialistsdays,
 	COALESCE(a2.specialtydays, 0) specialtydays,
+	
+	-- Primary care surgeon utilization
+	COALESCE(a2.surgicalprocedures, 0) surgicalprocedures,
+	COALESCE(a2.surgeonsdays, 0) surgeonsdays,
+	COALESCE(a2.surgerydays, 0) surgerydays,
 
 	-- Supportive living
 	COALESCE(a2.supportivelivingdays, 0) supportivelivingdays,
