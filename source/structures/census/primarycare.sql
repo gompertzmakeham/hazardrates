@@ -49,25 +49,17 @@ WITH
 					0
 			END surgeon,
 			CASE
-				WHEN a0.prvd_role_type_cls = 'PROC' THEN
+				WHEN a0.prvd_role_type_cls = 'PROC' AND a0.pers_capb_prvd_spec_ad = a0.pers_capb_prvd_skill_code_cls THEN
 					1
 				ELSE
 					0
 			END primaryprovider,
 			CASE
-				WHEN a0.pers_capb_prvd_spec_ad = a0.pers_capb_prvd_skill_code_cls THEN
-					1
-				ELSE
-					0
-			END primaryskill,
-			CASE
-				WHEN a0.prvd_role_type_cls = 'PROC' THEN
-					0
-				WHEN a0.pers_capb_prvd_spec_ad = a0.pers_capb_prvd_skill_code_cls THEN
+				WHEN a0.prvd_role_type_cls = 'PROC' AND a0.pers_capb_prvd_spec_ad = a0.pers_capb_prvd_skill_code_cls THEN
 					0
 				ELSE
 					1
-			END consult
+			END consultprovider
 		FROM
 			ahsdrrconform.ab_claims a0
 			LEFT JOIN
@@ -119,20 +111,20 @@ WITH
 			a0.uliabphn,
 			a0.uliabprid,
 			a0.visitdate,
-			MAX(a0.anesthesiologist * a0.primaryprovider * a0.primaryskill) anesthesiologist,
-			MAX(a0.consult) consult,
-			MAX(a0.generalpractitioner * a0.primaryprovider * a0.primaryskill) generalpractitioner,
-			MAX(a0.pathologist * a0.primaryprovider * a0.primaryskill) pathologist,
-			MAX(a0.radiologist * a0.primaryprovider * a0.primaryskill) radiologist,
-			MAX(a0.specialist * a0.primaryprovider * a0.primaryskill) specialist,
-			MAX(a0.surgeon * a0.primaryprovider * a0.primaryskill) surgeon,
-			SUM(a0.anesthesiologist * a0.primaryprovider * a0.primaryskill) anesthesiologyprocedures,
-			SUM(a0.consult) consultprocedures,
-			SUM(a0.generalpractitioner * a0.primaryprovider * a0.primaryskill) generalpracticeprocedures,
-			SUM(a0.pathologist * a0.primaryprovider * a0.primaryskill) pathologyprocedures,
-			SUM(a0.radiologist * a0.primaryprovider * a0.primaryskill) radiologyprocedures,
-			SUM(a0.specialist * a0.primaryprovider * a0.primaryskill) specialtyprocedures,
-			SUM(a0.surgeon * a0.primaryprovider * a0.primaryskill) surgicalprocedures,
+			MAX(a0.anesthesiologist * a0.primaryprovider) anesthesiologist,
+			MAX(a0.consultprovider) consult,
+			MAX(a0.generalpractitioner * a0.primaryprovider) generalpractitioner,
+			MAX(a0.pathologist * a0.primaryprovider) pathologist,
+			MAX(a0.radiologist * a0.primaryprovider) radiologist,
+			MAX(a0.specialist * a0.primaryprovider) specialist,
+			MAX(a0.surgeon * a0.primaryprovider) surgeon,
+			SUM(a0.anesthesiologist * a0.primaryprovider) anesthesiologyprocedures,
+			SUM(a0.consultprovider) consultprocedures,
+			SUM(a0.generalpractitioner * a0.primaryprovider) generalpracticeprocedures,
+			SUM(a0.pathologist * a0.primaryprovider) pathologyprocedures,
+			SUM(a0.radiologist * a0.primaryprovider) radiologyprocedures,
+			SUM(a0.specialist * a0.primaryprovider) specialtyprocedures,
+			SUM(a0.surgeon * a0.primaryprovider) surgicalprocedures,
 			COUNT(*) allprocedures
 		FROM
 			eventdata a0
