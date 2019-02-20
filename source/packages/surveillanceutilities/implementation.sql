@@ -157,7 +157,7 @@ CREATE OR REPLACE PACKAGE BODY surveillanceutilities AS
 					returnlower.extremumstart := returnlower.surveillancestart;
 			END CASE;
 
-			-- Deceased date and dectified extremum end date of lower (shortest) bound interval
+			-- Deceased date and rectified extremum end date of lower (shortest) bound interval
 			CASE
 				WHEN localrow.leastdeceased IS NOT NULL THEN
 					returnlower.surveillancedeceased := 1;

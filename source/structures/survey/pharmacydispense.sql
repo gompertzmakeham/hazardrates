@@ -1,32 +1,29 @@
 CREATE MATERIALIZED VIEW surveypharmacydispense NOLOGGING NOCOMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 WITH
 
-	-- Ingest community pharmacy dispense events
+	-- Ingest community pharmacy dispense events, surveillance refresh is weekly
 	eventdata AS
 	(
 		SELECT
-		
-			/*+ parallel(a0, 8) */
 			hazardutilities.cleanphn(a0.rcpt_uli) uliabphn,
 			hazardutilities.cleansex(a0.rcpt_gender_cd) sex,
 			a0.rcpt_dob birthdate,
 			CAST(NULL AS DATE) deceaseddate,
 
 			-- Service boundaries
-			a0.dspn_date servicestart,
-			a0.dspn_date serviceend,
+			a0.dspn_date leastservice,
+			a0.dspn_date greatestservice,
 
-			-- Calendar year boundaries
-			hazardutilities.calendarstart(a0.dspn_date) surveillancestart,
-			hazardutilities.calendarend(a0.dspn_date) surveillanceend,
+			-- Week boundaries or least service
+			hazardutilities.weekstart(a0.dspn_date) leastsurveillancestart,
+			hazardutilities.weekend(a0.dspn_date) leastsurveillanceend,
 
-			-- Postal code determines residency
-			CASE substr(UPPER(a0.rcpt_postal_cd), 1, 1)
-				WHEN 'T' THEN
-					1
-				ELSE
-					0
-			END albertacoverage,
+			-- Week boundaries or greatest service
+			hazardutilities.weekstart(a0.dspn_date) greatestsurveillancestart,
+			hazardutilities.weekend(a0.dspn_date) greatestsurveillanceend,
+
+			-- Coverage unknown
+			CAST(NULL AS INTEGER) albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observed
@@ -40,7 +37,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrconform.cf_pin_dspn@local.world a0
+			ahsdrrconform.cf_pin_dspn a0
 		WHERE
 			a0.dspn_date BETWEEN COALESCE(a0.rcpt_dob, a0.dspn_date) AND TRUNC(SYSDATE, 'MM')
 	)
@@ -54,12 +51,12 @@ SELECT
 	CAST(MAX(a0.birthdate) AS DATE) greatestbirth,
 	CAST(MIN(a0.deceaseddate) AS DATE) leastdeceased,
 	CAST(MAX(a0.deceaseddate) AS DATE) greatestdeceased,
-	CAST(MIN(a0.servicestart) AS DATE) servicestart,
-	CAST(MAX(a0.serviceend) AS DATE) serviceend,
-	CAST(MIN(a0.surveillancestart) AS DATE) surveillancestart,
-	CAST(MAX(a0.surveillanceend) AS DATE) surveillanceend,
-	CAST(MAX(a0.surveillancestart) AS DATE)greateststart,
-	CAST(MIN(a0.surveillanceend) AS DATE) leastend,
+	CAST(MIN(a0.leastservice) AS DATE) leastservice,
+	CAST(MAX(a0.greatestservice) AS DATE) greatestservice,
+	CAST(MIN(a0.leastsurveillancestart) AS DATE) leastsurveillancestart,
+	CAST(MIN(a0.leastsurveillanceend) AS DATE) leastsurveillanceend,
+	CAST(MAX(a0.greatestsurveillancestart) AS DATE) greatestsurveillancestart,
+	CAST(MAX(a0.greatestsurveillanceend) AS DATE) greatestsurveillanceend,
 	CAST(MAX(a0.surveillancebirth) AS INTEGER) surveillancebirth,
 	CAST(MAX(a0.surveillancedeceased) AS INTEGER) surveillancedeceased,
 	CAST(MAX(a0.surveillanceimmigrate) AS INTEGER) surveillanceimmigrate,
@@ -79,12 +76,12 @@ COMMENT ON COLUMN surveypharmacydispense.leastbirth IS 'Earliest recorded birth 
 COMMENT ON COLUMN surveypharmacydispense.greatestbirth IS 'Latest recorded birth date.';
 COMMENT ON COLUMN surveypharmacydispense.leastdeceased IS 'Earliest recorded deceased date.';
 COMMENT ON COLUMN surveypharmacydispense.greatestdeceased IS 'Latest recorded deceased date.';
-COMMENT ON COLUMN surveypharmacydispense.servicestart IS 'Earliest healthcare adminstrative record.';
-COMMENT ON COLUMN surveypharmacydispense.serviceend IS 'Latest healthcare adminstrative record.';
-COMMENT ON COLUMN surveypharmacydispense.surveillancestart IS 'Start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveypharmacydispense.surveillanceend IS 'End date of the observation bounds of the person.';
-COMMENT ON COLUMN surveypharmacydispense.greateststart IS 'Last start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveypharmacydispense.leastend IS 'First end date of the observation bounds of the person.';
+COMMENT ON COLUMN surveypharmacydispense.leastservice IS 'Earliest healthcare adminstrative record.';
+COMMENT ON COLUMN surveypharmacydispense.greatestservice IS 'Latest healthcare adminstrative record.';
+COMMENT ON COLUMN surveypharmacydispense.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
+COMMENT ON COLUMN surveypharmacydispense.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveypharmacydispense.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
+COMMENT ON COLUMN surveypharmacydispense.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveypharmacydispense.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';
 COMMENT ON COLUMN surveypharmacydispense.surveillancedeceased IS 'Death observed in the surveillance: 1 yes, 0 no.';
 COMMENT ON COLUMN surveypharmacydispense.surveillanceimmigrate IS 'Surveillance interval starts on the persons immigration: 1 yes, 0 no.';

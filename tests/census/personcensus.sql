@@ -57,3 +57,16 @@ ORDER BY
 	6 DESC NULLS FIRST,
 	7 DESC NULLS FIRST,
 	8 DESC NULLS FIRST;
+	
+SELECT
+	CASE LEAD(a0.durationstart, 1, 1 + a0.durationend) OVER (PARTITION BY a0.uliabphn, a0.cornercase ORDER BY a0.durationstart ASC NULLS FIRST)
+		WHEN 1 + a0.durationend THEN
+			1
+		ELSE
+			0
+	END nextcontiguous,
+	a0.*
+FROM
+	personcensus a0
+ORDER BY
+	1 ASC NULLS FIRST;

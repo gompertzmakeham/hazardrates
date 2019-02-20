@@ -1,7 +1,7 @@
 CREATE MATERIALIZED VIEW surveyambulatorycare NOLOGGING NOCOMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 WITH
 
-	-- Ingest all ambulatory care events
+	-- Ingest all ambulatory care events, surveillance refresh is monthly
 	eventdata AS
 	(
 
@@ -28,26 +28,38 @@ WITH
 			(
 				hazardutilities.cleandate(a0.visdate),
 				COALESCE(hazardutilities.cleandate(a0.disdate), hazardutilities.cleandate(a0.visdate))
-			) servicestart,
+			) leastservice,
 			greatest
 			(
 				hazardutilities.cleandate(a0.visdate),
 				COALESCE(hazardutilities.cleandate(a0.disdate), hazardutilities.cleandate(a0.visdate))
-			) serviceend,
+			) greatestservice,
 
-			-- Fiscal year boundaries
+			-- Month boundaries of least service
 			least
 			(
-				hazardutilities.fiscalstart(a0.visdate),
-				COALESCE(hazardutilities.fiscalstart(a0.disdate), hazardutilities.fiscalstart(a0.visdate))
-			) surveillancestart,
+				hazardutilities.monthstart(a0.visdate),
+				COALESCE(hazardutilities.monthstart(a0.disdate), hazardutilities.monthstart(a0.visdate))
+			) leastsurveillancestart,
+			least
+			(
+				hazardutilities.monthend(a0.visdate),
+				COALESCE(hazardutilities.monthend(a0.disdate), hazardutilities.monthend(a0.visdate))
+			) leastsurveillanceend,
+
+			-- Month boundaries of greatest service
 			greatest
 			(
-				hazardutilities.fiscalend(a0.visdate),
-				COALESCE(hazardutilities.fiscalend(a0.disdate), hazardutilities.fiscalend(a0.visdate))
-			) surveillanceend,
+				hazardutilities.monthstart(a0.visdate),
+				COALESCE(hazardutilities.monthstart(a0.disdate), hazardutilities.monthstart(a0.visdate))
+			) greatestsurveillancestart,
+			greatest
+			(
+				hazardutilities.monthend(a0.visdate),
+				COALESCE(hazardutilities.monthend(a0.disdate), hazardutilities.monthend(a0.visdate))
+			) greatestsurveillanceend,
 
-			-- Coverage determines residency
+			-- Coverage by insurer
 			CASE a0.resppay
 				WHEN '01' THEN
 					1
@@ -76,7 +88,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrdeliver.ahs_ambulatory@local.world a0
+			ahsdrrdeliver.ahs_ambulatory a0
 		WHERE
 			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
 			AND
@@ -114,26 +126,38 @@ WITH
 			(
 				hazardutilities.cleandate(a0.visit_date),
 				COALESCE(hazardutilities.cleandate(a0.disp_date), hazardutilities.cleandate(a0.visit_date))
-			) servicestart,
+			) leastservice,
 			greatest
 			(
 				hazardutilities.cleandate(a0.visit_date),
 				COALESCE(hazardutilities.cleandate(a0.disp_date), hazardutilities.cleandate(a0.visit_date))
-			) serviceend,
+			) greatestservice,
 
-			-- Fiscal year boundaries
+			-- Month boundaries of least service
 			least
 			(
-				hazardutilities.fiscalstart(a0.visit_date),
-				COALESCE(hazardutilities.fiscalstart(a0.disp_date), hazardutilities.fiscalstart(a0.visit_date))
-			) surveillancestart,
+				hazardutilities.monthstart(a0.visit_date),
+				COALESCE(hazardutilities.monthstart(a0.disp_date), hazardutilities.monthstart(a0.visit_date))
+			) leastsurveillancestart,
+			least
+			(
+				hazardutilities.monthend(a0.visit_date),
+				COALESCE(hazardutilities.monthend(a0.disp_date), hazardutilities.monthend(a0.visit_date))
+			) leastsurveillanceend,
+
+			-- Month boundaries of greatest service
 			greatest
 			(
-				hazardutilities.fiscalend(a0.visit_date),
-				COALESCE(hazardutilities.fiscalend(a0.disp_date), hazardutilities.fiscalend(a0.visit_date))
-			) surveillanceend,
+				hazardutilities.monthstart(a0.visit_date),
+				COALESCE(hazardutilities.monthstart(a0.disp_date), hazardutilities.monthstart(a0.visit_date))
+			) greatestsurveillancestart,
+			greatest
+			(
+				hazardutilities.monthend(a0.visit_date),
+				COALESCE(hazardutilities.monthend(a0.disp_date), hazardutilities.monthend(a0.visit_date))
+			) greatestsurveillanceend,
 
-			-- Coverage determines residency
+			-- Coverage by insurer
 			CASE a0.resppay
 				WHEN '01' THEN
 					1
@@ -162,7 +186,7 @@ WITH
 			CAST(NULL AS INTEGER) surveillanceimmigrate,
 			CAST(NULL AS INTEGER) surveillanceemigrate
 		FROM
-			ahsdrrdeliver.ahs_nacrs_tab@local.world a0
+			ahsdrrdeliver.ahs_nacrs_tab a0
 		WHERE
 			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')
 			AND
@@ -186,12 +210,12 @@ SELECT
 	CAST(MAX(a0.birthdate) AS DATE) greatestbirth,
 	CAST(MIN(a0.deceaseddate) AS DATE) leastdeceased,
 	CAST(MAX(a0.deceaseddate) AS DATE) greatestdeceased,
-	CAST(MIN(a0.servicestart) AS DATE) servicestart,
-	CAST(MAX(a0.serviceend) AS DATE) serviceend,
-	CAST(MIN(a0.surveillancestart) AS DATE) surveillancestart,
-	CAST(MAX(a0.surveillanceend) AS DATE) surveillanceend,
-	CAST(MAX(a0.surveillancestart) AS DATE)greateststart,
-	CAST(MIN(a0.surveillanceend) AS DATE) leastend,
+	CAST(MIN(a0.leastservice) AS DATE) leastservice,
+	CAST(MAX(a0.greatestservice) AS DATE) greatestservice,
+	CAST(MIN(a0.leastsurveillancestart) AS DATE) leastsurveillancestart,
+	CAST(MIN(a0.leastsurveillanceend) AS DATE) leastsurveillanceend,
+	CAST(MAX(a0.greatestsurveillancestart) AS DATE) greatestsurveillancestart,
+	CAST(MAX(a0.greatestsurveillanceend) AS DATE) greatestsurveillanceend,
 	CAST(MAX(a0.surveillancebirth) AS INTEGER) surveillancebirth,
 	CAST(MAX(a0.surveillancedeceased) AS INTEGER) surveillancedeceased,
 	CAST(MAX(a0.surveillanceimmigrate) AS INTEGER) surveillanceimmigrate,
@@ -211,12 +235,12 @@ COMMENT ON COLUMN surveyambulatorycare.leastbirth IS 'Earliest recorded birth da
 COMMENT ON COLUMN surveyambulatorycare.greatestbirth IS 'Latest recorded birth date.';
 COMMENT ON COLUMN surveyambulatorycare.leastdeceased IS 'Earliest recorded deceased date.';
 COMMENT ON COLUMN surveyambulatorycare.greatestdeceased IS 'Latest recorded deceased date.';
-COMMENT ON COLUMN surveyambulatorycare.servicestart IS 'Earliest healthcare adminstrative record.';
-COMMENT ON COLUMN surveyambulatorycare.serviceend IS 'Latest healthcare adminstrative record.';
-COMMENT ON COLUMN surveyambulatorycare.surveillancestart IS 'Start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveyambulatorycare.surveillanceend IS 'End date of the observation bounds of the person.';
-COMMENT ON COLUMN surveyambulatorycare.greateststart IS 'Last start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveyambulatorycare.leastend IS 'First end date of the observation bounds of the person.';
+COMMENT ON COLUMN surveyambulatorycare.leastservice IS 'Earliest healthcare adminstrative record.';
+COMMENT ON COLUMN surveyambulatorycare.greatestservice IS 'Latest healthcare adminstrative record.';
+COMMENT ON COLUMN surveyambulatorycare.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
+COMMENT ON COLUMN surveyambulatorycare.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveyambulatorycare.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
+COMMENT ON COLUMN surveyambulatorycare.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveyambulatorycare.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';
 COMMENT ON COLUMN surveyambulatorycare.surveillancedeceased IS 'Death observed in the surveillance: 1 yes, 0 no.';
 COMMENT ON COLUMN surveyambulatorycare.surveillanceimmigrate IS 'Surveillance interval starts on the persons immigration: 1 yes, 0 no.';

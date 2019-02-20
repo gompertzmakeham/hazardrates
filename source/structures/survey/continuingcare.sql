@@ -1,7 +1,7 @@
 CREATE MATERIALIZED VIEW surveycontinuingcare NOLOGGING NOCOMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 WITH
 
-	-- Ingest all continuing care events
+	-- Ingest all continuing care events, surveillance refresh is monthly
 	eventdata AS
 	(
 
@@ -13,12 +13,18 @@ WITH
 			a0.deceased_date deceaseddate,
 
 			-- Service boundaries
-			a0.first_appear_date servicestart,
-			a0.last_known_date serviceend,
+			a0.first_appear_date leastservice,
+			a0.last_known_date greatestservice,
 
-			-- Calendar year boundaries
-			hazardutilities.calendarstart(a0.first_appear_date) surveillancestart,
-			hazardutilities.calendarend(a0.last_known_date) surveillanceend,
+			-- Month boundaries of least service
+			hazardutilities.monthstart(a0.first_appear_date) leastsurveillancestart,
+			hazardutilities.monthend(a0.first_appear_date) leastsurveillanceend,
+
+			-- Month boundaries of greatest service
+			hazardutilities.monthstart(a0.last_known_date) greatestsurveillancestart,
+			hazardutilities.monthend(a0.last_known_date) greatestsurveillanceend,
+
+			-- Definitive coverage
 			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
@@ -64,16 +70,26 @@ WITH
 			END deceaseddate,
 
 			-- Service boundaries
-			a0.admit_date servicestart,
-			COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM')) serviceend,
+			a0.admit_date leastservice,
+			COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM')) greatestservice,
 
-			-- Calendar year boundaries
-			hazardutilities.calendarstart(a0.admit_date) surveillancestart,
+			-- Month boundaries of least service
+			hazardutilities.monthstart(a0.admit_date) leastsurveillancestart,
+			hazardutilities.monthend(a0.admit_date) leastsurveillanceend,
+
+			-- Month boundaries of greatest service
 			COALESCE
 			(
-				hazardutilities.calendarend(a0.discharge_date),
-				hazardutilities.calendarend(TRUNC(SYSDATE, 'MM'))
-			) surveillanceend,
+				hazardutilities.calendarstart(a0.discharge_date),
+				hazardutilities.calendarstart(SYSDATE)
+			) greatestsurveillancestart,
+			COALESCE
+			(
+				hazardutilities.monthend(a0.discharge_date),
+				hazardutilities.monthend(SYSDATE)
+			) greatestsurveillanceend,
+
+			-- Definitive coverage
 			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
@@ -111,12 +127,12 @@ SELECT
 	CAST(MAX(a0.birthdate) AS DATE) greatestbirth,
 	CAST(MIN(a0.deceaseddate) AS DATE) leastdeceased,
 	CAST(MAX(a0.deceaseddate) AS DATE) greatestdeceased,
-	CAST(MIN(a0.servicestart) AS DATE) servicestart,
-	CAST(MAX(a0.serviceend) AS DATE) serviceend,
-	CAST(MIN(a0.surveillancestart) AS DATE) surveillancestart,
-	CAST(MAX(a0.surveillanceend) AS DATE) surveillanceend,
-	CAST(MAX(a0.surveillancestart) AS DATE)greateststart,
-	CAST(MIN(a0.surveillanceend) AS DATE) leastend,
+	CAST(MIN(a0.leastservice) AS DATE) leastservice,
+	CAST(MAX(a0.greatestservice) AS DATE) greatestservice,
+	CAST(MIN(a0.leastsurveillancestart) AS DATE) leastsurveillancestart,
+	CAST(MIN(a0.leastsurveillanceend) AS DATE) leastsurveillanceend,
+	CAST(MAX(a0.greatestsurveillancestart) AS DATE) greatestsurveillancestart,
+	CAST(MAX(a0.greatestsurveillanceend) AS DATE) greatestsurveillanceend,
 	CAST(MAX(a0.surveillancebirth) AS INTEGER) surveillancebirth,
 	CAST(MAX(a0.surveillancedeceased) AS INTEGER) surveillancedeceased,
 	CAST(MAX(a0.surveillanceimmigrate) AS INTEGER) surveillanceimmigrate,
@@ -136,12 +152,12 @@ COMMENT ON COLUMN surveycontinuingcare.leastbirth IS 'Earliest recorded birth da
 COMMENT ON COLUMN surveycontinuingcare.greatestbirth IS 'Latest recorded birth date.';
 COMMENT ON COLUMN surveycontinuingcare.leastdeceased IS 'Earliest recorded deceased date.';
 COMMENT ON COLUMN surveycontinuingcare.greatestdeceased IS 'Latest recorded deceased date.';
-COMMENT ON COLUMN surveycontinuingcare.servicestart IS 'Earliest healthcare adminstrative record.';
-COMMENT ON COLUMN surveycontinuingcare.serviceend IS 'Latest healthcare adminstrative record.';
-COMMENT ON COLUMN surveycontinuingcare.surveillancestart IS 'Start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveycontinuingcare.surveillanceend IS 'End date of the observation bounds of the person.';
-COMMENT ON COLUMN surveycontinuingcare.greateststart IS 'Last start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveycontinuingcare.leastend IS 'First end date of the observation bounds of the person.';
+COMMENT ON COLUMN surveycontinuingcare.leastservice IS 'Earliest healthcare adminstrative record.';
+COMMENT ON COLUMN surveycontinuingcare.greatestservice IS 'Latest healthcare adminstrative record.';
+COMMENT ON COLUMN surveycontinuingcare.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
+COMMENT ON COLUMN surveycontinuingcare.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveycontinuingcare.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
+COMMENT ON COLUMN surveycontinuingcare.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveycontinuingcare.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';
 COMMENT ON COLUMN surveycontinuingcare.surveillancedeceased IS 'Death observed in the surveillance: 1 yes, 0 no.';
 COMMENT ON COLUMN surveycontinuingcare.surveillanceimmigrate IS 'Surveillance interval starts on the persons immigration: 1 yes, 0 no.';

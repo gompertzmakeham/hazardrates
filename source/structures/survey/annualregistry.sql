@@ -1,7 +1,7 @@
 CREATE MATERIALIZED VIEW surveyannualregistry NOLOGGING NOCOMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 WITH
 
-	-- Ingest registry census
+	-- Ingest registry census, surveillance refresh is fiscal annually
 	eventdata AS
 	(
 		SELECT
@@ -27,17 +27,17 @@ WITH
 					a0.pers_reap_end_date
 				ELSE
 					NULL
-			END servicestart,
+			END leastservice,
 			CASE
 				WHEN a0.pers_reap_end_date IS NOT NULL THEN
-					hazardutilities.cleandate(a0.pers_reap_end_date)
+					a0.pers_reap_end_date
 				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
 					a0.birth_dt
 				ELSE
 					NULL
-			END serviceend,
+			END greatestservice,
 
-			-- Fiscal year boundaries
+			-- Fiscal year boundaries of least service
 			CASE
 				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
 					hazardutilities.fiscalstart(a0.birth_dt)
@@ -45,7 +45,25 @@ WITH
 					hazardutilities.fiscalstart(a0.pers_reap_end_date)
 				ELSE
 					hazardutilities.cleandate(a0.fye - 1 || '0401')
-			END surveillancestart,
+			END leastsurveillancestart,
+			CASE
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
+					hazardutilities.fiscalend(a0.birth_dt)
+				WHEN a0.pers_reap_end_date IS NOT NULL THEN
+					hazardutilities.fiscalend(a0.pers_reap_end_date)
+				ELSE
+					hazardutilities.cleandate(a0.fye || '0331')
+			END leastsurveillanceend,
+
+			-- Fiscal year boundaries of greatest service
+			CASE
+				WHEN a0.pers_reap_end_date IS NOT NULL THEN
+					hazardutilities.fiscalstart(a0.pers_reap_end_date)
+				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
+					hazardutilities.fiscalstart(a0.birth_dt)
+				ELSE
+					hazardutilities.cleandate(a0.fye || '0401')
+			END greatestsurveillancestart,
 			CASE
 				WHEN a0.pers_reap_end_date IS NOT NULL THEN
 					hazardutilities.fiscalend(a0.pers_reap_end_date)
@@ -53,7 +71,9 @@ WITH
 					hazardutilities.fiscalend(a0.birth_dt)
 				ELSE
 					hazardutilities.cleandate(a0.fye || '0331')
-			END surveillanceend,
+			END greatestsurveillanceend,
+
+			-- Definitive coverage
 			1 albertacoverage,
 
 			-- Any indication of aboriginal, first nations, indigineous, Metis, or Inuit status
@@ -72,7 +92,7 @@ WITH
 			CASE
 				WHEN hazardutilities.cleandate(a0.fye - 1 || '0401') <= a0.birth_dt THEN
 					1
-				WHEN a0.birth_dt IS NULL AND a0.birth_ind = '1' THEN
+				WHEN a0.birth_ind = '1' THEN
 					1
 				ELSE
 					0
@@ -104,12 +124,12 @@ SELECT
 	CAST(MAX(a0.birthdate) AS DATE) greatestbirth,
 	CAST(MIN(a0.deceaseddate) AS DATE) leastdeceased,
 	CAST(MAX(a0.deceaseddate) AS DATE) greatestdeceased,
-	CAST(MIN(a0.servicestart) AS DATE) servicestart,
-	CAST(MAX(a0.serviceend) AS DATE) serviceend,
-	CAST(MIN(a0.surveillancestart) AS DATE) surveillancestart,
-	CAST(MAX(a0.surveillanceend) AS DATE) surveillanceend,
-	CAST(MAX(a0.surveillancestart) AS DATE)greateststart,
-	CAST(MIN(a0.surveillanceend) AS DATE) leastend,
+	CAST(MIN(a0.leastservice) AS DATE) leastservice,
+	CAST(MAX(a0.greatestservice) AS DATE) greatestservice,
+	CAST(MIN(a0.leastsurveillancestart) AS DATE) leastsurveillancestart,
+	CAST(MIN(a0.leastsurveillanceend) AS DATE) leastsurveillanceend,
+	CAST(MAX(a0.greatestsurveillancestart) AS DATE) greatestsurveillancestart,
+	CAST(MAX(a0.greatestsurveillanceend) AS DATE) greatestsurveillanceend,
 	CAST(MAX(a0.surveillancebirth) AS INTEGER) surveillancebirth,
 	CAST(MAX(a0.surveillancedeceased) AS INTEGER) surveillancedeceased,
 	CAST(MAX(a0.surveillanceimmigrate) AS INTEGER) surveillanceimmigrate,
@@ -129,12 +149,12 @@ COMMENT ON COLUMN surveyannualregistry.leastbirth IS 'Earliest recorded birth da
 COMMENT ON COLUMN surveyannualregistry.greatestbirth IS 'Latest recorded birth date.';
 COMMENT ON COLUMN surveyannualregistry.leastdeceased IS 'Earliest recorded deceased date.';
 COMMENT ON COLUMN surveyannualregistry.greatestdeceased IS 'Latest recorded deceased date.';
-COMMENT ON COLUMN surveyannualregistry.servicestart IS 'Earliest healthcare adminstrative record.';
-COMMENT ON COLUMN surveyannualregistry.serviceend IS 'Latest healthcare adminstrative record.';
-COMMENT ON COLUMN surveyannualregistry.surveillancestart IS 'Start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveyannualregistry.surveillanceend IS 'End date of the observation bounds of the person.';
-COMMENT ON COLUMN surveyannualregistry.greateststart IS 'Last start date of the observation bounds of the person.';
-COMMENT ON COLUMN surveyannualregistry.leastend IS 'First end date of the observation bounds of the person.';
+COMMENT ON COLUMN surveyannualregistry.leastservice IS 'Earliest healthcare adminstrative record.';
+COMMENT ON COLUMN surveyannualregistry.greatestservice IS 'Latest healthcare adminstrative record.';
+COMMENT ON COLUMN surveyannualregistry.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
+COMMENT ON COLUMN surveyannualregistry.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveyannualregistry.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
+COMMENT ON COLUMN surveyannualregistry.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveyannualregistry.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';
 COMMENT ON COLUMN surveyannualregistry.surveillancedeceased IS 'Death observed in the surveillance: 1 yes, 0 no.';
 COMMENT ON COLUMN surveyannualregistry.surveillanceimmigrate IS 'Surveillance interval starts on the persons immigration: 1 yes, 0 no.';

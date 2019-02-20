@@ -112,6 +112,96 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	FUNCTION calendarend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
 
 	/*
+	 *  Truncate a date to the start of the quarter.
+	 */
+	FUNCTION quarterstart(inputdate IN DATE) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Truncate a date to the end of the quarter.
+	 */
+	FUNCTION quarterend(inputdate IN DATE) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the start of the quarter given the date as string.
+	 */
+	FUNCTION quarterstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the end of the quarter given the date as string.
+	 */
+	FUNCTION quarterend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the start of the quarter given the date as string, and default format.
+	 */
+	FUNCTION quarterstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the end of the quarter given the date as string, and default format.
+	 */
+	FUNCTION quarterend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Truncate a date to the start of the month.
+	 */
+	FUNCTION monthstart(inputdate IN DATE) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Truncate a date to the end of the month.
+	 */
+	FUNCTION monthend(inputdate IN DATE) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the start of the month given the date as string.
+	 */
+	FUNCTION monthstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the end of the month given the date as string.
+	 */
+	FUNCTION monthend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the start of the month given the date as string, and default format.
+	 */
+	FUNCTION monthstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the end of the month given the date as string, and default format.
+	 */
+	FUNCTION monthend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Truncate a date to the start of the week.
+	 */
+	FUNCTION weekstart(inputdate IN DATE) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Truncate a date to the end of the week.
+	 */
+	FUNCTION weekend(inputdate IN DATE) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the start of the week given the date as string.
+	 */
+	FUNCTION weekstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the end of the week given the date as string.
+	 */
+	FUNCTION weekend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the start of the week given the date as string, and default format.
+	 */
+	FUNCTION weekstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
+	 *  Return the end of the week given the date as string, and default format.
+	 */
+	FUNCTION weekend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC;
+
+	/*
 	 *  Try to convert a string to a date according to the format model. Return null when the
 	 *  string cannot be converted to a date.
 	 */
