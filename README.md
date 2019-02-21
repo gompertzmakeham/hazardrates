@@ -23,4 +23,9 @@ Definite observations, versus known to exist.
 Temporal Joins
 --------------
 
-Partitions total ordered under absolute set ordering
+Partitions total ordered under absolute set ordering.
+
+Data Sources
+------------
+
+List and cite data sources and standards.
