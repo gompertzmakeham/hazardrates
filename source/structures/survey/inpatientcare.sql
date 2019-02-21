@@ -30,8 +30,8 @@ WITH
 			hazardutilities.monthend(a0.admitdate) leastsurveillanceend,
 
 			-- Month boundaries of greatest service
-			hazardutilities.monthstart(a0.disdate) greastsurveillancestart,
-			hazardutilities.monthend(a0.disdate) greastsurveillanceend,
+			hazardutilities.monthstart(a0.disdate) greatestsurveillancestart,
+			hazardutilities.monthend(a0.disdate) greatestsurveillanceend,
 
 			-- Coverage by insurer
 			CASE a0.resppay

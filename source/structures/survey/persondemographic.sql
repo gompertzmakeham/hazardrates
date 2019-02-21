@@ -41,45 +41,49 @@ WITH
 			ingestevents a0
 		GROUP BY
 			a0.uliabphn
-	),
+	)
 
-	-- Rectify life events
-	lifeevents AS
+-- Rectify life events
+SELECT
+
+	/*+ cardinality(a1, 1) */
+	a0.uliabphn,
+	a0.sex,
+	a0.firstnations,
+	a1.leastbirth,
+	a1.greatestbirth,
+	a1.leastdeceased,
+	a1.greatestdeceased,
+	a1.leastimmigrate,
+	a1.greatestimmigrate,
+	a1.leastemigrate,
+	a1.greatestemigrate,
+	a1.surveillancestart,
+	a1.surveillanceend,
+	a1.birthdateequipoise,
+	a1.deceaseddateequipoise,
+	a1.birthobservationequipoise,
+	a1.deceasedobservationequipoise,
+	a1.immigratedateequipoise,
+	a1.emigratedateequipoise,
+	a1.immigrateobservationequipoise,
+	a1.emigrateobservationequipoise,
+	a1.surveillancestartequipoise,
+	a1.surveillanceendequipoise,
+	a1.ageequipoise,
+	a0.albertacoverage,
+	a0.censoreddate
+FROM
+	digestevents a0
+	CROSS JOIN
+	TABLE
 	(
-		SELECT
-			a0.uliabphn,
-			a0.sex,
-			a0.firstnations,
-			
-			-- Estimate unobserved birth dates
-			CASE a0.surveillancebirth
-				WHEN 1 THEN
-					COALESCE(a0.leastbirth, a0.leastsurveillancestart)
-				ELSE
-					a0.leastbirth
-			END leastbirth,
-			CASE a0.surveillancebirth
-				WHEN 1 THEN
-					COALESCE(a0.greatestbirth, least(a0.leastservice, a0.leastsurveillanceend))
-				ELSE
-					a0.greatestbirth
-			END greatestbirth,
-
-			-- Estimate unobserved deceased dates
-			CASE a0.surveillancedeceased
-				WHEN 1 THEN
-					COALESCE(a0.leastdeceased, greatest(a0.greatestservice, a0.greatestsurveillancestart))
-				ELSE
-					a0.leastdeceased
-			END leastdeceased,
-			CASE a0.surveillancedeceased
-				WHEN 1 THEN
-					COALESCE(a0.greatestdeceased, a0.greatestsurveillanceend)
-				ELSE
-					a0.greatestdeceased
-			END greatestdeceased,
-			
-			-- Pass through
+		hazardutilities.generatedemographic
+		(
+			a0.leastbirth,
+			a0.greatestbirth,
+			a0.leastdeceased,
+			a0.greatestdeceased,
 			a0.leastservice,
 			a0.greatestservice,
 			a0.leastsurveillancestart,
@@ -89,83 +93,6 @@ WITH
 			a0.surveillancebirth,
 			a0.surveillancedeceased,
 			a0.surveillanceimmigrate,
-			a0.surveillanceemigrate,
-			a0.albertacoverage,
-			a0.censoreddate
-		FROM
-			digestevents a0
-	)
-	
--- Rectify surveillance events
-SELECT
-	a0.uliabphn,
-	a0.sex,
-	a0.firstnations,
-	a0.leastbirth,
-	a0.greatestbirth,
-	a0.leastdeceased,
-	a0.greatestdeceased,
-	a0.leastsurveillancestart surveillancestart,
-	a0.greatestsurveillanceend surveillanceend,
-
-	-- Birth indicators
-	CASE
-		WHEN a0.leastsurveillancestart <= a0.leastbirth THEN
-			1
-		ELSE
-			0
-	END leastsurveillancebirth,
-	CASE
-		WHEN a0.leastsurveillancestart <= a0.greatestbirth THEN
-			1
-		ELSE
-			0
-	END greatestsurveillancebirth,
-
-	-- Deceased indicators
-	CASE
-		WHEN a0.leastdeceased <= a0.greatestsurveillanceend THEN
-			1
-		ELSE
-			0
-	END leastsurveillancedeceased,
-	CASE
-		WHEN a0.greatestdeceased <= a0.greatestsurveillanceend THEN
-			1
-		ELSE
-			0
-	END greatestsurveillancedeceased,
-	
-	-- Immigration indicators
-	CASE
-		WHEN a0.leastsurveillancestart <= a0.leastbirth THEN
-			0
-		ELSE
-			a0.surveillanceimmigrate
-	END leastsurveillanceimmigrate,
-	CASE
-		WHEN a0.leastsurveillancestart <= a0.greatestbirth THEN
-			0
-		ELSE
-			a0.surveillanceimmigrate
-	END greatestsurveillanceimmigrate,
-
-	-- Emigration indicators
-	CASE
-		WHEN a0.leastdeceased <= a0.greatestsurveillanceend THEN
-			0
-		ELSE
 			a0.surveillanceemigrate
-	END leastsurveillanceemigrate,
-	CASE
-		WHEN a0.greatestdeceased <= a0.greatestsurveillanceend THEN
-			0
-		ELSE
-			a0.surveillanceemigrate
-	END greatestsurveillanceemigrate,
-	
-	-- Pass through
-	a0.albertacoverage,
-	a0.censoreddate
-FROM
-	lifeevents a0;
+		)
+	) a1;

@@ -4,6 +4,227 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
  */
 
 	/*
+	 *  Map event data extremums of each person to a demographic interval.
+	 */
+	FUNCTION generatedemographic
+	(
+		leastbirth IN DATE,
+		greatestbirth IN DATE,
+		leastdeceased IN DATE,
+		greatestdeceased IN DATE,
+		leastservice IN DATE,
+		greatestservice IN DATE,
+		leastsurveillancestart IN DATE,
+		leastsurveillanceend IN DATE,
+		greatestsurveillancestart IN DATE,
+		greatestsurveillanceend IN DATE,
+		surveillancebirth IN INTEGER,
+		surveillancedeceased IN INTEGER,
+		surveillanceimmigrate IN INTEGER,
+		surveillanceemigrate IN INTEGER
+	)
+	RETURN demographicintervals PIPELINED DETERMINISTIC AS
+		returnrow demographicinterval;
+	BEGIN
+
+		-- Maximum observation bounds
+		returnrow.surveillancestart := leastsurveillancestart;
+		returnrow.surveillanceend := greatestsurveillanceend;
+		
+		-- Estimate unobserved least birth date
+		CASE surveillancebirth
+			WHEN 1 THEN
+				returnrow.leastbirth := COALESCE(leastbirth, leastsurveillancestart);
+			ELSE
+				returnrow.leastbirth := leastbirth;
+		END CASE;
+
+		-- Estimate unobserved greatest birth date
+		CASE surveillancebirth
+			WHEN 1 THEN
+				returnrow.greatestbirth := COALESCE
+				(
+					greatestbirth,
+					least
+					(
+						leastsurveillanceend,
+						COALESCE(leastservice, leastsurveillanceend)
+					)
+				);
+			ELSE
+				returnrow.greatestbirth := greatestbirth;
+		END CASE;
+
+		-- Estimate unobserved least deceased date
+		CASE surveillancedeceased
+			WHEN 1 THEN
+				returnrow.leastdeceased := COALESCE
+				(
+					leastdeceased,
+					greatest
+					(
+						greatestsurveillancestart,
+						COALESCE(greatestservice, greatestsurveillancestart)
+					)
+				);
+			ELSE
+				returnrow.leastdeceased := leastdeceased;
+		END CASE;
+
+		-- Estimate unobserved least deceased date
+		CASE surveillancedeceased
+			WHEN 1 THEN
+				returnrow.greatestdeceased := COALESCE(greatestdeceased, greatestsurveillanceend);
+			ELSE
+				returnrow.greatestdeceased := greatestdeceased;
+		END CASE;
+
+		-- Least immigration date
+		CASE
+			WHEN returnrow.surveillancestart <= returnrow.leastbirth THEN
+				returnrow.leastimmigrate := NULL;
+			WHEN surveillanceimmigrate = 0 THEN
+				returnrow.leastimmigrate := NULL;
+			ELSE
+				returnrow.leastimmigrate := leastsurveillancestart;
+		END CASE;
+
+		-- Greatest immigration date
+		CASE
+			WHEN returnrow.surveillancestart <= returnrow.greatestbirth THEN
+				returnrow.greatestimmigrate := NULL;
+			WHEN surveillanceimmigrate = 0 THEN
+				returnrow.greatestimmigrate := NULL;
+			ELSE
+				returnrow.greatestimmigrate := least
+				(
+					leastsurveillanceend,
+					COALESCE(leastservice, leastsurveillanceend)
+				);
+		END CASE;
+
+		-- Least emigration date
+		CASE
+			WHEN returnrow.leastdeceased <= returnrow.surveillanceend THEN
+				returnrow.leastemigrate := NULL;
+			WHEN surveillanceemigrate = 0 THEN
+				returnrow.leastemigrate := NULL;
+			ELSE
+				returnrow.leastemigrate := greatest
+				(
+					greatestsurveillancestart,
+					COALESCE(greatestservice, greatestsurveillancestart)
+				);
+		END CASE;
+
+		-- Greatest emigration date
+		CASE
+			WHEN returnrow.greatestdeceased <= returnrow.surveillanceend THEN
+				returnrow.greatestemigrate := NULL;
+			WHEN surveillanceemigrate = 0 THEN
+				returnrow.greatestemigrate := NULL;
+			ELSE
+				returnrow.greatestemigrate := greatestsurveillanceend;
+		END CASE;
+
+		-- Birth date equipoise flags
+		CASE
+			WHEN returnrow.leastbirth < returnrow.greatestbirth THEN
+				returnrow.birthdateequipoise := 0;
+			ELSE
+				returnrow.birthdateequipoise := 1;
+		END CASE;
+
+		-- Deceased date equipoise flag
+		CASE
+			WHEN returnrow.leastdeceased < returnrow.greatestdeceased THEN
+				returnrow.deceaseddateequipoise := 0;
+			ELSE
+				returnrow.deceaseddateequipoise := 1;
+		END CASE;
+
+		-- Immigrate date equipoise flag
+		CASE
+			WHEN returnrow.leastimmigrate IS NULL AND returnrow.greatestimmigrate IS NULL THEN
+				returnrow.immigratedateequipoise := 1;
+			WHEN returnrow.leastimmigrate = returnrow.greatestimmigrate THEN
+				returnrow.immigratedateequipoise := 1;
+			ELSE
+				returnrow.immigratedateequipoise := 0;
+		END CASE;
+
+		-- Emigrate date equipoise flag
+		CASE
+			WHEN returnrow.leastemigrate IS NULL AND returnrow.greatestemigrate IS NULL THEN
+				returnrow.emigratedateequipoise := 1;
+			WHEN returnrow.leastemigrate = returnrow.greatestemigrate THEN
+				returnrow.emigratedateequipoise := 1;
+			ELSE
+				returnrow.emigratedateequipoise := 0;
+		END CASE;
+
+		-- Birth observation equipoise
+		CASE
+			WHEN returnrow.surveillancestart <= returnrow.leastbirth THEN
+				returnrow.birthobservationequipoise := 1;
+			WHEN returnrow.greatestbirth < returnrow.surveillancestart THEN
+				returnrow.birthobservationequipoise := 1;
+			ELSE
+				returnrow.birthobservationequipoise := returnrow.birthdateequipoise;
+		END CASE;
+
+		-- Deceased observation equipoise
+		CASE
+			WHEN returnrow.greatestdeceased <= returnrow.surveillanceend THEN
+				returnrow.deceasedobservationequipoise := 1;
+			WHEN returnrow.surveillanceend < returnrow.leastdeceased THEN
+				returnrow.deceasedobservationequipoise := 1;
+			ELSE
+				returnrow.deceasedobservationequipoise := returnrow.deceaseddateequipoise;
+		END CASE;
+
+		-- Immigration observation equipoise
+		CASE
+			WHEN returnrow.surveillancestart <= returnrow.leastimmigrate THEN
+				returnrow.immigrateobservationequipoise := 1;
+			WHEN returnrow.greatestimmigrate < returnrow.surveillancestart THEN
+				returnrow.immigrateobservationequipoise := 1;
+			ELSE
+				returnrow.immigrateobservationequipoise := returnrow.immigratedateequipoise;
+		END CASE;
+
+		-- Emigration observation equipoise
+		CASE
+			WHEN returnrow.greatestemigrate <= returnrow.surveillanceend THEN
+				returnrow.emigrateobservationequipoise := 1;
+			WHEN returnrow.surveillanceend < returnrow.leastemigrate THEN
+				returnrow.emigrateobservationequipoise := 1;
+			ELSE
+				returnrow.emigrateobservationequipoise := returnrow.emigratedateequipoise;
+		END CASE;
+
+		-- Surveillance start equipoise flag
+		returnrow.surveillancestartequipoise := 1;
+
+		-- Surveillance end equipoise flag
+		returnrow.surveillanceendequipoise := 1;
+
+		-- Age equipoise flag
+		CASE
+			WHEN returnrow.leastbirth IS NULL AND returnrow.greatestbirth IS NULL THEN
+				returnrow.ageequipoise := 1;
+			WHEN fiscalstart(returnrow.leastbirth) = fiscalstart(returnrow.greatestbirth) THEN
+				returnrow.ageequipoise := 1;
+			ELSE
+				returnrow.ageequipoise := 0;
+		END CASE;		
+
+		-- Send
+		PIPE ROW (returnrow);
+		RETURN;
+	END generatedemographic;
+
+	/*
 	 *  Partition an event into fiscal years, subpartitioned by the birthday.
 	 */
 	FUNCTION generatecensus(eventstart IN DATE, eventend IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC AS

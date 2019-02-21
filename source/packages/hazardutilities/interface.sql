@@ -4,6 +4,39 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
  */
 
 	/*
+	 *  A single demographic interval of a person.
+	 */
+	TYPE demographicinterval IS RECORD
+	(
+		leastbirth DATE,
+		greatestbirth DATE,
+		leastdeceased DATE,
+		greatestdeceased DATE,
+		leastimmigrate DATE,
+		greatestimmigrate DATE,
+		leastemigrate DATE,
+		greatestemigrate DATE,
+		surveillancestart DATE,
+		surveillanceend DATE,
+		birthdateequipoise INTEGER,
+		deceaseddateequipoise INTEGER,
+		birthobservationequipoise INTEGER,
+		deceasedobservationequipoise INTEGER,
+		immigratedateequipoise INTEGER,
+		emigratedateequipoise INTEGER,
+		immigrateobservationequipoise INTEGER,
+		emigrateobservationequipoise INTEGER,
+		surveillancestartequipoise INTEGER,
+		surveillanceendequipoise INTEGER,
+		ageequipoise INTEGER
+	);
+
+	/*
+	 *  A collection of demographic intervals of persons.
+	 */
+	TYPE demographicintervals IS TABLE OF demographicinterval;
+
+	/*
 	 *  A single census interval division of an event.
 	 */
 	TYPE censusinterval IS RECORD
@@ -27,9 +60,31 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	);
 
 	/*
-	 *  A collection of census intervals partitioning an event by fiscal year and birthday
+	 *  A collection of census intervals partitioning an event by fiscal year and birthday.
 	 */
 	TYPE censusintervals IS TABLE OF censusinterval;
+
+	/*
+	 *  Map event data extremums of each person to a demographic interval.
+	 */
+	FUNCTION generatedemographic
+	(
+		leastbirth IN DATE,
+		greatestbirth IN DATE,
+		leastdeceased IN DATE,
+		greatestdeceased IN DATE,
+		leastservice IN DATE,
+		greatestservice IN DATE,
+		leastsurveillancestart IN DATE,
+		leastsurveillanceend IN DATE,
+		greatestsurveillancestart IN DATE,
+		greatestsurveillanceend IN DATE,
+		surveillancebirth IN INTEGER,
+		surveillancedeceased IN INTEGER,
+		surveillanceimmigrate IN INTEGER,
+		surveillanceemigrate IN INTEGER
+	)
+	RETURN demographicintervals PIPELINED DETERMINISTIC;
 
 	/*
 	 *  Partition an event into fiscal years, subpartitioned by the birthday.
