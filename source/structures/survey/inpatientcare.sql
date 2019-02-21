@@ -112,7 +112,7 @@ COMMENT ON COLUMN surveyinpatientcare.greatestdeceased IS 'Latest recorded decea
 COMMENT ON COLUMN surveyinpatientcare.leastservice IS 'Earliest healthcare adminstrative record.';
 COMMENT ON COLUMN surveyinpatientcare.greatestservice IS 'Latest healthcare adminstrative record.';
 COMMENT ON COLUMN surveyinpatientcare.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
-COMMENT ON COLUMN surveyinpatientcare.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveyinpatientcare.leastsurveillanceend IS 'End date of the least observation bounds of the person.';
 COMMENT ON COLUMN surveyinpatientcare.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveyinpatientcare.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveyinpatientcare.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';

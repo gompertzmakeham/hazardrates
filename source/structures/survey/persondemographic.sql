@@ -47,32 +47,32 @@ WITH
 SELECT
 
 	/*+ cardinality(a1, 1) */
-	a0.uliabphn,
-	a0.sex,
-	a0.firstnations,
-	a1.leastbirth,
-	a1.greatestbirth,
-	a1.leastdeceased,
-	a1.greatestdeceased,
-	a1.leastimmigrate,
-	a1.greatestimmigrate,
-	a1.leastemigrate,
-	a1.greatestemigrate,
-	a1.surveillancestart,
-	a1.surveillanceend,
-	a1.birthdateequipoise,
-	a1.deceaseddateequipoise,
-	a1.birthobservationequipoise,
-	a1.deceasedobservationequipoise,
-	a1.immigratedateequipoise,
-	a1.emigratedateequipoise,
-	a1.immigrateobservationequipoise,
-	a1.emigrateobservationequipoise,
-	a1.surveillancestartequipoise,
-	a1.surveillanceendequipoise,
-	a1.ageequipoise,
-	a0.albertacoverage,
-	a0.censoreddate
+	CAST(a0.uliabphn AS INTEGER) uliabphn,
+	CAST(a0.sex AS VARCHAR2(1)) sex,
+	CAST(a0.firstnations AS INTEGER) firstnations,
+	CAST(a1.leastbirth AS DATE) leastbirth,
+	CAST(a1.greatestbirth AS DATE) greatestbirth,
+	CAST(a1.leastdeceased AS DATE) leastdeceased,
+	CAST(a1.greatestdeceased AS DATE) greatestdeceased,
+	CAST(a1.leastimmigrate AS DATE) leastimmigrate,
+	CAST(a1.greatestimmigrate AS DATE) greatestimmigrate,
+	CAST(a1.leastemigrate AS DATE) leastemigrate,
+	CAST(a1.greatestemigrate AS DATE) greatestemigrate,
+	CAST(a1.surveillancestart AS DATE) surveillancestart,
+	CAST(a1.surveillanceend AS DATE) surveillanceend,
+	CAST(a1.birthdateequipoise AS INTEGER) birthdateequipoise,
+	CAST(a1.deceaseddateequipoise AS INTEGER) deceaseddateequipoise,
+	CAST(a1.birthobservationequipoise AS INTEGER) birthobservationequipoise,
+	CAST(a1.deceasedobservationequipoise AS INTEGER) deceasedobservationequipoise,
+	CAST(a1.immigratedateequipoise AS INTEGER) immigratedateequipoise,
+	CAST(a1.emigratedateequipoise AS INTEGER) emigratedateequipoise,
+	CAST(a1.immigrateobservationequipoise AS INTEGER) immigrateobservationequipoise,
+	CAST(a1.emigrateobservationequipoise AS INTEGER) emigrateobservationequipoise,
+	CAST(a1.surveillancestartequipoise AS INTEGER) surveillancestartequipoise,
+	CAST(a1.surveillanceendequipoise AS INTEGER) surveillanceendequipoise,
+	CAST(a1.ageequipoise AS INTEGER) ageequipoise,
+	CAST(a0.albertacoverage AS INTEGER) albertacoverage,
+	CAST(a0.censoreddate AS DATE) censoreddate
 FROM
 	digestevents a0
 	CROSS JOIN
@@ -96,3 +96,31 @@ FROM
 			a0.surveillanceemigrate
 		)
 	) a1;
+
+COMMENT ON MATERIALIZED VIEW persondemographic IS 'For every person that at any time was covered by Alberta Healthcare Insurance Plan report the extremum dates on events of birth, death, immigation, emigration, surveillance start, and end.';
+COMMENT ON COLUMN persondemographic.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
+COMMENT ON COLUMN persondemographic.sex IS 'Biological sex for use in physiological and metabolic determinants of health, not self identified gender: F female, M male.';
+COMMENT ON COLUMN persondemographic.firstnations IS 'Presence of adminstrative indications of membership or status in first nations, aboriginal, indigenous, Metis, or Inuit communities: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.leastbirth IS 'Lower bound on the date of birth.';
+COMMENT ON COLUMN persondemographic.greatestbirth IS 'Upper bound on the date of birth.';
+COMMENT ON COLUMN persondemographic.leastdeceased IS 'Lower bound on the deceased date, null when unknown.';
+COMMENT ON COLUMN persondemographic.greatestdeceased IS 'Upper bound on the deceased date, null when unknown.';
+COMMENT ON COLUMN persondemographic.leastimmigrate IS 'Lower bound on the immigration date, null when unknown.';
+COMMENT ON COLUMN persondemographic.greatestimmigrate IS 'Upper bound on the immigration date, null when unknown.';
+COMMENT ON COLUMN persondemographic.leastemigrate IS 'Lower bound on the emigration date, null when unknown.';
+COMMENT ON COLUMN persondemographic.greatestemigrate IS 'Upper bound on the emigration date, null when unknown.';
+COMMENT ON COLUMN persondemographic.birthdateequipoise IS 'Lower and upper estimates of birth date are equal: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.deceaseddateequipoise IS 'Lower and upper estimates of deceased date are equal: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.birthobservationequipoise IS 'Extremums agree on occurrence of birth event: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.deceasedobservationequipoise IS 'Extremums agree on occurrence of deceased event: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.immigratedateequipoise IS 'Lower and upper estimates of immigrate date are equal: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.emigratedateequipoise IS 'Lower and upper estimates of emigrate date are equal: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.immigrateobservationequipoise IS 'Extremums agree on occurrence of immigration event: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.emigrateobservationequipoise IS 'Extremums agree on occurrence of emigration event: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.surveillancestartequipoise IS 'Extremums start dates agree: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.surveillanceendequipoise IS 'Extremums end dates agree: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.ageequipoise IS 'Extremums have the same age in the fiscal year: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.surveillancestart IS 'Start date of the observation bounds of the person.';
+COMMENT ON COLUMN persondemographic.surveillanceend IS 'End date of the observation bounds of the person.';
+COMMENT ON COLUMN persondemographic.albertacoverage IS 'Person is covered by the Ablerta Healthcare Insurance Plan: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.censoreddate IS 'First day of the month of the last refresh of the data.';

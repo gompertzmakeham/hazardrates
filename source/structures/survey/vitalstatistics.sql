@@ -414,7 +414,7 @@ COMMENT ON COLUMN surveyvitalstatistics.greatestdeceased IS 'Latest recorded dec
 COMMENT ON COLUMN surveyvitalstatistics.leastservice IS 'Earliest healthcare adminstrative record.';
 COMMENT ON COLUMN surveyvitalstatistics.greatestservice IS 'Latest healthcare adminstrative record.';
 COMMENT ON COLUMN surveyvitalstatistics.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
-COMMENT ON COLUMN surveyvitalstatistics.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveyvitalstatistics.leastsurveillanceend IS 'End date of the least observation bounds of the person.';
 COMMENT ON COLUMN surveyvitalstatistics.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveyvitalstatistics.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveyvitalstatistics.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';

@@ -25,6 +25,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	)
 	RETURN demographicintervals PIPELINED DETERMINISTIC AS
 		returnrow demographicinterval;
+		localgreatest DATE;
+		localleast DATE;
 	BEGIN
 
 		-- Maximum observation bounds
@@ -71,7 +73,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				returnrow.leastdeceased := leastdeceased;
 		END CASE;
 
-		-- Estimate unobserved least deceased date
+		-- Estimate unobserved greatest deceased date
 		CASE surveillancedeceased
 			WHEN 1 THEN
 				returnrow.greatestdeceased := COALESCE(greatestdeceased, greatestsurveillanceend);
@@ -81,50 +83,42 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 
 		-- Least immigration date
 		CASE
-			WHEN returnrow.surveillancestart <= returnrow.leastbirth THEN
-				returnrow.leastimmigrate := NULL;
-			WHEN surveillanceimmigrate = 0 THEN
-				returnrow.leastimmigrate := NULL;
-			ELSE
+			WHEN returnrow.leastbirth < returnrow.surveillancestart AND surveillanceimmigrate = 1 THEN
 				returnrow.leastimmigrate := leastsurveillancestart;
+			ELSE
+				returnrow.leastimmigrate := NULL;
 		END CASE;
 
 		-- Greatest immigration date
 		CASE
-			WHEN returnrow.surveillancestart <= returnrow.greatestbirth THEN
-				returnrow.greatestimmigrate := NULL;
-			WHEN surveillanceimmigrate = 0 THEN
-				returnrow.greatestimmigrate := NULL;
-			ELSE
+			WHEN returnrow.greatestbirth < returnrow.surveillancestart AND surveillanceimmigrate = 1 THEN
 				returnrow.greatestimmigrate := least
 				(
 					leastsurveillanceend,
 					COALESCE(leastservice, leastsurveillanceend)
 				);
+			ELSE
+				returnrow.greatestimmigrate := NULL;
 		END CASE;
 
 		-- Least emigration date
 		CASE
-			WHEN returnrow.leastdeceased <= returnrow.surveillanceend THEN
-				returnrow.leastemigrate := NULL;
-			WHEN surveillanceemigrate = 0 THEN
-				returnrow.leastemigrate := NULL;
-			ELSE
+			WHEN returnrow.surveillanceend < returnrow.leastdeceased AND surveillanceemigrate = 1 THEN
 				returnrow.leastemigrate := greatest
 				(
 					greatestsurveillancestart,
 					COALESCE(greatestservice, greatestsurveillancestart)
 				);
+			ELSE
+				returnrow.leastemigrate := NULL;
 		END CASE;
 
 		-- Greatest emigration date
 		CASE
-			WHEN returnrow.greatestdeceased <= returnrow.surveillanceend THEN
-				returnrow.greatestemigrate := NULL;
-			WHEN surveillanceemigrate = 0 THEN
-				returnrow.greatestemigrate := NULL;
-			ELSE
+			WHEN returnrow.surveillanceend < returnrow.greatestdeceased AND surveillanceemigrate = 1 THEN
 				returnrow.greatestemigrate := greatestsurveillanceend;
+			ELSE
+				returnrow.greatestemigrate := NULL;
 		END CASE;
 
 		-- Birth date equipoise flags
@@ -204,10 +198,48 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		END CASE;
 
 		-- Surveillance start equipoise flag
-		returnrow.surveillancestartequipoise := 1;
+		localleast := greatest
+		(
+			returnrow.surveillancestart,
+			returnrow.leastbirth,
+			COALESCE(returnrow.leastimmigrate, returnrow.surveillancestart)
+		);
+		localgreatest := greatest
+		(
+			returnrow.surveillancestart,
+			returnrow.greatestbirth,
+			COALESCE(returnrow.greatestimmigrate, returnrow.surveillancestart)
+		);
+		CASE
+			WHEN localleast IS NULL AND localgreatest IS NULL THEN
+				returnrow.surveillancestartequipoise := 1;
+			WHEN localleast = localgreatest THEN
+				returnrow.surveillancestartequipoise := 1;
+			ELSE
+				returnrow.surveillancestartequipoise := 0; 
+		END CASE;
 
 		-- Surveillance end equipoise flag
-		returnrow.surveillanceendequipoise := 1;
+		localleast := least
+		(
+			returnrow.surveillanceend,
+			COALESCE(returnrow.leastdeceased, returnrow.surveillanceend),
+			COALESCE(returnrow.leastemigrate, returnrow.surveillanceend)
+		);
+		localgreatest := least
+		(
+			returnrow.surveillanceend,
+			COALESCE(returnrow.greatestdeceased, returnrow.surveillanceend),
+			COALESCE(returnrow.greatestemigrate, returnrow.surveillanceend)
+		);
+		CASE
+			WHEN localleast IS NULL AND localgreatest IS NULL THEN
+				returnrow.surveillanceendequipoise := 1;
+			WHEN localleast = localgreatest THEN
+				returnrow.surveillanceendequipoise := 1;
+			ELSE
+				returnrow.surveillanceendequipoise := 0; 
+		END CASE;
 
 		-- Age equipoise flag
 		CASE
@@ -225,9 +257,79 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	END generatedemographic;
 
 	/*
+	 *  Map the demographic interval of each person to a pair of surveillance extremums.
+	 */
+	FUNCTION generatesurveillance
+	(
+		leastbirth IN DATE,
+		greatestbirth IN DATE,
+		leastdeceased IN DATE,
+		greatestdeceased IN DATE,
+		leastimmigrate IN DATE,
+		greatestimmigrate IN DATE,
+		leastemigrate IN DATE,
+		greatestemigrate IN DATE,
+		surveillancestart IN DATE,
+		surveillanceend IN DATE
+	)
+	RETURN surveillancecintervals PIPELINED DETERMINISTIC AS
+		returnlower surveillancecinterval;
+		returnupper surveillancecinterval;
+	BEGIN
+
+		-- Lower lifespan extremum
+		returnlower.cornercase := 'L';
+		returnlower.birthdate := greatestbirth;
+		returnlower.deceaseddate := leastdeceased;
+		returnlower.immigratedate := greatestimmigrate;
+		returnlower.emigratedate := leastemigrate;
+		returnlower.extremumstart := greatest
+		(
+			surveillancestart,
+			returnlower.birthdate,
+			COALESCE(returnlower.immigratedate, surveillancestart)
+		);
+		returnlower.extremumend := least
+		(
+			surveillanceend,
+			COALESCE(returnlower.deceaseddate, surveillanceend),
+			COALESCE(returnlower.emigratedate, surveillanceend)
+		);
+
+		-- Upper lifespane extremum
+		returnupper.cornercase := 'U';
+		returnupper.birthdate := leastbirth;
+		returnupper.deceaseddate := greatestdeceased;
+		returnupper.immigratedate := leastimmigrate;
+		returnupper.emigratedate := greatestemigrate;
+		returnupper.extremumstart := greatest
+		(
+			surveillancestart,
+			returnupper.birthdate,
+			COALESCE(returnupper.immigratedate, surveillancestart)
+		);
+		returnupper.extremumend := least
+		(
+			surveillanceend,
+			COALESCE(returnupper.deceaseddate, surveillanceend),
+			COALESCE(returnupper.emigratedate, surveillanceend)
+		);
+
+		-- Send
+		PIPE ROW (returnlower);
+		PIPE ROW (returnupper);
+		RETURN;
+	END;
+
+	/*
 	 *  Partition an event into fiscal years, subpartitioned by the birthday.
 	 */
-	FUNCTION generatecensus(eventstart IN DATE, eventend IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC AS
+	FUNCTION generatecensus
+	(
+		eventstart IN DATE,
+		eventend IN DATE,
+		birthdate IN DATE
+	) RETURN censusintervals PIPELINED DETERMINISTIC AS
 		returnfiscal censusinterval;
 		returnbirth censusinterval;
 		lastfiscal DATE := fiscalstart(eventend);
@@ -255,14 +357,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				returnbirth.intervalcount := 1 + ageyears(returnbirth.censusstart, lastfiscal);
 			
 			-- No first fiscal interval and no last birthday interval
-			WHEN yearanniversary(birthdate, returnfiscal.censusstart) <= eventstart AND eventend < yearanniversary(birthdate, lastfiscal) THEN
+			WHEN nextanniversary(birthdate, returnfiscal.censusstart) <= eventstart AND eventend < nextanniversary(birthdate, lastfiscal) THEN
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 2 * ageyears(returnfiscal.censusstart, lastfiscal);
 				returnbirth.intervalcount := 2 * ageyears(returnbirth.censusstart, lastfiscal);
 			
 			-- Only no first fiscal interval or only no birthday interval
-			WHEN yearanniversary(birthdate, returnfiscal.censusstart) <= eventstart OR eventend < yearanniversary(birthdate, lastfiscal) THEN
+			WHEN nextanniversary(birthdate, returnfiscal.censusstart) <= eventstart OR eventend < nextanniversary(birthdate, lastfiscal) THEN
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 1 + 2 * ageyears(returnfiscal.censusstart, lastfiscal);
@@ -280,11 +382,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		WHILE returnfiscal.censusstart <= lastfiscal LOOP
 
 			-- Birthday interval
-			returnfiscal.agestart := yearanniversary(birthdate, add_months(returnfiscal.censusstart, -12));
-			returnfiscal.ageend := yearanniversary(birthdate, returnfiscal.censusstart) - 1;
+			returnfiscal.agestart := prioranniversary(birthdate, returnfiscal.censusstart);
+			returnfiscal.ageend := prioranniversary(birthdate, returnfiscal.censusend) - 1;
 			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.agestart);
-			returnbirth.agestart := yearanniversary(birthdate, returnbirth.censusstart);
-			returnbirth.ageend := yearanniversary(birthdate, add_months(returnbirth.censusstart, 12)) - 1;
+			returnbirth.agestart := nextanniversary(birthdate, returnbirth.censusstart);
+			returnbirth.ageend := nextanniversary(birthdate, returnbirth.censusend) - 1;
 			returnbirth.intervalage := ageyears(birthdate, returnbirth.agestart);
 
 			-- Intersection of fiscal and age intervals
@@ -293,42 +395,42 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			returnbirth.intervalstart := greatest(returnbirth.censusstart, returnbirth.agestart);
 			returnbirth.intervalend := least(returnbirth.censusend, returnbirth.ageend);
 
-			-- Duration within the interval
-			returnfiscal.durationstart := greatest(eventstart, returnfiscal.intervalstart);
-			returnfiscal.durationend := least(eventend, returnfiscal.intervalend);
-			returnbirth.durationstart := greatest(eventstart, returnbirth.intervalstart);
-			returnbirth.durationend := least(eventend, returnbirth.intervalend);
+			-- Rectification of the intervals to the event boundaries
+			returnfiscal.durationstart := greatest(returnfiscal.intervalstart, eventstart);
+			returnfiscal.durationend := least(returnfiscal.intervalend, eventend);
+			returnbirth.durationstart := greatest(returnbirth.intervalstart, eventstart);
+			returnbirth.durationend := least(returnbirth.intervalend, eventend);
 
 			-- Fiscal start and event start flag
 			CASE returnfiscal.durationstart
 				WHEN eventstart THEN
-					returnfiscal.evententry := 1;
+					returnfiscal.intervalfirst := 1;
 				ELSE
-					returnfiscal.evententry := 0;
+					returnfiscal.intervalfirst := 0;
 			END CASE;
 			
 			-- Birth start and event start flag
 			CASE returnbirth.durationstart
 				WHEN eventstart THEN
-					returnbirth.evententry := 1;
+					returnbirth.intervalfirst := 1;
 				ELSE
-					returnbirth.evententry := 0;
+					returnbirth.intervalfirst := 0;
 			END CASE;
 
 			-- Fiscal end and event end flag
 			CASE returnfiscal.durationend
 				WHEN eventend THEN
-					returnfiscal.eventexit := 1;
+					returnfiscal.intervallast := 1;
 				ELSE
-					returnfiscal.eventexit := 0;
+					returnfiscal.intervallast := 0;
 			END CASE;
 			
 			-- Birth end and event end flag
 			CASE returnbirth.durationend
 				WHEN eventend THEN
-					returnbirth.eventexit := 1;
+					returnbirth.intervallast := 1;
 				ELSE
-					returnbirth.eventexit := 0;
+					returnbirth.intervallast := 0;
 			END CASE;
 
 			-- Assign duration, increment, and send
@@ -365,56 +467,51 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate an event into fiscal years, subpartitioned by the birthday.
 	 */
-	FUNCTION generatecensus(eventdate IN DATE, birthdate IN DATE) RETURN censusintervals PIPELINED DETERMINISTIC AS
+	FUNCTION generatecensus
+	(
+		eventdate IN DATE,
+		birthdate IN DATE
+	)
+	RETURN censusintervals PIPELINED DETERMINISTIC AS
 		returncensus censusinterval;
-		localbirth DATE;
 	BEGIN
 
-		-- Fiscal interval
+		-- Fiscal, age, and duration boundaries
 		returncensus.censusstart := fiscalstart(eventdate);
 		returncensus.censusend := fiscalend(eventdate);
-
-		-- Order and count
-		returncensus.intervalcount := 1;
-		returncensus.intervalorder := 1;
-
-		-- Assign the event to an interval
-		localbirth := yearanniversary(birthdate, returncensus.censusstart);
-		CASE
-
-			-- Birthday interval coincides with the fiscal interval
-			WHEN returncensus.censusstart = localbirth THEN
-				returncensus.agecoincidecensus := 1;
-				returncensus.agecoincideinterval := 1;
-				returncensus.agestart := localbirth;
-				returncensus.ageend := yearanniversary(birthdate, add_months(returncensus.censusstart, 12)) - 1;
-
-			-- Interval starting on the fiscal year start
-			WHEN eventdate < localbirth THEN
-				returncensus.agecoincidecensus := 0;
-				returncensus.agecoincideinterval := 0;
-				returncensus.agestart := yearanniversary(birthdate, add_months(returncensus.censusstart, -12));
-				returncensus.ageend := localbirth - 1;
-
-			-- Interval starting on the birthday
-			ELSE
-				returncensus.agecoincidecensus := 0;
-				returncensus.agecoincideinterval := 1;
-				returncensus.agestart := localbirth;
-				returncensus.ageend := yearanniversary(birthdate, add_months(returncensus.censusstart, 12)) - 1;
-		END CASE;
-
-		-- Final interval boundaries
+		returncensus.agestart := prioranniversary(birthdate, eventdate);
+		returncensus.ageend := nextanniversary(birthdate, eventdate) - 1;
 		returncensus.intervalstart := greatest(returncensus.censusstart, returncensus.agestart);
 		returncensus.intervalend := least(returncensus.censusend, returncensus.ageend);
 		returncensus.durationstart := eventdate;
 		returncensus.durationend := eventdate;
 
-		-- Age and days
-		returncensus.intervalage := ageyears(birthdate, returncensus.intervalstart);
+		-- Order, count, duration, and age
+		returncensus.intervalfirst := 1;
+		returncensus.intervallast := 1;
+		returncensus.intervalcount := 1;
+		returncensus.intervalorder := 1;
 		returncensus.durationdays := 1;
-		returncensus.evententry := 1;
-		returncensus.eventexit := 1;
+		returncensus.intervalage := ageyears(birthdate, returncensus.agestart);
+
+		-- Assign the event to an interval
+		CASE returncensus.censusstart
+
+			-- Birthday interval coincides with the fiscal interval
+			WHEN returncensus.agestart THEN
+				returncensus.agecoincidecensus := 1;
+				returncensus.agecoincideinterval := 1;
+
+			-- Interval starting on the fiscal year start
+			WHEN returncensus.intervalstart THEN
+				returncensus.agecoincidecensus := 0;
+				returncensus.agecoincideinterval := 0;
+
+			-- Interval starting on the birthday
+			ELSE
+				returncensus.agecoincidecensus := 0;
+				returncensus.agecoincideinterval := 1;
+		END CASE;
 
 		-- Send
 		PIPE ROW (returncensus);
@@ -424,15 +521,43 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Lower truncated years between start date and end date.
 	 */
-	FUNCTION ageyears(startdate IN DATE, enddate IN DATE) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION ageyears
+	(
+		startdate IN DATE,
+		enddate IN DATE
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN floor(months_between(enddate, startdate) / 12);
 	END ageyears;
 
 	/*
+	 *  The anniversary of the start date in the year preceding the end date.
+	 */
+	FUNCTION prioranniversary
+	(
+		startdate IN DATE,
+		enddate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
+		localmonths INTEGER := 12 * ageyears(startdate, enddate);
+	BEGIN
+		RETURN least
+		(
+			1 + add_months(startdate - 1, localmonths),
+			add_months(startdate, localmonths)
+		);
+	END prioranniversary;
+
+	/*
 	 *  The anniversary of the start date in the year following the end date.
 	 */
-	FUNCTION yearanniversary(startdate IN DATE, enddate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION nextanniversary
+	(
+		startdate IN DATE,
+		enddate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 		localmonths INTEGER := 12 * (1 + ageyears(startdate, enddate));
 	BEGIN
 		RETURN least
@@ -440,12 +565,16 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			1 + add_months(startdate - 1, localmonths),
 			add_months(startdate, localmonths)
 		);
-	END yearanniversary;
+	END nextanniversary;
 
 	/*
 	 *  Truncate a date to the start of the fiscal year, the preceding April 1.
 	 */
-	FUNCTION fiscalstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION fiscalstart
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(TRUNC(add_months(inputdate, -3), 'yyyy'), 3);
 	END fiscalstart;
@@ -453,7 +582,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the end of the fiscal year, the following March 31.
 	 */
-	FUNCTION fiscalend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION fiscalend
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(fiscalstart(inputdate), 12) - 1;
 	END fiscalend;
@@ -461,7 +594,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the fiscal year given the date as string.
 	 */
-	FUNCTION fiscalstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION fiscalstart
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalstart(cleandate(datestring, formatmodel));
 	END fiscalstart;
@@ -469,7 +607,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the fiscal year given the date as string.
 	 */
-	FUNCTION fiscalend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION fiscalend
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalend(cleandate(datestring, formatmodel));
 	END fiscalend;
@@ -477,7 +620,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the fiscal year given the date as string, and default format.
 	 */
-	FUNCTION fiscalstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION fiscalstart
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalstart(cleandate(datestring));
 	END fiscalstart;
@@ -485,7 +632,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the fiscal year given the date as string, and default format.
 	 */
-	FUNCTION fiscalend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION fiscalend
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN fiscalend(cleandate(datestring));
 	END fiscalend;
@@ -493,7 +644,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the start of the calendar year, the preceding January 1.
 	 */
-	FUNCTION calendarstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION calendarstart
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN TRUNC(inputdate, 'yyyy');
 	END calendarstart;
@@ -501,7 +656,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the end of the calendar year, the following December 31.
 	 */
-	FUNCTION calendarend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION calendarend
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(calendarstart(inputdate), 12) - 1;
 	END calendarend;
@@ -509,7 +668,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the calendar year given the date as string.
 	 */
-	FUNCTION calendarstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION calendarstart
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarstart(cleandate(datestring, formatmodel));
 	END calendarstart;
@@ -517,7 +681,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the calendar year given the date as string.
 	 */
-	FUNCTION calendarend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION calendarend
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarend(cleandate(datestring, formatmodel));
 	END calendarend;
@@ -525,7 +694,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the calendar year given the date as string, and default format.
 	 */
-	FUNCTION calendarstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION calendarstart
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarstart(cleandate(datestring));
 	END calendarstart;
@@ -533,7 +706,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the calendar year given the date as string, and default format.
 	 */
-	FUNCTION calendarend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION calendarend
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN calendarend(cleandate(datestring));
 	END calendarend;
@@ -541,7 +718,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the start of the quarter.
 	 */
-	FUNCTION quarterstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION quarterstart
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN TRUNC(inputdate, 'q');
 	END quarterstart;
@@ -549,7 +730,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the end of the quarter.
 	 */
-	FUNCTION quarterend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION quarterend
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(quarterstart(inputdate), 3) - 1;
 	END quarterend;
@@ -557,7 +742,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the quarter given the date as string.
 	 */
-	FUNCTION quarterstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION quarterstart
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN quarterstart(cleandate(datestring, formatmodel));
 	END quarterstart;
@@ -565,7 +755,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the quarter given the date as string.
 	 */
-	FUNCTION quarterend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION quarterend
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN quarterend(cleandate(datestring, formatmodel));
 	END quarterend;
@@ -573,7 +768,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the quarter given the date as string, and default format.
 	 */
-	FUNCTION quarterstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION quarterstart
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN quarterstart(cleandate(datestring));
 	END quarterstart;
@@ -581,7 +780,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the quarter given the date as string, and default format.
 	 */
-	FUNCTION quarterend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION quarterend
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN quarterend(cleandate(datestring));
 	END quarterend;
@@ -589,7 +792,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the start of the month.
 	 */
-	FUNCTION monthstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION monthstart
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN TRUNC(inputdate, 'mm');
 	END monthstart;
@@ -597,7 +804,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the end of the month.
 	 */
-	FUNCTION monthend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION monthend
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN add_months(monthstart(inputdate), 1) - 1;
 	END monthend;
@@ -605,7 +816,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the month given the date as string.
 	 */
-	FUNCTION monthstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION monthstart
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN monthstart(cleandate(datestring, formatmodel));
 	END monthstart;
@@ -613,7 +829,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the month given the date as string.
 	 */
-	FUNCTION monthend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION monthend
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN monthend(cleandate(datestring, formatmodel));
 	END monthend;
@@ -621,7 +842,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the month given the date as string, and default format.
 	 */
-	FUNCTION monthstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION monthstart
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN monthstart(cleandate(datestring));
 	END monthstart;
@@ -629,7 +854,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the month given the date as string, and default format.
 	 */
-	FUNCTION monthend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION monthend
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN monthend(cleandate(datestring));
 	END monthend;
@@ -637,7 +866,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the start of the week.
 	 */
-	FUNCTION weekstart(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION weekstart
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN TRUNC(inputdate, 'dy');
 	END weekstart;
@@ -645,7 +878,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Truncate a date to the end of the week.
 	 */
-	FUNCTION weekend(inputdate IN DATE) RETURN DATE DETERMINISTIC AS
+	FUNCTION weekend
+	(
+		inputdate IN DATE
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN weekstart(inputdate) + 6;
 	END weekend;
@@ -653,7 +890,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the week given the date as string.
 	 */
-	FUNCTION weekstart(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION weekstart
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN weekstart(cleandate(datestring, formatmodel));
 	END weekstart;
@@ -661,7 +903,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the week given the date as string.
 	 */
-	FUNCTION weekend(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION weekend
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN weekend(cleandate(datestring, formatmodel));
 	END weekend;
@@ -669,7 +916,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the start of the week given the date as string, and default format.
 	 */
-	FUNCTION weekstart(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION weekstart
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN weekstart(cleandate(datestring));
 	END weekstart;
@@ -677,7 +928,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Return the end of the week given the date as string, and default format.
 	 */
-	FUNCTION weekend(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION weekend
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN weekend(cleandate(datestring));
 	END weekend;
@@ -686,7 +941,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Try to convert a string to a date according to the format model. Return null when the
 	 *  string cannot be converted to a date.
 	 */
-	FUNCTION cleandate(datestring IN VARCHAR2, formatmodel IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION cleandate
+	(
+		datestring IN VARCHAR2,
+		formatmodel IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 		returndate DATE;
 	BEGIN
 		returndate := TO_DATE(datestring, formatmodel);
@@ -701,7 +961,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Try to convert a string to a date using a default format model. Return null when the
 	 *  string cannot be converted to a date.
 	 */
-	FUNCTION cleandate(datestring IN VARCHAR2) RETURN DATE DETERMINISTIC AS
+	FUNCTION cleandate
+	(
+		datestring IN VARCHAR2
+	)
+	RETURN DATE DETERMINISTIC AS
 	BEGIN
 		RETURN cleandate(datestring, 'YYYYMMDD');
 	END cleandate;
@@ -710,7 +974,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Check for a minimally plausible Alberta provincial healthcare number, containing
 	 *  exactly nine digits with no leading zeroes, return null otherwise.
 	 */
-	FUNCTION cleanphn(inputphn IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleanphn
+	(
+		inputphn IN INTEGER
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		CASE
 			WHEN inputphn BETWEEN 100000000 AND 999999999 THEN
@@ -725,7 +993,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Alberta provincial healthcare number, containing exactly nine digits with no leading
 	 *  zeroes, return null otherwise.
 	 */
-	FUNCTION cleanphn(inputphn IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleanphn
+	(
+		inputphn IN VARCHAR2
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN cleanphn(cleaninteger(inputphn));
 	END cleanphn;
@@ -734,7 +1006,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  For fields intended to indicate biological sex, not self identified gender, clean all
 	 *  characters not indicating either female or male.
 	 */
-	FUNCTION cleansex(inputsex IN VARCHAR2) RETURN VARCHAR2 DETERMINISTIC AS
+	FUNCTION cleansex
+	(
+		inputsex IN VARCHAR2
+	)
+	RETURN VARCHAR2 DETERMINISTIC AS
 	BEGIN
 		RETURN regexp_substr(UPPER(inputsex), '[FM]', 1, 1, 'i');
 	END cleansex;
@@ -742,7 +1018,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Ensure the inpatient care facility number is between 80000 and 80999.
 	 */
-	FUNCTION cleaninpatient(inputfacility IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleaninpatient
+	(
+		inputfacility IN INTEGER
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		CASE
 			WHEN inputfacility BETWEEN 80000 AND 80999 THEN
@@ -755,7 +1035,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Convert to number and ensure the inpatient facility number is between 80000 and 80999.
 	 */
-	FUNCTION cleaninpatient(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleaninpatient
+	(
+		inputfacility IN VARCHAR2
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN cleaninpatient(cleaninteger(inputfacility));
 	END cleaninpatient;
@@ -763,7 +1047,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Ensure the ambulatory care facility number is between 88000 and 88999.
 	 */
-	FUNCTION cleanambulatory(inputfacility IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleanambulatory
+	(
+		inputfacility IN INTEGER
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		CASE
 			WHEN inputfacility BETWEEN 88000 AND 88999 THEN
@@ -777,7 +1065,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Convert to number ensure the ambulatory care facility number is between 88000 and 
 	 *  88999.
 	 */
-	FUNCTION cleanambulatory(inputfacility IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleanambulatory
+	(
+		inputfacility IN VARCHAR2
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN cleanambulatory(cleaninteger(inputfacility));
 	END cleanambulatory;
@@ -786,7 +1078,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Check for a minimally plausible Alberta provincial provider identifier, containing
 	 *  exactly nine digits with no leading zeroes, return null otherwise.
 	 */
-	FUNCTION cleanprid(inputprid IN INTEGER) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleanprid
+	(
+		inputprid IN INTEGER
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		CASE
 			WHEN inputprid BETWEEN 100000000 AND 999999999 THEN
@@ -801,7 +1097,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 *  Alberta provincial provider identifier, containing exactly nine digits with no leading
 	 *  zeroes, return null otherwise.
 	 */
-	FUNCTION cleanprid(inputprid IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleanprid
+	(
+		inputprid IN VARCHAR2
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN cleanprid(cleaninteger(inputprid));
 	END cleanprid;
@@ -809,7 +1109,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	/*
 	 *  Clean a string of all non-numeric characters.
 	 */
-	FUNCTION cleaninteger(inputstring IN VARCHAR2) RETURN INTEGER DETERMINISTIC AS
+	FUNCTION cleaninteger
+	(
+		inputstring IN VARCHAR2
+	)
+	RETURN INTEGER DETERMINISTIC AS
 	BEGIN
 		RETURN to_number(regexp_replace(inputstring, '[^0-9]', ''));
 	END cleaninteger;

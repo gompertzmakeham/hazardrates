@@ -28,22 +28,74 @@ SELECT 'hazardutilities.calendarend(''20181121'', ''abcd'')' functioncall, hazar
 SELECT 'hazardutilities.calendarend(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.calendarend('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.calendarend(''abcd'')' functioncall, hazardutilities.calendarend('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.calendarend(''20181121'')' functioncall, hazardutilities.calendarend('20181121') callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE)' functioncall, hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE + 1)' functioncall, hazardutilities.yearanniversary(TRUNC(SYSDATE), SYSDATE + 1) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TRUNC(SYSDATE) - 1000, SYSDATE)' functioncall, hazardutilities.yearanniversary(TRUNC(SYSDATE) - 1000, SYSDATE) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.yearanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.yearanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual;
+SELECT 'hazardutilities.quarterstart(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.quarterstart(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterend(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.quarterend(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterstart(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.quarterstart('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterstart(''20181121'', ''abcd'')' functioncall, hazardutilities.quarterstart('20181121', 'abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterstart(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.quarterstart('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterstart(''abcd'')' functioncall, hazardutilities.quarterstart('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterstart(''20181121'')' functioncall, hazardutilities.quarterstart('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterend(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.quarterend('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterend(''20181121'', ''abcd'')' functioncall, hazardutilities.quarterend('20181121', 'abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterend(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.quarterend('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterend(''abcd'')' functioncall, hazardutilities.quarterend('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.quarterend(''20181121'')' functioncall, hazardutilities.quarterend('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthstart(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.monthstart(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthend(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.monthend(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthstart(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.monthstart('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthstart(''20181121'', ''abcd'')' functioncall, hazardutilities.monthstart('20181121', 'abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthstart(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.monthstart('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthstart(''abcd'')' functioncall, hazardutilities.monthstart('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthstart(''20181121'')' functioncall, hazardutilities.monthstart('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthend(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.monthend('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthend(''20181121'', ''abcd'')' functioncall, hazardutilities.monthend('20181121', 'abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthend(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.monthend('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthend(''abcd'')' functioncall, hazardutilities.monthend('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.monthend(''20181121'')' functioncall, hazardutilities.monthend('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekstart(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.weekstart(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekend(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.weekend(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekstart(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.weekstart('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekstart(''20181121'', ''abcd'')' functioncall, hazardutilities.weekstart('20181121', 'abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekstart(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.weekstart('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekstart(''abcd'')' functioncall, hazardutilities.weekstart('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekstart(''20181121'')' functioncall, hazardutilities.weekstart('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekend(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.weekend('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekend(''20181121'', ''abcd'')' functioncall, hazardutilities.weekend('20181121', 'abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekend(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.weekend('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekend(''abcd'')' functioncall, hazardutilities.weekend('abcd') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.weekend(''20181121'')' functioncall, hazardutilities.weekend('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TRUNC(SYSDATE), SYSDATE)' functioncall, hazardutilities.nextanniversary(TRUNC(SYSDATE), SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TRUNC(SYSDATE), SYSDATE + 1)' functioncall, hazardutilities.nextanniversary(TRUNC(SYSDATE), SYSDATE + 1) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TRUNC(SYSDATE) - 1000, SYSDATE)' functioncall, hazardutilities.nextanniversary(TRUNC(SYSDATE) - 1000, SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.nextanniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.nextanniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TRUNC(SYSDATE), SYSDATE)' functioncall, hazardutilities.prioranniversary(TRUNC(SYSDATE), SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TRUNC(SYSDATE), SYSDATE + 1)' functioncall, hazardutilities.prioranniversary(TRUNC(SYSDATE), SYSDATE + 1) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TRUNC(SYSDATE) - 1000, SYSDATE)' functioncall, hazardutilities.prioranniversary(TRUNC(SYSDATE) - 1000, SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20000301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20000301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20010301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20010301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20020301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20020301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.prioranniversary(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.prioranniversary(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual;
 
 -- Number utilities
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360), SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -360), SYSDATE) callresult FROM dual UNION ALL
@@ -51,6 +103,7 @@ SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360) + 23, SYSDATE)' funct
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -360) - 23, SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -360) - 23, SYSDATE) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -12) + 23, SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -12) + 23, SYSDATE) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.ageyears(add_months(SYSDATE, -12), SYSDATE)' functioncall, hazardutilities.ageyears(add_months(SYSDATE, -12), SYSDATE) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.ageyears(SYSDATE, add_months(SYSDATE, -36))' functioncall, hazardutilities.ageyears(SYSDATE, add_months(SYSDATE, -36)) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleaninteger(''987654321'')' functioncall, hazardutilities.cleaninteger('987654321') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleaninteger(''abcd'')' functioncall, hazardutilities.cleaninteger('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleaninteger(''12345a67890'')' functioncall, hazardutilities.cleaninteger('12345a67890') callresult FROM dual UNION ALL
@@ -88,7 +141,56 @@ WITH
 		SELECT add_months(hazardutilities.fiscalstart(SYSDATE) - 275, -360) birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
 		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
 		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) - 315 birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
-		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) - 182 birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual
+		SELECT add_months(hazardutilities.fiscalstart(SYSDATE), -360) - 182 birthdate, hazardutilities.fiscalstart(SYSDATE) - 275 eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800229', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800228', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800228', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800228', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800228', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800228', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800228', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19800301', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810228', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19810301', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790228', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20030228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20030301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20040228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20040229', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20040301', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20050228', 'yyyymmdd') eventdate FROM dual UNION ALL
+		SELECT TO_DATE('19790301', 'yyyymmdd') birthdate, TO_DATE('20050301', 'yyyymmdd') eventdate FROM dual
 	)
 SELECT
 	a0.*,

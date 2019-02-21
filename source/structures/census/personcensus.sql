@@ -20,8 +20,8 @@ SELECT
 	CAST(a0.surveillancedeceased * a1.eventexit AS INTEGER) intervaldeceased,
 	CAST(a0.surveillanceimmigrate * a1.evententry AS INTEGER) intervalimmigrate,
 	CAST(a0.surveillanceemigrate * a1.eventexit AS INTEGER) intervalemigrate,
-	CAST(a1.evententry AS INTEGER) intervalfirst,
-	CAST(a1.eventexit AS INTEGER) intervallast,
+	CAST(a1.intervalfirst AS INTEGER) intervalfirst,
+	CAST(a1.intervallast AS INTEGER) intervallast,
 	CAST(a1.intervalcount AS INTEGER) intervalcount,
 	CAST(a1.intervalorder AS INTEGER) intervalorder
 FROM

@@ -151,12 +151,12 @@ WITH
 			a0.clct_dt greatestservice,
 
 			-- Week boundaries of least service
-			hazardutilities.fiscalstart(a0.clct_dt) leastsurveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) leastsurveillanceend,
+			hazardutilities.weekstart(a0.clct_dt) leastsurveillancestart,
+			hazardutilities.weekend(a0.clct_dt) leastsurveillanceend,
 
 			-- Week boundaries of greatest service
-			hazardutilities.fiscalstart(a0.clct_dt) greatestsurveillancestart,
-			hazardutilities.fiscalend(a0.clct_dt) greatestsurveillanceend,
+			hazardutilities.weekstart(a0.clct_dt) greatestsurveillancestart,
+			hazardutilities.weekend(a0.clct_dt) greatestsurveillanceend,
 
 			-- Coverage unknown
 			CAST(NULL AS INTEGER) albertacoverage,
@@ -215,7 +215,7 @@ COMMENT ON COLUMN surveylaboratorycollection.greatestdeceased IS 'Latest recorde
 COMMENT ON COLUMN surveylaboratorycollection.leastservice IS 'Earliest healthcare adminstrative record.';
 COMMENT ON COLUMN surveylaboratorycollection.greatestservice IS 'Latest healthcare adminstrative record.';
 COMMENT ON COLUMN surveylaboratorycollection.leastsurveillancestart IS 'Start date of the least observation bounds of the person.';
-COMMENT ON COLUMN surveylaboratorycollection.leastsurveillanceend IS 'End date of the leastobservation bounds of the person.';
+COMMENT ON COLUMN surveylaboratorycollection.leastsurveillanceend IS 'End date of the least observation bounds of the person.';
 COMMENT ON COLUMN surveylaboratorycollection.greatestsurveillancestart IS 'Start date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveylaboratorycollection.greatestsurveillanceend IS 'End date of the greatest observation bounds of the person.';
 COMMENT ON COLUMN surveylaboratorycollection.surveillancebirth IS 'Birth observed in the surveillance interval: 1 yes, 0 no.';
