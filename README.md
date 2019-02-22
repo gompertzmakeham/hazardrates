@@ -38,5 +38,5 @@ List and cite data sources and standards.
 - *Annual Registry* Alberta Health [Alberta Health Care Insurance Plan](https://www.alberta.ca/ahcip.aspx)
 - *Home Care* proprietary direct access (Civica, Meditech, StrataHealth).
 - *Designated Supportive Living* proprietary direct access (Civica, Meditech, StrataHealth).
-- *Community Laboratory Collection* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
+- *Community Laboratory Collections* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
 - *Diagnostic Imaging* proprietary direct access (in staging).
