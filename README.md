@@ -28,7 +28,7 @@ Partitions total ordered under absolute set ordering.
 Data Sources
 ------------
 
-List and cite data sources and standards.
+Of the 19 data sources that currently feed into this hazard rates analysis, a number either partially or completely publish their data collection methodology, definitions, and standards:
 
 - *Ambulatory care* Canadian Institute of Health Information [National Ambulatory Care Reporting System](https://www.cihi.ca/en/national-ambulatory-care-reporting-system-metadata).
   - 2 data sources from 2002 onward; currently approximately 126 000 000 events.
@@ -43,8 +43,8 @@ List and cite data sources and standards.
 - *Annual Registry* Alberta Health [Alberta Health Care Insurance Plan](https://www.alberta.ca/ahcip.aspx)
   - 1 data source from 1994 onward; currently approximately 90 000 000 events.
 - *Home Care and Designated Supportive Living* proprietary direct access (Civica, Meditech, StrataHealth).
-  - 4 data sources, from 2010 onward; currently approximately 53 000 events.
+  - 4 data sources, from 2012 onward; currently approximately 53 000 events.
 - *Community Laboratory Collections* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
-  - 4 data sources, phased adoption 2008, 2009, 2012, and 20104 onward; currently approximately 1 500 000 000 events.
+  - 4 data sources, phased adoption 2008, 2009, 2012, and 2014 onward; currently approximately 1 500 000 000 events.
 - *Diagnostic Imaging* proprietary direct access (in staging).
   - Not calibrated yet.
