@@ -29,3 +29,14 @@ Data Sources
 ------------
 
 List and cite data sources and standards.
+
+- *Ambulatory care* Canadian Institute of Health Information [National Ambulatory Care Reporting System](https://www.cihi.ca/en/national-ambulatory-care-reporting-system-metadata), ambulatory care.
+- *Inpatient care* Canadian Institute of Health Information [Discharge Abstract Database](https://www.cihi.ca/en/discharge-abstract-database-metadata).
+- *Long Term Care* Canadian Institute of Health Information [Resident Assessment Instrument](https://www.cihi.ca/en/residential-care).
+- *Primary Care* Alberta Health [Schedule of Medical Benefits](https://www.alberta.ca/fees-health-professionals.aspx).
+- *Community Pharmacy Dispensing* Alberta Health [Pharmacy Information Network](http://www.albertanetcare.ca/learningcentre/Pharmaceutical-Information-Network.htm).
+- *Annual Registry* Alberta Health [Alberta Health Care Insurance Plan](https://www.alberta.ca/ahcip.aspx)
+- *Home Care* proprietary direct access (Civica, Meditech, StrataHealth).
+- *Designated Supportive Living* proprietary direct access (Civica, Meditech, StrataHealth).
+- *Community Laboratory Collection* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
+- *Diagnostic Imaging* proprietary direct access (in staging).
