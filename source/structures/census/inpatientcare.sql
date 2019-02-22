@@ -5,8 +5,8 @@ SELECT
 	CAST(a2.intervalstart AS DATE) intervalstart,
 	CAST(a2.intervalend AS DATE) intervalend,
 	CAST(SUM(a2.durationdays) AS INTEGER) staydays,
-	CAST(SUM(a2.evententry) AS INTEGER) admissioncount,
-	CAST(SUM(a2.eventexit) AS INTEGER) dischargecount,
+	CAST(SUM(a2.intervalfirst) AS INTEGER) admissioncount,
+	CAST(SUM(a2.intervallast) AS INTEGER) dischargecount,
 	CAST(COUNT(*) AS INTEGER) intersectingstays
 FROM
 	personsurveillance a0
@@ -23,8 +23,8 @@ FROM
 	(
 		hazardutilities.generatecensus
 		(
-			greatest(a0.extremumstart, hazardutilities.cleandate(a1.admitdate)),
-			least(a0.extremumend, hazardutilities.cleandate(a1.disdate)),
+			hazardutilities.cleandate(a1.admitdate),
+			hazardutilities.cleandate(a1.disdate),
 			a0.birthdate
 		)
 	) a2

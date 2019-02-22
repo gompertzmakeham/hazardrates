@@ -4,8 +4,6 @@ SELECT
 	/*+ cardinality(a1, 1) */
 	CAST(a0.uliabphn AS INTEGER) uliabphn,
 	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
-	CAST(a1.agecoincideinterval AS INTEGER) agecoincideinterval,
-	CAST(a1.agecoincidecensus AS INTEGER) agecoincidecensus,
 	CAST(a1.censusstart AS DATE) censusstart,
 	CAST(a1.censusend AS DATE) censusend,
 	CAST(a1.agestart AS DATE) agestart,
@@ -16,10 +14,32 @@ SELECT
 	CAST(a1.durationend AS DATE) durationend,
 	CAST(a1.durationdays AS INTEGER) durationdays,
 	CAST(a1.intervalage AS INTEGER) intervalage,
-	CAST(a0.surveillancebirth * a1.evententry AS INTEGER) intervalbirth,
-	CAST(a0.surveillancedeceased * a1.eventexit AS INTEGER) intervaldeceased,
-	CAST(a0.surveillanceimmigrate * a1.evententry AS INTEGER) intervalimmigrate,
-	CAST(a0.surveillanceemigrate * a1.eventexit AS INTEGER) intervalemigrate,
+	CAST(a1.agecoincideinterval AS INTEGER) agecoincideinterval,
+	CAST(a1.agecoincidecensus AS INTEGER) agecoincidecensus,
+	CASE
+		WHEN a0.durationstart <= a0.birthdate THEN
+			CAST(1 AS INTEGER)
+		ELSE
+			CAST(0 AS INTEGER)
+	END intervalbirth,
+	CASE
+		WHEN a0.deceasedate <= a0.durationend THEN
+			CAST(1 AS INTEGER)
+		ELSE
+			CAST(0 AS INTEGER)
+	END intervaldeceased,
+	CASE
+		WHEN a0.durationstart <= a0.immigratedate THEN
+			CAST(1 AS INTEGER)
+		ELSE
+			CAST(0 AS INTEGER)
+	END intervalimmigrate,
+	CASE
+		WHEN a0.emigratedate <= a0.durateionend THEN
+			CAST(1 AS INTEGER)
+		ELSE
+			CAST(0 AS INTEGER)
+	END intervalemigrate,
 	CAST(a1.intervalfirst AS INTEGER) intervalfirst,
 	CAST(a1.intervallast AS INTEGER) intervallast,
 	CAST(a1.intervalcount AS INTEGER) intervalcount,
@@ -32,8 +52,6 @@ FROM
 COMMENT ON MATERIALIZED VIEW personcensus IS 'For every person that at any time was covered by Alberta Healthcare Insurance partition the surviellance interval by the intersections of fiscal years and age years, rectified by the start and end of the surveillance interval.';
 COMMENT ON COLUMN personcensus.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN personcensus.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
-COMMENT ON COLUMN personcensus.agecoincideinterval IS 'Interval starts on the birthday: 1 yes, 0 no';
-COMMENT ON COLUMN personcensus.agecoincidecensus IS 'Birthday is the start of the fical year (April 1): 1 yes, 0 no.';
 COMMENT ON COLUMN personcensus.censusstart IS 'Closed start of the fiscal year, April 1.';
 COMMENT ON COLUMN personcensus.censusend IS 'Closed end of the fiscal year, March 31.';
 COMMENT ON COLUMN personcensus.agestart IS 'Closed start of the age interval.';
@@ -44,6 +62,8 @@ COMMENT ON COLUMN personcensus.durationstart IS 'Closed start of the interval, r
 COMMENT ON COLUMN personcensus.durationend IS 'Closed end of the interval, rectified to the end of the surveillance interval.';
 COMMENT ON COLUMN personcensus.durationdays IS 'Duration of the interval in days, an integer starting at 1, using the convention that the interval is closed so that the duration is end minus start plus one day.';
 COMMENT ON COLUMN personcensus.intervalage IS 'Age in years at the start of the interval, an integer starting at 0.';
+COMMENT ON COLUMN personcensus.agecoincideinterval IS 'Interval starts on the birthday: 1 yes, 0 no';
+COMMENT ON COLUMN personcensus.agecoincidecensus IS 'Birthday is the start of the fical year (April 1): 1 yes, 0 no.';
 COMMENT ON COLUMN personcensus.intervalbirth IS 'Census interval starts on the persons birth: 1 yes, 0 no.';
 COMMENT ON COLUMN personcensus.intervaldeceased IS 'Census interval ends on the persons death: 1 yes, 0 no.';
 COMMENT ON COLUMN personcensus.intervalimmigrate IS 'Census interval starts on the persons immigration: 1 yes, 0 no.';

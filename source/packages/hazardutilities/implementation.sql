@@ -83,42 +83,50 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 
 		-- Least immigration date
 		CASE
-			WHEN returnrow.leastbirth < returnrow.surveillancestart AND surveillanceimmigrate = 1 THEN
-				returnrow.leastimmigrate := leastsurveillancestart;
-			ELSE
+			WHEN returnrow.surveillancestart <= returnrow.leastbirth THEN
 				returnrow.leastimmigrate := NULL;
+			WHEN surveillanceimmigrate = 0 THEN
+				returnrow.leastimmigrate := NULL;
+			ELSE
+				returnrow.leastimmigrate := leastsurveillancestart;
 		END CASE;
 
 		-- Greatest immigration date
 		CASE
-			WHEN returnrow.greatestbirth < returnrow.surveillancestart AND surveillanceimmigrate = 1 THEN
+			WHEN returnrow.surveillancestart <= returnrow.greatestbirth THEN
+				returnrow.greatestimmigrate := NULL;
+			WHEN surveillanceimmigrate = 0 THEN
+				returnrow.greatestimmigrate := NULL;
+			ELSE
 				returnrow.greatestimmigrate := least
 				(
 					leastsurveillanceend,
 					COALESCE(leastservice, leastsurveillanceend)
 				);
-			ELSE
-				returnrow.greatestimmigrate := NULL;
 		END CASE;
 
 		-- Least emigration date
 		CASE
-			WHEN returnrow.surveillanceend < returnrow.leastdeceased AND surveillanceemigrate = 1 THEN
+			WHEN returnrow.leastdeceased <= returnrow.surveillanceend THEN
+				returnrow.leastemigrate := NULL;
+			WHEN surveillanceemigrate = 0 THEN
+				returnrow.leastemigrate := NULL;
+			ELSE
 				returnrow.leastemigrate := greatest
 				(
 					greatestsurveillancestart,
 					COALESCE(greatestservice, greatestsurveillancestart)
 				);
-			ELSE
-				returnrow.leastemigrate := NULL;
 		END CASE;
 
 		-- Greatest emigration date
 		CASE
-			WHEN returnrow.surveillanceend < returnrow.greatestdeceased AND surveillanceemigrate = 1 THEN
-				returnrow.greatestemigrate := greatestsurveillanceend;
-			ELSE
+			WHEN returnrow.greatestdeceased <= returnrow.surveillanceend THEN
 				returnrow.greatestemigrate := NULL;
+			WHEN surveillanceemigrate = 0 THEN
+				returnrow.greatestemigrate := NULL;
+			ELSE
+				returnrow.greatestemigrate := greatestsurveillanceend;
 		END CASE;
 
 		-- Birth date equipoise flags
@@ -296,7 +304,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			COALESCE(returnlower.emigratedate, surveillanceend)
 		);
 
-		-- Upper lifespane extremum
+		-- Upper lifespan extremum
 		returnupper.cornercase := 'U';
 		returnupper.birthdate := leastbirth;
 		returnupper.deceaseddate := greatestdeceased;
@@ -329,7 +337,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		eventstart IN DATE,
 		eventend IN DATE,
 		birthdate IN DATE
-	) RETURN censusintervals PIPELINED DETERMINISTIC AS
+	)
+	RETURN censusintervals PIPELINED DETERMINISTIC AS
 		returnfiscal censusinterval;
 		returnbirth censusinterval;
 		lastfiscal DATE := fiscalstart(eventend);

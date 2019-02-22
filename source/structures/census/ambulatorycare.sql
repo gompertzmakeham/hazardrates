@@ -96,8 +96,6 @@ FROM
 	daydata a1
 	ON
 		a0.uliabphn = a1.uliabphn
-		AND
-		a1.visitdate BETWEEN a0.extremumstart AND a0.extremumend
 	CROSS JOIN
 	TABLE(hazardutilities.generatecensus(a1.visitdate, a0.birthdate)) a2
 GROUP BY
