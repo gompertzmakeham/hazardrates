@@ -52,7 +52,7 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
 - *Community Pharmacy Dispensing* Alberta Health [Pharmacy Information Network](http://www.albertanetcare.ca/learningcentre/Pharmaceutical-Information-Network.htm).
   - 1 data source from 2008 onward; currently approximately 605 000 000 events.
 - *Annual Registry* Alberta Health [Alberta Health Care Insurance Plan](https://www.alberta.ca/ahcip.aspx)
-  - 1 data source from 1994 onward; currently approximately 90 000 000 events.
+  - 1 data source from 1993 onward; currently approximately 90 000 000 events.
 - *Home Care and Designated Supportive Living* proprietary direct access (Civica, Meditech, StrataHealth).
   - 3 data sources, phased adoption 2008, 2010, and 2012 onward; currently approximately 53 000 events.
 - *Community Laboratory Collections* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
