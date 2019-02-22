@@ -13,7 +13,7 @@ High resolution estimation of mortality and utilization hazard rates is accompli
 Overview
 --------
 
-The construction of the denominators and numerators of the hazard rate analysis broadly proceeds in 10 ad hoc map-reduce steps, with reconstitution into observation intervals:
+The construction of the denominators and numerators of the hazard rate analysis broadly proceeds in 10 steps of ad hoc map-reduce and reconstitution into observation intervals:
 
 1. Ingest independently and in parallel the data sources, mapping the required features.
 2. Digest independently and in parallel the mapped data sources, reducing each source to one record per person.
