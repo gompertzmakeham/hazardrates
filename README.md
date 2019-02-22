@@ -13,7 +13,18 @@ High resolution estimation of mortality and utilization hazard rates is accompli
 Overview
 --------
 
-Outline of ingest-digest-reconstitute map-reduce steps.
+The construction of the denominators and numerators of the hazard rate analysis broadly proceeds in 10 ad hoc map-reduce steps, with reconstitution into observation intervals:
+
+1. Ingest independently and in parallel the data sources, mapping the required features
+2. Digest independently and in parallel the mapped data sources, reducing each source to one record per person.
+3. Ingest sequentially the reduceded data sources, mapping into a common structure
+4. Digest sequentially the mapped common structure, reducing to one master record per peson, containing the extremums of life event dates.
+5. Reconstitue the reduced master record of people to two records per person, containing the shortest and longest observation span, based on equivocation of the dates of birth, death, immigration, and emigration.
+6. Ingest independently and in parallel the data sources, mapping to the pairs of reconstituted records.
+7. Digest independently and in parallel the mapped data sources, reducing each source to on record per person per observation interval.
+8. Ingest sequentially the reduced records per person per observation interval, mapping to a common data structure
+9. Disgest sequenctally the mapped common data struture, reducing to one master record per person per observation interval, containing the utilization and outcomes in that observation interval.
+10. Reconstitute the mapped pair of extremum observation records to one record per observation interval.
 
 Events
 ------
@@ -43,7 +54,7 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
 - *Annual Registry* Alberta Health [Alberta Health Care Insurance Plan](https://www.alberta.ca/ahcip.aspx)
   - 1 data source from 1994 onward; currently approximately 90 000 000 events.
 - *Home Care and Designated Supportive Living* proprietary direct access (Civica, Meditech, StrataHealth).
-  - 4 data sources, from 2012 onward; currently approximately 53 000 events.
+  - 3 data sources, phased adoption 2008, 2010, and 2012 onward; currently approximately 53 000 events.
 - *Community Laboratory Collections* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
   - 4 data sources, phased adoption 2008, 2009, 2012, and 2014 onward; currently approximately 1 500 000 000 events.
 - *Diagnostic Imaging* proprietary direct access (in staging).
