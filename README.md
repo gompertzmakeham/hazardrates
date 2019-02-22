@@ -23,8 +23,8 @@ The construction of the denominators and numerators of the hazard rate analysis 
 6. Ingest independently and in parallel the data sources, mapping to the pairs of reconstituted records.
 7. Digest independently and in parallel the mapped data sources, reducing each source to on record per person per observation interval.
 8. Ingest sequentially the reduced records per person per observation interval, mapping to a common data structure.
-9. Disgest sequenctally the mapped common data struture, reducing to one master record per person per observation interval, containing the utilization and outcomes in that observation interval.
-10. Reconstitute the mapped pair of extremum observation records to one record per observation interval.
+9. Disgest sequentially the mapped common data struture, reducing by temporal join to one record per person per observation interval, containing the utilization and outcomes in that observation interval.
+10. Reconstitute by temporal join the mapped pair of extremum observation records to one record per observation interval.
 
 Events
 ------
