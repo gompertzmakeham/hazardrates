@@ -14,6 +14,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
+			(substr(a0.clnt_bill_id, 1, 2) = 'AB' OR substr(a0.clnt_bill_id, 1, 1) = '0')
+			AND
 			a0.clnt_type = 'OP'
 		UNION ALL
 
@@ -27,6 +29,8 @@ WITH
 		FROM
 			ahsdrrconform.lab_mt a0
 		WHERE
+			substr(a0.clnt_bill_cd, 1, 3) = 'AHC'
+			AND
 			a0.clnt_type IN ('Outpatient', 'Recurring', 'Referred', 'Surgical Day Care')
 			AND
 			a0.ordr_sts_cd = 'COMP'
@@ -44,6 +48,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_lab_millennium a0
 		WHERE
+			a0.clnt_bill_id IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES')
+			AND
 			a0.clnt_type IN ('Community', 'Day Surgery', 'Home Visit', 'Outpatient', 'Pre - Admit', 'Pre Day Care', 'Prereg', 'Recurring', 'Referred-In Specimen', 'Waitlist Outpatient')
 			AND
 			a0.collect_location_id IS NOT NULL

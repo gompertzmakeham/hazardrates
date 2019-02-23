@@ -35,7 +35,7 @@ WITH
 			COALESCE(MAX(a0.surveillancedeceased), 0) surveillancedeceased,
 			COALESCE(MAX(a0.surveillanceimmigrate), 0) surveillanceimmigrate,
 			COALESCE(MAX(a0.surveillanceemigrate), 0) surveillanceemigrate,
-			COALESCE(MIN(a0.albertacoverage), 1) albertacoverage,
+			COALESCE(MAX(a0.albertacoverage), 0) albertacoverage,
 			MAX(a0.censoreddate) censoreddate
 		FROM
 			ingestevents a0

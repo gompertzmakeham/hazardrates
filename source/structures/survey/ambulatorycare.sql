@@ -60,12 +60,7 @@ WITH
 			) greatestsurveillanceend,
 
 			-- Coverage by insurer
-			CASE a0.resppay
-				WHEN '01' THEN
-					1
-				ELSE
-					0
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observed
@@ -90,6 +85,8 @@ WITH
 		FROM
 			ahsdrrdeliver.ahs_ambulatory a0
 		WHERE
+			a0.resppay = '01'
+			AND
 			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
 			AND
 			COALESCE(hazardutilities.cleandate(a0.disdate), TRUNC(SYSDATE, 'MM')) <= TRUNC(SYSDATE, 'MM')
@@ -158,12 +155,7 @@ WITH
 			) greatestsurveillanceend,
 
 			-- Coverage by insurer
-			CASE a0.resppay
-				WHEN '01' THEN
-					1
-				ELSE
-					0
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observed
@@ -188,6 +180,8 @@ WITH
 		FROM
 			ahsdrrdeliver.ahs_nacrs_tab a0
 		WHERE
+			a0.resppay = '01'
+			AND
 			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')
 			AND
 			COALESCE(hazardutilities.cleandate(a0.disp_date), TRUNC(SYSDATE, 'MM')) <= TRUNC(SYSDATE, 'MM')

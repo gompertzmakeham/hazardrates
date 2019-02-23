@@ -34,12 +34,7 @@ WITH
 			hazardutilities.monthend(a0.disdate) greatestsurveillanceend,
 
 			-- Coverage by insurer
-			CASE a0.resppay
-				WHEN '01' THEN
-					1
-				ELSE
-					0
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observed
@@ -70,6 +65,8 @@ WITH
 		FROM
 			ahsdrrdeliver.ahs_ip_doctor_dx a0
 		WHERE
+			a0.resppay = '01'
+			AND
 			hazardutilities.cleandate(a0.disdate) BETWEEN hazardutilities.cleandate(a0.admitdate) AND TRUNC(SYSDATE, 'MM')
 			AND
 			COALESCE(hazardutilities.cleandate(a0.birthdate), hazardutilities.cleandate(a0.admitdate)) <= hazardutilities.cleandate(a0.disdate)

@@ -9,12 +9,15 @@ ALTER PACKAGE maintenanceutilities COMPILE PACKAGE
 	PLSQL_OPTIMIZE_LEVEL = 3
 	PLSQL_CODE_TYPE = NATIVE
 	PLSQL_DEBUG = FALSE;
-	
--- Step 2: Clean up extermum aggregation utilities
-ALTER PACKAGE surveillanceutilities COMPILE PACKAGE
-	PLSQL_OPTIMIZE_LEVEL = 3
-	PLSQL_CODE_TYPE = NATIVE
-	PLSQL_DEBUG = FALSE;
+
+-- Step 2: Refresh person demographic sources
+SET SERVEROUTPUT ON;
+BEGIN
+	maintenanceutilities.dispatchjobs('demographics');
+EXCEPTION
+	WHEN OTHERS THEN
+		sys.dbms_output.put_line(SQLERRM);
+END;
 
 -- Step 3: Refresh person surveillance sources
 SET SERVEROUTPUT ON;
@@ -34,19 +37,19 @@ EXCEPTION
 		sys.dbms_output.put_line(SQLERRM);
 END;
 
--- Step 5: Refresh person fiscal census
+-- Step 5: Refresh person fiscal utilization
 SET SERVEROUTPUT ON;
 BEGIN
-	maintenanceutilities.dispatchjobs('census');
+	maintenanceutilities.dispatchjobs('utilization');
 EXCEPTION
 	WHEN OTHERS THEN
 		sys.dbms_output.put_line(SQLERRM);
 END;
 
--- Step 6: Refresh person fiscal utilization
+-- Step 6: Refresh person fiscal census
 SET SERVEROUTPUT ON;
 BEGIN
-	maintenanceutilities.dispatchjobs('utilization');
+	maintenanceutilities.dispatchjobs('census');
 EXCEPTION
 	WHEN OTHERS THEN
 		sys.dbms_output.put_line(SQLERRM);

@@ -7,7 +7,7 @@ SELECT
 	CAST(a2.intervalstart AS DATE) intervalstart,
 	CAST(a2.intervalend AS DATE) intervalend,
 	CAST(SUM(a2.durationdays) AS INTEGER) staydays,
-	CAST(SUM(a2.intevalfirst) AS INTEGER) admissioncount,
+	CAST(SUM(a2.intervalfirst) AS INTEGER) admissioncount,
 	CAST(SUM(a2.intervallast) AS INTEGER) dischargecount,
 	CAST(COUNT(*) AS INTEGER) intersectingstays
 FROM

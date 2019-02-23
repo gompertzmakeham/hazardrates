@@ -234,12 +234,12 @@ SELECT
 FROM
 
 	-- Initial listing of all persons
-	ab_hazardrates_anlys.personsdemographic a0
+	ab_hzrd_rts_anlys.personsdemographic a0
 	INNER JOIN
 	
 	-- Every person has two surveillance intervals, representing the extermums of the 
 	-- possible observations of age. Report only persons covered by AHCIP, with a birthdate
-	ab_hazardrates_anlys.personsurveillance a1
+	ab_hzrd_rts_anlys.personsurveillance a1
 	ON
 		a0.uliabphn = a1.uliabphn
 		AND
@@ -253,7 +253,7 @@ FROM
 	-- Each surveillance interval is partitioned into census intervals, a pair for each fiscal
 	-- year, the interval before the birthday, and the interval after. This is the denominator
 	-- data in the hazard rates.
-	ab_hazardrates_anlys.personcensus a2
+	ab_hzrd_rts_anlys.personcensus a2
 	ON
 		a0.uliabphn = a2.uliabphn
 		AND
@@ -262,7 +262,7 @@ FROM
 	
 	-- Most, but not all, census intervals will have some form of utilization. This is the
 	-- numerator in the hazard rates.
-	ab_hazardrates_anlys.personutilization a3
+	ab_hzrd_rts_anlys.personutilization a3
 	ON
 		a0.uliabphn = a3.uliabphn
 		AND

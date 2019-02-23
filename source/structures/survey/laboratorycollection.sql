@@ -25,14 +25,7 @@ WITH
 			hazardutilities.weekend(a0.collect_dt) greatestsurveillanceend,
 
 			-- Coverage can be asserted by not refuted
-			CASE
-				WHEN substr(UPPER(a0.clnt_bill_id), 1, 2) = 'AB' THEN
-					1
-				WHEN substr(UPPER(a0.clnt_bill_id), 1, 1) = '0' THEN
-					1
-				ELSE
-					CAST(NULL AS INTEGER)
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observation
@@ -48,6 +41,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
+			(substr(a0.clnt_bill_id, 1, 2) = 'AB' OR substr(a0.clnt_bill_id, 1, 1) = '0')
+			AND
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 		
@@ -71,12 +66,7 @@ WITH
 			hazardutilities.weekend(a0.clct_dt) greatestsurveillanceend,
 
 			-- Coverage can be asserted by not refuted
-			CASE
-				WHEN substr(UPPER(a0.clnt_bill_cd), 1, 3) = 'AHC' THEN
-					1
-				ELSE
-					CAST(NULL AS INTEGER)
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observation
@@ -92,6 +82,8 @@ WITH
 		FROM
 			ahsdrrconform.lab_mt a0
 		WHERE
+			substr(a0.clnt_bill_cd, 1, 3) = 'AHC'
+			AND
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
@@ -115,12 +107,7 @@ WITH
 			hazardutilities.weekend(a0.collect_dt) greatestsurveillanceend,
 
 			-- Coverage can be asserted by not refuted
-			CASE
-				WHEN UPPER(a0.clnt_bill_id) IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES') THEN
-					1
-				ELSE
-					CAST(NULL AS INTEGER)
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observation
@@ -136,6 +123,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_lab_millennium a0
 		WHERE
+			a0.clnt_bill_id IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES')
+			AND
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 

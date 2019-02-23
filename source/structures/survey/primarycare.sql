@@ -23,12 +23,7 @@ WITH
 			hazardutilities.quarterend(a0.se_end_date) greatestsurveillanceend,
 
 			-- Coverage by insurer
-			CASE UPPER(a0.pgm_subtype_cls)
-				WHEN 'BASRMEDR' THEN
-					0
-				ELSE
-					1
-			END albertacoverage,
+			1 albertacoverage,
 			CAST(NULL AS INTEGER) firstnations,
 			
 			-- Birth observed
@@ -44,6 +39,8 @@ WITH
 		FROM
 			ahsdrrconform.ab_claims a0
 		WHERE
+			a0.pgm_subtype_cls <> 'BASRMEDR'
+			AND
 			a0.se_end_date BETWEEN a0.se_start_date AND TRUNC(SYSDATE, 'MM')
 			AND
 			COALESCE(a0.rcpt_dob, a0.se_start_date) <= a0.se_end_date

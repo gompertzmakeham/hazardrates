@@ -13,6 +13,8 @@ FROM
 	INNER JOIN
 	ahsdrrdeliver.ahs_ip_doctor_dx a1
 	ON
+		a1.resppay = '01'
+		AND
 		a0.uliabphn = hazardutilities.cleanphn(a1.phn)
 		AND
 		a1.admitcat = 'U'

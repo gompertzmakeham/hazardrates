@@ -17,25 +17,25 @@ SELECT
 	CAST(a1.agecoincideinterval AS INTEGER) agecoincideinterval,
 	CAST(a1.agecoincidecensus AS INTEGER) agecoincidecensus,
 	CASE
-		WHEN a0.durationstart <= a0.birthdate THEN
+		WHEN a1.durationstart <= a0.birthdate THEN
 			CAST(1 AS INTEGER)
 		ELSE
 			CAST(0 AS INTEGER)
 	END intervalbirth,
 	CASE
-		WHEN a0.deceasedate <= a0.durationend THEN
+		WHEN a0.deceaseddate <= a1.durationend THEN
 			CAST(1 AS INTEGER)
 		ELSE
 			CAST(0 AS INTEGER)
 	END intervaldeceased,
 	CASE
-		WHEN a0.durationstart <= a0.immigratedate THEN
+		WHEN a1.durationstart <= a0.immigratedate THEN
 			CAST(1 AS INTEGER)
 		ELSE
 			CAST(0 AS INTEGER)
 	END intervalimmigrate,
 	CASE
-		WHEN a0.emigratedate <= a0.durateionend THEN
+		WHEN a0.emigratedate <= a1.durationend THEN
 			CAST(1 AS INTEGER)
 		ELSE
 			CAST(0 AS INTEGER)

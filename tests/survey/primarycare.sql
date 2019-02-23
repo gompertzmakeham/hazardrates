@@ -1,3 +1,22 @@
+WITH
+	coveragedata AS
+	(
+		SELECT
+			a0.uliabphn,
+			MIN(a0.albertacoverage) albertacoverage
+		FROM
+			surveyprimarycare a0
+		GROUP BY
+			a0.uliabphn
+	)
+SELECT
+	COUNT(*) persons,
+	a0.albertacoverage
+FROM
+	coveragedata a0
+GROUP BY
+	a0.albertacoverage;
+
 -- Tabulate inconsistent records ingested from primary care
 WITH
 	assertiondata AS

@@ -1,3 +1,11 @@
+SELECT
+	COUNT(*) persons,
+	a0.albertacoverage
+FROM
+	persondemographic a0
+GROUP BY
+	a0.albertacoverage;
+
 -- Tabulate date equivocation
 WITH
 	persondata AS
