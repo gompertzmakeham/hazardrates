@@ -49,6 +49,8 @@ WITH
 		FROM
 			vital_stats_dsp.ex_ah_bth_2000_2016 a0
 		WHERE
+			hazardutilities.cleanphn(a0.stkh_num_1) IS NOT NULL
+			AND
 			COALESCE(a0.oop_death_, TRUNC(SYSDATE, 'MM')) BETWEEN a0.birth_date AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
@@ -81,6 +83,8 @@ WITH
 		FROM
 			vital_stats_dsp.ahs_bth_2015_2017 a0
 		WHERE
+			hazardutilities.cleanphn(a0.stkh_num_1) IS NOT NULL
+			AND
 			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
@@ -113,6 +117,8 @@ WITH
 		FROM
 			vital_stats_dsp.ex_vs_bth_2000_2015 a0
 		WHERE
+			hazardutilities.cleanphn(a0.primary_uli_c) IS NOT NULL
+			AND
 			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
@@ -200,6 +206,8 @@ WITH
 		FROM
 			vital_stats_dsp.ex_ah_dth_2010_2016 a0
 		WHERE
+			hazardutilities.cleanphn(a0.stkh_num_1) IS NOT NULL
+			AND
 			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
@@ -287,6 +295,8 @@ WITH
 		FROM
 			vital_stats_dsp.ahs_dth_2015_2017 a0
 		WHERE
+			hazardutilities.cleanphn(a0.stkh_num_1) IS NOT NULL
+			AND
 			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
@@ -374,6 +384,8 @@ WITH
 		FROM
 			vital_stats_dsp.ex_vs_deaths_phn a0
 		WHERE
+			hazardutilities.cleanphn(a0.primary_uli) IS NOT NULL
+			AND
 			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
 	)
 

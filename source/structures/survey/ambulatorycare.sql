@@ -85,6 +85,8 @@ WITH
 		FROM
 			ahsdrrdeliver.ahs_ambulatory a0
 		WHERE
+			hazardutilities.cleanphn(a0.phn) IS NOT NULL
+			AND
 			a0.resppay = '01'
 			AND
 			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
@@ -180,6 +182,8 @@ WITH
 		FROM
 			ahsdrrdeliver.ahs_nacrs_tab a0
 		WHERE
+			hazardutilities.cleanphn(a0.phn) IS NOT NULL
+			AND
 			a0.resppay = '01'
 			AND
 			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')

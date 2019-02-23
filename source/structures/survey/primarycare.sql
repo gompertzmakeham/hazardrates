@@ -39,6 +39,8 @@ WITH
 		FROM
 			ahsdrrconform.ab_claims a0
 		WHERE
+			hazardutilities.cleanphn(a0.rcpt_uli) IS NOT NULL
+			AND
 			a0.pgm_subtype_cls <> 'BASRMEDR'
 			AND
 			a0.se_end_date BETWEEN a0.se_start_date AND TRUNC(SYSDATE, 'MM')

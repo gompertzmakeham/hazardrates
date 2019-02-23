@@ -112,6 +112,8 @@ WITH
 		FROM
 			ahsdrrconform.provincial_registry a0
 		WHERE
+			hazardutilities.cleanphn(a0.phn) IS NOT NULL
+			AND
 			COALESCE(a0.pers_reap_end_date, a0.birth_dt, TRUNC(SYSDATE, 'MM')) BETWEEN COALESCE(a0.birth_dt, a0.pers_reap_end_date, TRUNC(SYSDATE, 'MM')) AND TRUNC(SYSDATE, 'MM')
 	)
 

@@ -48,6 +48,8 @@ WITH
 		FROM
 			TABLE(continuing_care.home_care.get_client) a0
 		WHERE
+			hazardutilities.cleanphn(a0.uli_ab_phn) IS NOT NULL
+			AND
 			a0.last_known_date BETWEEN a0.first_appear_date AND TRUNC(SYSDATE, 'MM')
 			AND
 			COALESCE(a0.birth_date, a0.last_known_date) <= a0.last_known_date
@@ -113,6 +115,8 @@ WITH
 		FROM
 			TABLE(continuing_care.accis.get_adt) a0
 		WHERE
+			hazardutilities.cleanphn(a0.uli_ab_phn) IS NOT NULL
+			AND
 			COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM')) BETWEEN a0.admit_date AND TRUNC(SYSDATE, 'MM')
 			AND
 			COALESCE(a0.birth_date, a0.admit_date) <= COALESCE(a0.discharge_date, TRUNC(SYSDATE, 'MM'))

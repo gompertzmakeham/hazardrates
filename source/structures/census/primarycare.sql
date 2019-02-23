@@ -5,7 +5,7 @@ WITH
 	eventdata AS
 	(
 		SELECT
-			a0.rcpt_uli uliabphn,
+			hazardutilities.cleanphn(a0.rcpt_uli) uliabphn,
 			COALESCE
 			(
 				hazardutilities.cleanprid(a0.prvd_prid),
@@ -67,6 +67,8 @@ WITH
 			ON
 				a0.rnd_id = a1.rnd_id
 		WHERE
+			hazardutilities.cleanphn(a0.rcpt_uli) IS NOT NULL
+			AND
 			COALESCE
 			(
 				hazardutilities.cleanprid(a0.prvd_prid),

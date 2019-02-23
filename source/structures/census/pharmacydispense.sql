@@ -5,7 +5,7 @@ WITH
 	eventdata AS
 	(
 		SELECT
-			a0.rcpt_uli uliabphn,
+			hazardutilities.cleanphn(a0.rcpt_uli) uliabphn,
 			a0.dspn_date dispensedate,
 			a0.fac_key_di360 siteidentifier,
 			a0.dspn_day_supply_qty dailydoses,
@@ -14,6 +14,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_pin_dspn a0
 		WHERE
+			hazardutilities.cleanphn(a0.rcpt_uli) IS NOT NULL
+			AND
 			a0.supp_drug_atc_code IS NOT NULL
 			AND
 			hazardutilities.cleanprid(a0.prscb_prid) IS NOT NULL

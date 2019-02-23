@@ -41,6 +41,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_lab_labfusion a0
 		WHERE
+			hazardutilities.cleanphn(a0.clnt_phn) IS NOT NULL
+			AND
 			(substr(a0.clnt_bill_id, 1, 2) = 'AB' OR substr(a0.clnt_bill_id, 1, 1) = '0')
 			AND
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
@@ -82,6 +84,8 @@ WITH
 		FROM
 			ahsdrrconform.lab_mt a0
 		WHERE
+			hazardutilities.cleanphn(a0.clnt_phn) IS NOT NULL
+			AND
 			substr(a0.clnt_bill_cd, 1, 3) = 'AHC'
 			AND
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
@@ -123,6 +127,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_lab_millennium a0
 		WHERE
+			hazardutilities.cleanphn(a0.clnt_phn) IS NOT NULL
+			AND
 			a0.clnt_bill_id IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES')
 			AND
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
@@ -164,6 +170,8 @@ WITH
 		FROM
 			ahsdrrconform.lab_sq a0
 		WHERE
+			hazardutilities.cleanphn(a0.clnt_phn) IS NOT NULL
+			AND
 			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 	)
 

@@ -71,11 +71,10 @@ SELECT
 	CAST(a1.surveillancestartequipoise AS INTEGER) surveillancestartequipoise,
 	CAST(a1.surveillanceendequipoise AS INTEGER) surveillanceendequipoise,
 	CAST(a1.ageequipoise AS INTEGER) ageequipoise,
-	CAST(a0.albertacoverage AS INTEGER) albertacoverage,
 	CAST(a0.censoreddate AS DATE) censoreddate
 FROM
 	digestevents a0
-	CROSS JOIN
+	INNER JOIN
 	TABLE
 	(
 		hazardutilities.generatedemographic
@@ -95,7 +94,13 @@ FROM
 			a0.surveillanceimmigrate,
 			a0.surveillanceemigrate
 		)
-	) a1;
+	) a1
+	ON
+		a0.albertacoverage = 1
+		AND
+		a1.leastbirth IS NOT NULL
+		AND
+		a1.greatestbirth IS NOT NULL;
 
 COMMENT ON MATERIALIZED VIEW persondemographic IS 'For every person that at any time was covered by Alberta Healthcare Insurance Plan report the extremum dates on events of birth, death, immigation, emigration, surveillance start, and end.';
 COMMENT ON COLUMN persondemographic.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
@@ -122,5 +127,4 @@ COMMENT ON COLUMN persondemographic.surveillanceendequipoise IS 'Extremums end d
 COMMENT ON COLUMN persondemographic.ageequipoise IS 'Extremums have the same age in the fiscal year: 1 yes, 0 no.';
 COMMENT ON COLUMN persondemographic.surveillancestart IS 'Start date of the observation bounds of the person.';
 COMMENT ON COLUMN persondemographic.surveillanceend IS 'End date of the observation bounds of the person.';
-COMMENT ON COLUMN persondemographic.albertacoverage IS 'Person is covered by the Ablerta Healthcare Insurance Plan: 1 yes, 0 no.';
 COMMENT ON COLUMN persondemographic.censoreddate IS 'First day of the month of the last refresh of the data.';

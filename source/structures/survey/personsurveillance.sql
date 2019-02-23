@@ -12,7 +12,7 @@ SELECT
 	CAST(a1.extremumend AS DATE) extremumend
 FROM
 	persondemographic a0
-	INNER JOIN
+	CROSS JOIN
 	TABLE
 	(
 		hazardutilities.generatesurveillance
@@ -28,9 +28,7 @@ FROM
 			a0.surveillancestart,
 			a0.surveillanceend
 		)
-	) a1
-	ON
-		a0.albertacoverage = 1;
+	) a1;
 
 COMMENT ON MATERIALIZED VIEW personsurveillance IS 'For every person that at any time was covered by Alberta Healthcare Insurance list two surveillance intervals for each person, representing the corner cases of possible values for the birth and death dates. In the case of observational equipose the two records are identical.';
 COMMENT ON COLUMN personsurveillance.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';

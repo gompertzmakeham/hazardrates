@@ -65,6 +65,8 @@ WITH
 		FROM
 			ahsdrrdeliver.ahs_ip_doctor_dx a0
 		WHERE
+			hazardutilities.cleanphn(a0.phn) IS NOT NULL
+			AND
 			a0.resppay = '01'
 			AND
 			hazardutilities.cleandate(a0.disdate) BETWEEN hazardutilities.cleandate(a0.admitdate) AND TRUNC(SYSDATE, 'MM')

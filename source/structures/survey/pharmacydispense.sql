@@ -39,6 +39,8 @@ WITH
 		FROM
 			ahsdrrconform.cf_pin_dspn a0
 		WHERE
+			hazardutilities.cleanphn(a0.rcpt_uli) IS NOT NULL
+			AND
 			a0.dspn_date BETWEEN COALESCE(a0.rcpt_dob, a0.dspn_date) AND TRUNC(SYSDATE, 'MM')
 	)
 

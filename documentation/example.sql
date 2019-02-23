@@ -242,12 +242,6 @@ FROM
 	ab_hzrd_rts_anlys.personsurveillance a1
 	ON
 		a0.uliabphn = a1.uliabphn
-		AND
-		a0.albertacoverage = 1
-		AND
-		a0.leastbirth IS NOT NULL
-		AND
-		a0.greatestbirth IS NOT NULL
 	INNER JOIN
 	
 	-- Each surveillance interval is partitioned into census intervals, a pair for each fiscal

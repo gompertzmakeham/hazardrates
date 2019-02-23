@@ -17,7 +17,7 @@ DROP MATERIALIZED VIEW censussupportiveliving;
 
 -- Surveillance support
 DROP MATERIALIZED VIEW personsurveillance;
-DROP PACKAGE surveillanceutilities;
+DROP MATERIALIZED VIEW persondemographic;
 
 -- Surveillance structures
 DROP MATERIALIZED VIEW surveyambulatorycare;
