@@ -46,7 +46,7 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
 - *Inpatient care* Canadian Institute of Health Information [Discharge Abstract Database](https://www.cihi.ca/en/discharge-abstract-database-metadata).
   - 1 data source from 2002 onward; current approximately 7 000 000 events.
 - *Long Term Care* Canadian Institute of Health Information [Resident Assessment Instrument](https://www.cihi.ca/en/residential-care).
-  - 1 data source from 2010 onward; currently approximately 80 000 events.
+  - 1 data source from 2010 onward; currently approximately 560 000 events.
 - *Primary Care* Alberta Health [Schedule of Medical Benefits](https://www.alberta.ca/fees-health-professionals.aspx).
   - 1 data source from 2001 onward; currently approximately 656 000 000 events.
 - *Community Pharmacy Dispensing* Alberta Health [Pharmacy Information Network](http://www.albertanetcare.ca/learningcentre/Pharmaceutical-Information-Network.htm).
@@ -54,7 +54,7 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
 - *Annual Registry* Alberta Health [Alberta Health Care Insurance Plan](https://www.alberta.ca/ahcip.aspx)
   - 1 data source from 1993 onward; currently approximately 90 000 000 events.
 - *Home Care and Designated Supportive Living* proprietary direct access (Civica, Meditech, StrataHealth).
-  - 3 data sources, phased adoption 2008, 2010, and 2012 onward; currently approximately 53 000 events.
+  - 3 data sources, phased adoption 2008, 2010, and 2012 onward; currently approximately 520 000 events.
 - *Community Laboratory Collections* proprietary direct access (Fusion, Meditech, Millennium, SunQuest).
   - 4 data sources, phased adoption 2008, 2009, 2012, and 2014 onward; currently approximately 1 500 000 000 events.
 - *Diagnostic Imaging* proprietary direct access (in staging).
