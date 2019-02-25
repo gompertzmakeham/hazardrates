@@ -1,6 +1,11 @@
 Hazard Rates
 ============
 
+Declaration and Land Acknowledgement
+------------------------------------
+
+This project, its materials, resources, and manpower are wholly funded by Alberta Health Services for the purpose of informing health system performance improvement, and health care quality improvement. [Alberta Health Services](https://www.albertahealthservices.ca/) is the single public health authority in the province of Alberta, on the traditional lands of the Cree, Dene, Kanai, Nakoda, Nakota, Piikani, Saulteaux, Siksika, Tsek’ehne, and Tsuu T’ina nations of Treaty 6, 7, and 8. The author is best reached through the project [issue log](https://github.com/gompertzmakeham/hazardrates/issues).
+
 Introduction
 ------------
 
@@ -69,8 +74,3 @@ Disclaimer
 ----------
 
 This material is intended for general information only, and is provided on an "as is", or "where is" basis. Although reasonable efforts were made to confirm the accuracy of the information, Alberta Health Services does make any representation or warranty, express, implied, or statutory, as to the accuracy, reliability, completeness, applicability, or fitness for a particular purpose of such information. This material is not a substitute for the advice of a qualified health professional. Alberta Health Services expressly disclaims all liability for the use of these materials, and for any claims, actions, demands, or suits arising from such use.
-
-Declaration and Land Acknowledgement
-------------------------------------
-
-This project, its materials, resources, and manpower are wholly funded by Alberta Health Services for the purpose of informing health system performance improvement, and health care quality improvement. [Alberta Health Services](https://www.albertahealthservices.ca/) is the single public health authority in the province of Alberta, on the traditional lands of the Cree, Dene, Kanai, Nakoda, Nakota, Piikani, Saulteaux, Siksika, Tsek’ehne, and Tsuu T’ina nations of Treaty 6, 7, and 8.
