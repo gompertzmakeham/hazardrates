@@ -32,37 +32,37 @@ SELECT
 	 */
 
 	-- Least and greatest birth dates are in the same fiscal year
-	a1.ageequipoise,
+	a0.ageequipoise,
 
 	-- Least and greatest birth dates are equal
-	a1.birthdateequipoise,
+	a0.birthdateequipoise,
 
 	-- Least and greatest deceased dates are equal
-	a1.deceaseddateequipoise,
+	a0.deceaseddateequipoise,
 
 	-- Birth observed flag is equal in both surveillance extremums
-	a1.birthobservationequipoise,
+	a0.birthobservationequipoise,
 
 	-- Death observed flag is equal in both surveillance extremums
-	a1.deceasedobservationequipoise,
+	a0.deceasedobservationequipoise,
 
 	-- Least and greatest immigration dates are equal
-	a1.immigratedateequipoise,
+	a0.immigratedateequipoise,
 
 	-- Least and greatest emigration dates are equal
-	a1.emigratedateequipoise,
+	a0.emigratedateequipoise,
 
 	-- In migration observed flag is equal in both surveillance extremums
-	a1.immigrateobservationequipoise,
+	a0.immigrateobservationequipoise,
 
 	-- Out migration observed flag is equal in both surveillance extremums
-	a1.emigrateobservationequipoise,
+	a0.emigrateobservationequipoise,
 
 	-- Surveillance extremum start dates are equal
-	a1.surveillancestartequipoise,
+	a0.surveillancestartequipoise,
 
 	-- Surveillance extremum end dates are equal
-	a1.surveillanceendequipoise,
+	a0.surveillanceendequipoise,
 
 	/*
 	 *  Census interval properties, the duration is used as the denominator.
@@ -234,7 +234,7 @@ SELECT
 FROM
 
 	-- Initial listing of all persons
-	ab_hzrd_rts_anlys.personsdemographic a0
+	ab_hzrd_rts_anlys.persondemographic a0
 	INNER JOIN
 	
 	-- Every person has two surveillance intervals, representing the extermums of the 

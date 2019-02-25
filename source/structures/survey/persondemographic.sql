@@ -98,9 +98,31 @@ FROM
 	ON
 		a0.albertacoverage = 1
 		AND
-		a1.leastbirth IS NOT NULL
+		greatest
+		(
+			a1.surveillancestart,
+			a1.leastbirth,
+			COALESCE(a1.leastimmigrate, a1.surveillancestart)
+		) <= 
+		least
+		(
+			a1.surveillanceend,
+			COALESCE(a1.greatestdeceased, a1.surveillanceend),
+			COALESCE(a1.greatestemigrate, a1.surveillanceend)
+		)
 		AND
-		a1.greatestbirth IS NOT NULL;
+		greatest
+		(
+			a1.surveillancestart,
+			a1.greatestbirth,
+			COALESCE(a1.greatestimmigrate, a1.surveillancestart)
+		) <= 
+		least
+		(
+			a1.surveillanceend,
+			COALESCE(a1.leastdeceased, a1.surveillanceend),
+			COALESCE(a1.leastemigrate, a1.surveillanceend)
+		);
 
 COMMENT ON MATERIALIZED VIEW persondemographic IS 'For every person that at any time was covered by Alberta Healthcare Insurance Plan report the extremum dates on events of birth, death, immigation, emigration, surveillance start, and end.';
 COMMENT ON COLUMN persondemographic.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';

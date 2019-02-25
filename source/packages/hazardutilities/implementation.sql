@@ -246,7 +246,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			WHEN localleast = localgreatest THEN
 				returnrow.surveillanceendequipoise := 1;
 			ELSE
-				returnrow.surveillanceendequipoise := 0; 
+				returnrow.surveillanceendequipoise := 0;
 		END CASE;
 
 		-- Age equipoise flag
@@ -366,14 +366,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				returnbirth.intervalcount := 1 + ageyears(returnbirth.censusstart, lastfiscal);
 			
 			-- No first fiscal interval and no last birthday interval
-			WHEN nextanniversary(birthdate, returnfiscal.censusstart) <= eventstart AND eventend < nextanniversary(birthdate, lastfiscal) THEN
+			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart AND eventend < anniversarystart(birthdate, lastfiscal) THEN
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 2 * ageyears(returnfiscal.censusstart, lastfiscal);
 				returnbirth.intervalcount := 2 * ageyears(returnbirth.censusstart, lastfiscal);
 			
 			-- Only no first fiscal interval or only no birthday interval
-			WHEN nextanniversary(birthdate, returnfiscal.censusstart) <= eventstart OR eventend < nextanniversary(birthdate, lastfiscal) THEN
+			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart OR eventend < anniversarystart(birthdate, lastfiscal) THEN
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 1 + 2 * ageyears(returnfiscal.censusstart, lastfiscal);
@@ -391,11 +391,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		WHILE returnfiscal.censusstart <= lastfiscal LOOP
 
 			-- Birthday interval
-			returnfiscal.agestart := prioranniversary(birthdate, returnfiscal.censusstart);
-			returnfiscal.ageend := prioranniversary(birthdate, returnfiscal.censusend) - 1;
+			returnfiscal.agestart := anniversarystart(birthdate, returnfiscal.censusstart);
+			returnfiscal.ageend := anniversaryend(birthdate, returnfiscal.censusend);
 			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.agestart);
-			returnbirth.agestart := nextanniversary(birthdate, returnbirth.censusstart);
-			returnbirth.ageend := nextanniversary(birthdate, returnbirth.censusend) - 1;
+			returnbirth.agestart := anniversarystart(birthdate, returnbirth.censusend);
+			returnbirth.ageend := anniversaryend(birthdate, returnbirth.censusend);
 			returnbirth.intervalage := ageyears(birthdate, returnbirth.agestart);
 
 			-- Intersection of fiscal and age intervals
@@ -454,6 +454,9 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returnfiscal.intervalorder := localcount;
 			END CASE;
 			CASE
+				WHEN returnfiscal.durationstart = returnbirth.durationstart THEN
+					returnbirth.durationdays := 0;
+					returnbirth.intervalorder := localcount;
 				WHEN returnbirth.durationstart <= returnbirth.durationend THEN
 					localcount := 1 + localcount;
 					returnbirth.durationdays := 1 + returnbirth.durationend - returnbirth.durationstart;
@@ -488,8 +491,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		-- Fiscal, age, and duration boundaries
 		returncensus.censusstart := fiscalstart(eventdate);
 		returncensus.censusend := fiscalend(eventdate);
-		returncensus.agestart := prioranniversary(birthdate, eventdate);
-		returncensus.ageend := nextanniversary(birthdate, eventdate) - 1;
+		returncensus.agestart := anniversarystart(birthdate, eventdate);
+		returncensus.ageend := anniversaryend(birthdate, eventdate);
 		returncensus.intervalstart := greatest(returncensus.censusstart, returncensus.agestart);
 		returncensus.intervalend := least(returncensus.censusend, returncensus.ageend);
 		returncensus.durationstart := eventdate;
@@ -541,9 +544,9 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	END ageyears;
 
 	/*
-	 *  The anniversary of the start date in the year preceding the end date.
+	 *  The start of the anniversary year of the start date that the end date falls in.
 	 */
-	FUNCTION prioranniversary
+	FUNCTION anniversarystart
 	(
 		startdate IN DATE,
 		enddate IN DATE
@@ -556,12 +559,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			1 + add_months(startdate - 1, localmonths),
 			add_months(startdate, localmonths)
 		);
-	END prioranniversary;
+	END anniversarystart;
 
 	/*
-	 *  The anniversary of the start date in the year following the end date.
+	 *  The end of the anniversary year of the start date that the end date falls in.
 	 */
-	FUNCTION nextanniversary
+	FUNCTION anniversaryend
 	(
 		startdate IN DATE,
 		enddate IN DATE
@@ -573,8 +576,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		(
 			1 + add_months(startdate - 1, localmonths),
 			add_months(startdate, localmonths)
-		);
-	END nextanniversary;
+		) - 1;
+	END anniversaryend;
 
 	/*
 	 *  Truncate a date to the start of the fiscal year, the preceding April 1.

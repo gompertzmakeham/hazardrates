@@ -1,3 +1,10 @@
+SELECT
+	a0.*
+FROM
+	personsurveillance a0
+WHERE
+	a0.extremumend < a0.extremumstart;
+
 -- Test for invalid combinations of data at the person surveillance level
 WITH
 	assertiondata AS

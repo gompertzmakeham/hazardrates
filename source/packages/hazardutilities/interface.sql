@@ -155,9 +155,9 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	RETURN INTEGER DETERMINISTIC;
 
 	/*
-	 *  The anniversary of the start date in the year preceding the end date.
+	 *  The start of the anniversary year of the start date that the end date falls in.
 	 */
-	FUNCTION prioranniversary
+	FUNCTION anniversarystart
 	(
 		startdate IN DATE,
 		enddate IN DATE
@@ -165,9 +165,9 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	RETURN DATE DETERMINISTIC;
 
 	/*
-	 *  The anniversary of the start date in the year following the end date.
+	 *  The end of the anniversary year of the start date that the end date falls in.
 	 */
-	FUNCTION nextanniversary
+	FUNCTION anniversaryend
 	(
 		startdate IN DATE,
 		enddate IN DATE
