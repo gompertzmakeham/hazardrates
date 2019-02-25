@@ -36,6 +36,11 @@ Temporal Joins
 
 In keeping with declarative languages, a measure theoretically consistent temporal join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a join is a measure theoretically consitent temporal join if the resulting data set represents a totally ordered partition of a bounded time span under the absolute set ordering.
 
+Equivocation and Equipoise
+--------------------------
+
+Using clerical equivocation to calibrate precision and measurement uncertainty.
+
 Data Sources
 ------------
 
