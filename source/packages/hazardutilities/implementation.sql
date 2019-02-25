@@ -454,7 +454,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returnfiscal.intervalorder := localcount;
 			END CASE;
 			CASE
-				WHEN returnfiscal.durationstart = returnbirth.durationstart THEN
+				WHEN returnbirth.agecoincidecensus = 1 THEN
 					returnbirth.durationdays := 0;
 					returnbirth.intervalorder := localcount;
 				WHEN returnbirth.durationstart <= returnbirth.durationend THEN

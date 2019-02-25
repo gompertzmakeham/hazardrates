@@ -211,28 +211,6 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		localquery := 'ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8';
 		EXECUTE IMMEDIATE localquery;
 
-		-- Compact the table
-		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' ENABLE ROW MOVEMENT';
-		EXECUTE IMMEDIATE localquery;
-		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' SHRINK SPACE COMPACT';
-		EXECUTE IMMEDIATE localquery;
-		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' DISABLE ROW MOVEMENT';
-		EXECUTE IMMEDIATE localquery;
-		COMMIT;
-
-		-- Recompile after row movement
-		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
-		EXECUTE IMMEDIATE localquery;
-		COMMIT;
-
-		-- Run parallel
-		localquery := 'ALTER SESSION FORCE PARALLEL DDL PARALLEL 8';
-		EXECUTE IMMEDIATE localquery;
-		localquery := 'ALTER SESSION FORCE PARALLEL DML PARALLEL 8';
-		EXECUTE IMMEDIATE localquery;
-		localquery := 'ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8';
-		EXECUTE IMMEDIATE localquery;
-
 		-- Analyze the table
 		sys.dbms_stats.gather_table_stats
 		(

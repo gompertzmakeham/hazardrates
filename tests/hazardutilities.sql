@@ -5,17 +5,19 @@ SELECT 'hazardutilities.cleandate(''20181121'', ''YYYYMMDD'')' functioncall, haz
 SELECT 'hazardutilities.cleandate(''abcd'')' functioncall, hazardutilities.cleandate('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.cleandate(''20181121'')' functioncall, hazardutilities.cleandate('20181121') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalstart(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.fiscalstart(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.fiscalend(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.fiscalend(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalstart(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.fiscalstart('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalstart(''20181121'', ''abcd'')' functioncall, hazardutilities.fiscalstart('20181121', 'abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalstart(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.fiscalstart('20181121', 'YYYYMMDD') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalstart(''abcd'')' functioncall, hazardutilities.fiscalstart('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalstart(''20181121'')' functioncall, hazardutilities.fiscalstart('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.fiscalstart(''19930331'')' functioncall, hazardutilities.fiscalstart('19930331') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.fiscalend(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.fiscalend(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalend(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.fiscalend('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalend(''20181121'', ''abcd'')' functioncall, hazardutilities.fiscalend('20181121', 'abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalend(''20181121'', ''YYYYMMDD'')' functioncall, hazardutilities.fiscalend('20181121', 'YYYYMMDD') camllresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalend(''abcd'')' functioncall, hazardutilities.fiscalend('abcd') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.fiscalend(''20181121'')' functioncall, hazardutilities.fiscalend('20181121') callresult FROM dual UNION ALL
+SELECT 'hazardutilities.fiscalend(''19930331'')' functioncall, hazardutilities.fiscalend('19930331') callresult FROM dual UNION ALL
 SELECT 'hazardutilities.calendarstart(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.calendarstart(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.calendarend(TRUNC(SYSDATE, ''MM'') - 100)' functioncall, hazardutilities.calendarend(TRUNC(SYSDATE, 'MM') - 100) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.calendarstart(''abcd'', ''YYYYMMDD'')' functioncall, hazardutilities.calendarstart('abcd', 'YYYYMMDD') callresult FROM dual UNION ALL
@@ -95,7 +97,9 @@ SELECT 'hazardutilities.anniversaryend(TO_DATE(''20000229'', ''YYYYMMDD''), TO_D
 SELECT 'hazardutilities.anniversaryend(TO_DATE(''20000229'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversaryend(TO_DATE('20000229', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.anniversaryend(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20030301'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversaryend(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20030301', 'YYYYMMDD')) callresult FROM dual UNION ALL
 SELECT 'hazardutilities.anniversaryend(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20040301'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversaryend(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20040301', 'YYYYMMDD')) callresult FROM dual UNION ALL
-SELECT 'hazardutilities.anniversaryend(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversaryend(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual;
+SELECT 'hazardutilities.anniversaryend(TO_DATE(''20030228'', ''YYYYMMDD''), TO_DATE(''20050301'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversaryend(TO_DATE('20030228', 'YYYYMMDD'), TO_DATE('20050301', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.anniversarystart(TO_DATE(''19930228'', ''YYYYMMDD''), TO_DATE(''20010331'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversarystart(TO_DATE('19930228', 'YYYYMMDD'), TO_DATE('20010331', 'YYYYMMDD')) callresult FROM dual UNION ALL
+SELECT 'hazardutilities.anniversaryend(TO_DATE(''19930228'', ''YYYYMMDD''), TO_DATE(''20010331'', ''YYYYMMDD''))' functioncall, hazardutilities.anniversaryend(TO_DATE('19930228', 'YYYYMMDD'), TO_DATE('20010331', 'YYYYMMDD')) callresult FROM dual;
 
 -- Number utilities
 SELECT 'hazardutilities.ageyears(TO_DATE(''19800601'', ''yyyymmdd''), TO_DATE(''19850615'', ''yyyymmdd''))' functioncall, hazardutilities.ageyears(TO_DATE('19800601', 'yyyymmdd'), TO_DATE('19850615', 'yyyymmdd')) callresult FROM dual UNION ALL
@@ -233,7 +237,9 @@ WITH
 		SELECT TO_DATE('19990331', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual UNION ALL
 		SELECT TO_DATE('19980401', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual UNION ALL
 		SELECT TO_DATE('20091121', 'yyyymmdd') eventstart, TO_DATE('20181110', 'yyyymmdd') eventend, TO_DATE('20091121', 'yyyymmdd') birthdate FROM dual UNION ALL
-		SELECT TO_DATE('19930401', 'yyyymmdd') eventstart, TO_DATE('20180519', 'yyyymmdd') eventend, TO_DATE('19691130', 'yyyymmdd') birthdate FROM dual
+		SELECT TO_DATE('19930401', 'yyyymmdd') eventstart, TO_DATE('20180519', 'yyyymmdd') eventend, TO_DATE('19691130', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('19940331', 'yyyymmdd') eventstart, TO_DATE('20190126', 'yyyymmdd') eventend, TO_DATE('19560924', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('19930401', 'yyyymmdd') eventstart, TO_DATE('20190126', 'yyyymmdd') eventend, TO_DATE('19570925', 'yyyymmdd') birthdate FROM dual
 	)
 SELECT
 	a0.*,
