@@ -231,7 +231,9 @@ WITH
 		SELECT TO_DATE('20070401', 'yyyymmdd') eventstart, TO_DATE('20180331', 'yyyymmdd') eventend, TO_DATE('19920229', 'yyyymmdd') birthdate FROM dual UNION ALL
 		SELECT TO_DATE('20070401', 'yyyymmdd') eventstart, TO_DATE('20180331', 'yyyymmdd') eventend, TO_DATE('20070401', 'yyyymmdd') birthdate FROM dual UNION ALL
 		SELECT TO_DATE('19990331', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual UNION ALL
-		SELECT TO_DATE('19980401', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual
+		SELECT TO_DATE('19980401', 'yyyymmdd') eventstart, TO_DATE('20190101', 'yyyymmdd') eventend, TO_DATE('19660401', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('20091121', 'yyyymmdd') eventstart, TO_DATE('20181110', 'yyyymmdd') eventend, TO_DATE('20091121', 'yyyymmdd') birthdate FROM dual UNION ALL
+		SELECT TO_DATE('19930401', 'yyyymmdd') eventstart, TO_DATE('20180519', 'yyyymmdd') eventend, TO_DATE('19691130', 'yyyymmdd') birthdate FROM dual
 	)
 SELECT
 	a0.*,

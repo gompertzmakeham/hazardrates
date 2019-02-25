@@ -366,14 +366,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				returnbirth.intervalcount := 1 + ageyears(returnbirth.censusstart, lastfiscal);
 			
 			-- No first fiscal interval and no last birthday interval
-			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart AND eventend < anniversarystart(birthdate, lastfiscal) THEN
+			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart AND eventend <= anniversaryend(birthdate, lastfiscal) THEN
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 2 * ageyears(returnfiscal.censusstart, lastfiscal);
 				returnbirth.intervalcount := 2 * ageyears(returnbirth.censusstart, lastfiscal);
 			
 			-- Only no first fiscal interval or only no birthday interval
-			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart OR eventend < anniversarystart(birthdate, lastfiscal) THEN
+			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart OR eventend <= anniversaryend(birthdate, lastfiscal) THEN
 				returnfiscal.agecoincidecensus := 0;
 				returnbirth.agecoincidecensus := 0;
 				returnfiscal.intervalcount := 1 + 2 * ageyears(returnfiscal.censusstart, lastfiscal);
@@ -392,7 +392,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 
 			-- Birthday interval
 			returnfiscal.agestart := anniversarystart(birthdate, returnfiscal.censusstart);
-			returnfiscal.ageend := anniversaryend(birthdate, returnfiscal.censusend);
+			returnfiscal.ageend := anniversaryend(birthdate, returnfiscal.censusstart);
 			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.agestart);
 			returnbirth.agestart := anniversarystart(birthdate, returnbirth.censusend);
 			returnbirth.ageend := anniversaryend(birthdate, returnbirth.censusend);
