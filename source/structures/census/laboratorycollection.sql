@@ -19,6 +19,8 @@ WITH
 			(substr(a0.clnt_bill_id, 1, 2) = 'AB' OR substr(a0.clnt_bill_id, 1, 1) = '0')
 			AND
 			a0.clnt_type = 'OP'
+			AND
+			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Laboratory Meditech
@@ -40,6 +42,8 @@ WITH
 			a0.ordr_sts_cd = 'COMP'
 			AND
 			a0.clct_loc_cd IS NOT NULL
+			AND
+			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Laboratory Millenium
@@ -59,6 +63,8 @@ WITH
 			a0.clnt_type IN ('Community', 'Day Surgery', 'Home Visit', 'Outpatient', 'Pre - Admit', 'Pre Day Care', 'Prereg', 'Recurring', 'Referred-In Specimen', 'Waitlist Outpatient')
 			AND
 			a0.collect_location_id IS NOT NULL
+			AND
+			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
 		-- Laboratory Sunquest
@@ -78,6 +84,8 @@ WITH
 			a0.ordr_sts_cd = 'RE'
 			AND
 			a0.clnt_fac_cd IS NOT NULL
+			AND
+			a0.clct_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.clct_dt) AND TRUNC(SYSDATE, 'MM')
 	),
 
 	-- Digest to one record per patient per day per laboratory

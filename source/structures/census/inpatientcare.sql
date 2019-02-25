@@ -22,6 +22,10 @@ FROM
 		a1.admitcat = 'U'
 		AND
 		hazardutilities.cleaninpatient(a1.inst) IS NOT NULL
+		AND
+		hazardutilities.cleandate(a1.disdate) BETWEEN hazardutilities.cleandate(a1.admitdate) AND TRUNC(SYSDATE, 'MM')
+		AND
+		COALESCE(hazardutilities.cleandate(a1.birthdate), hazardutilities.cleandate(a1.admitdate)) <= hazardutilities.cleandate(a1.disdate)
 	CROSS JOIN
 	TABLE
 	(

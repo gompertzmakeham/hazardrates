@@ -18,13 +18,17 @@ FROM
 		a0.uliabphn = a1.uli_ab_phn
 		AND
 		a1.current_client_type_code = '10'
+		AND
+		COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM')) BETWEEN a1.admit_date AND TRUNC(SYSDATE, 'MM')
+		AND
+		COALESCE(a1.birth_date, a1.admit_date) <= COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM'))
 	CROSS JOIN
 	TABLE
 	(
 		hazardutilities.generatecensus
 		(
 			a1.admit_date,
-			COALESCE(a1.discharge_date, a0.extremumend),
+			COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM')),
 			a0.birthdate
 		)
 	) a2

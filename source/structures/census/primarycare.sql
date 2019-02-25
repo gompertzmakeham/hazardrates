@@ -104,6 +104,10 @@ WITH
 					a0.delv_site_type_cls IN ('DIAG', 'OFFC')
 				)
 			)
+			AND
+			a0.se_end_date BETWEEN a0.se_start_date AND TRUNC(SYSDATE, 'MM')
+			AND
+			COALESCE(a0.rcpt_dob, a0.se_start_date) <= a0.se_end_date
 	),
 
 	-- Digest to one record per patient per provider per day

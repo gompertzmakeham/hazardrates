@@ -20,13 +20,23 @@ WITH
 			AND
 			hazardutilities.cleanambulatory(a0.inst) IS NOT NULL
 			AND
-			hazardutilities.cleandate(a0.visdate) IS NOT NULL
-			AND
 			a0.los_minutes > 0
 			AND
 			a0.abstract_type IN ('A', 'E', 'U')
 			AND
 			a0.vismode = 1
+			AND
+			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
+			AND
+			COALESCE(hazardutilities.cleandate(a0.disdate), TRUNC(SYSDATE, 'MM')) <= TRUNC(SYSDATE, 'MM')
+			AND
+			(
+				hazardutilities.cleandate(a0.birthdate) IS NULL
+				OR
+				hazardutilities.cleandate(a0.birthdate) <= hazardutilities.cleandate(a0.visdate)
+				OR
+				hazardutilities.cleandate(a0.birthdate) <= hazardutilities.cleandate(a0.disdate)
+			)
 		UNION ALL
 
 		-- NACRS current
@@ -44,13 +54,23 @@ WITH
 			AND
 			hazardutilities.cleanambulatory(a0.inst) IS NOT NULL
 			AND
-			hazardutilities.cleandate(a0.visit_date) IS NOT NULL
-			AND
 			a0.visit_los_minutes > 0
 			AND
 			a0.abstract_type IN ('A', 'E', 'U')
 			AND
 			a0.visit_mode = 1
+			AND
+			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')
+			AND
+			COALESCE(hazardutilities.cleandate(a0.disp_date), TRUNC(SYSDATE, 'MM')) <= TRUNC(SYSDATE, 'MM')
+			AND
+			(
+				hazardutilities.cleandate(a0.birthdate) IS NULL
+				OR
+				hazardutilities.cleandate(a0.birthdate) <= hazardutilities.cleandate(a0.visit_date)
+				OR
+				hazardutilities.cleandate(a0.birthdate) <= hazardutilities.cleandate(a0.disp_date)
+			)
 	),
 
 	-- Digest to one record per person per day per institution

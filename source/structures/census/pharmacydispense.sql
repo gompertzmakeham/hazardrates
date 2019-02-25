@@ -33,6 +33,8 @@ WITH
 			a0.dspn_act_tp_code <> 'Z'
 			AND
 			a0.dspn_amt_qty > 0
+			AND
+			a0.dspn_date BETWEEN COALESCE(a0.rcpt_dob, a0.dspn_date) AND TRUNC(SYSDATE, 'MM')
 	),
 
 	-- Digest to one record per person per day per pharmacy
