@@ -355,20 +355,17 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		returninterval.intervalfirst := 1;
 		returninterval.intervalage := ageyears(birthdate, returninterval.agestart);
 
-		-- Determine the type of age interval
-		CASE returninterval.agestart
-			WHEN returninterval.censusstart THEN
+		-- Determine the type of the first interval
+		CASE returninterval.censusstart
+			WHEN returninterval.agestart THEN
 				returninterval.agecoincidecensus := 1;
+				returninterval.agecoincideinterval := 1;
+			WHEN returninterval.intervalstart THEN
+				returninterval.agecoincidecensus := 0;
+				returninterval.agecoincideinterval := 0;
 			ELSE
 				returninterval.agecoincidecensus := 0;
-		END CASE;
-
-		-- Determine the type of the first interval
-		CASE returninterval.intervalstart
-			WHEN returninterval.agestart THEN
 				returninterval.agecoincideinterval := 1;
-			ELSE
-				returninterval.agecoincideinterval := 0;
 		END CASE;
 
 		-- Determine the number of intervals
@@ -387,7 +384,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				returninterval.intervalcount := 1 + 2 * ageyears(returninterval.censusstart, fiscalstart(eventend));
 
 			-- Start on the fiscal interval and end on the fiscal interval
-			WHEN returninterval.agecoincideinterval = 0 AND anniversarystart(birthdate, eventend) < fiscalstart(eventend) THEN
+			WHEN anniversarystart(birthdate, eventend) < fiscalstart(eventend) THEN
 				returninterval.intervalcount := 1 + 2 * ageyears(returninterval.censusstart, fiscalstart(eventend));
 				
 			-- Start on the fiscal interval and end on the age interval
@@ -401,6 +398,10 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 				NULL;
 			ELSE
 				returninterval.intervallast := 0;
+				returninterval.durationend := returninterval.intervalend;
+				returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+				PIPE ROW (returninterval);
+				returninterval.intervalfirst := 0;
 		END CASE;
 
 		-- Determine the loop cases
@@ -414,11 +415,6 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			WHEN returninterval.agecoincidecensus = 1 THEN
 				LOOP
 
-					-- Current interval
-					returninterval.durationend := returninterval.intervalend;
-					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
-					PIPE ROW (returninterval);
-
 					-- Next interval
 					returninterval.intervalorder := 1 + returninterval.intervalorder;
 					returninterval.censusstart := add_months(returninterval.censusstart, 12);
@@ -428,17 +424,18 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returninterval.intervalstart := returninterval.censusstart;
 					returninterval.intervalend := returninterval.censusend;
 					returninterval.durationstart := returninterval.intervalstart;
+					returninterval.intervalage := 1 + returninterval.intervalage;
+
+					-- End test
 					EXIT WHEN eventend <= returninterval.intervalend;
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
 				END LOOP;
 
 			-- Start on age interval
 			WHEN returninterval.agecoincideinterval = 1 THEN
 				LOOP
-
-					-- Age interval
-					returninterval.durationend := returninterval.intervalend;
-					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
-					PIPE ROW (returninterval);
 
 					-- Fiscal interval
 					returninterval.intervalorder := 1 + returninterval.intervalorder;
@@ -448,6 +445,8 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returninterval.intervalstart := returninterval.censusstart;
 					returninterval.intervalend := returninterval.ageend;
 					returninterval.durationstart := returninterval.intervalstart;
+
+					-- End test
 					EXIT WHEN eventend <= returninterval.intervalend;
 					returninterval.durationend := returninterval.intervalend;
 					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
@@ -461,17 +460,18 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returninterval.intervalstart := returninterval.agestart;
 					returninterval.intervalend := returninterval.censusend;
 					returninterval.durationstart := returninterval.intervalstart;
-					EXIT WHEN eventend <= returninterval.intervalend;
-				END LOOP;
-		
-			-- Start on fiscal interval
-			ELSE
-				LOOP
+					returninterval.intervalage := 1 + returninterval.intervalage;
 
-					-- Fiscal interval
+					-- End test
+					EXIT WHEN eventend <= returninterval.intervalend;
 					returninterval.durationend := returninterval.intervalend;
 					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
 					PIPE ROW (returninterval);
+				END LOOP;
+
+			-- Start on fiscal interval
+			ELSE
+				LOOP
 
 					-- Age interval
 					returninterval.intervalorder := 1 + returninterval.intervalorder;
@@ -481,12 +481,15 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returninterval.intervalstart := returninterval.agestart;
 					returninterval.intervalend := returninterval.censusend;
 					returninterval.durationstart := returninterval.intervalstart;
+					returninterval.intervalage := 1 + returninterval.intervalage;
+
+					-- End test
 					EXIT WHEN eventend <= returninterval.intervalend;
 					returninterval.durationend := returninterval.intervalend;
 					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
 					PIPE ROW (returninterval);
 
-					-- Next census interval
+					-- Fiscal interval
 					returninterval.intervalorder := 1 + returninterval.intervalorder;
 					returninterval.agecoincideinterval := 0;
 					returninterval.censusstart := add_months(returninterval.censusstart, 12);
@@ -494,7 +497,12 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 					returninterval.intervalstart := returninterval.censusstart;
 					returninterval.intervalend := returninterval.ageend;
 					returninterval.durationstart := returninterval.intervalstart;
+
+					-- End test
 					EXIT WHEN eventend <= returninterval.intervalend;
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
 				END LOOP;
 		END CASE;
 
@@ -537,20 +545,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		returninterval.durationdays := 1;
 		returninterval.intervalage := ageyears(birthdate, returninterval.agestart);
 
-		-- Assign the event to an interval
+		-- Determine the type of the interval
 		CASE returninterval.censusstart
-
-			-- Birthday interval coincides with the fiscal interval
 			WHEN returninterval.agestart THEN
 				returninterval.agecoincidecensus := 1;
 				returninterval.agecoincideinterval := 1;
-
-			-- Interval starting on the fiscal year start
 			WHEN returninterval.intervalstart THEN
 				returninterval.agecoincidecensus := 0;
 				returninterval.agecoincideinterval := 0;
-
-			-- Interval starting on the birthday
 			ELSE
 				returninterval.agecoincidecensus := 0;
 				returninterval.agecoincideinterval := 1;
