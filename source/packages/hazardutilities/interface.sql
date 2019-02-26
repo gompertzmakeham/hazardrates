@@ -124,7 +124,8 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	RETURN surveillancecintervals PIPELINED DETERMINISTIC;
 
 	/*
-	 *  Partition an event into fiscal years, subpartitioned by the birthday.
+	 *  Chidi Anagonye's Time Knife. Partition an event into fiscal years, subpartitioned by
+	 *  the birthday.
 	 */
 	FUNCTION generatecensus
 	(
@@ -135,7 +136,8 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	RETURN censusintervals PIPELINED DETERMINISTIC;
 
 	/*
-	 *  Truncate an event into fiscal years, subpartitioned by the birthday.
+	 *  Chidi Anagonye's Time Knife. Truncate an event into fiscal years, subpartitioned by
+	 *  the birthday.
 	 */
 	FUNCTION generatecensus
 	(

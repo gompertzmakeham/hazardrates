@@ -329,8 +329,9 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		RETURN;
 	END;
 
-	/*
-	 *  Partition an event into fiscal years, subpartitioned by the birthday.
+/*
+	 *  Chidi Anagonye's Time Knife. Partition an event into fiscal years, subpartitioned by
+	 *  the birthday.
 	 */
 	FUNCTION generatecensus
 	(
@@ -339,145 +340,175 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		birthdate IN DATE
 	)
 	RETURN censusintervals PIPELINED DETERMINISTIC AS
-		returnfiscal censusinterval;
-		returnbirth censusinterval;
-		lastfiscal DATE := fiscalstart(eventend);
-		localcount INTEGER := 0;
+		returninterval censusinterval;
 	BEGIN
 
-		-- Assign representation
-		returnfiscal.agecoincideinterval := 0;
-		returnbirth.agecoincideinterval := 1;
+		-- Common initialization
+		returninterval.censusstart := fiscalstart(eventstart);
+		returninterval.censusend := fiscalend(eventstart);
+		returninterval.agestart := anniversarystart(birthdate, eventstart);
+		returninterval.ageend := anniversaryend(birthdate, eventstart);
+		returninterval.intervalstart := greatest(returninterval.censusstart, returninterval.agestart);
+		returninterval.intervalend := least(returninterval.censusend, returninterval.ageend);
+		returninterval.durationstart := eventstart;
+		returninterval.intervalorder := 1;
+		returninterval.intervalfirst := 1;
+		returninterval.intervalage := ageyears(birthdate, returninterval.agestart);
 
-		-- Fiscal interval
-		returnfiscal.censusstart := fiscalstart(eventstart);
-		returnfiscal.censusend := fiscalend(eventstart);
-		returnbirth.censusstart := fiscalstart(eventstart);
-		returnbirth.censusend := fiscalend(eventstart);
-		
-		-- Determine the number of intervals if the birthday interval coincides with the fiscal interval
-		CASE
-
-			-- Birthday interval coincides with the fiscal interval
-			WHEN birthdate = fiscalstart(birthdate) THEN
-				returnfiscal.agecoincidecensus := 1;
-				returnbirth.agecoincidecensus := 1;
-				returnfiscal.intervalcount := 1 + ageyears(returnfiscal.censusstart, lastfiscal);
-				returnbirth.intervalcount := 1 + ageyears(returnbirth.censusstart, lastfiscal);
-			
-			-- No first fiscal interval and no last birthday interval
-			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart AND eventend <= anniversaryend(birthdate, lastfiscal) THEN
-				returnfiscal.agecoincidecensus := 0;
-				returnbirth.agecoincidecensus := 0;
-				returnfiscal.intervalcount := 2 * ageyears(returnfiscal.censusstart, lastfiscal);
-				returnbirth.intervalcount := 2 * ageyears(returnbirth.censusstart, lastfiscal);
-			
-			-- Only no first fiscal interval or only no birthday interval
-			WHEN anniversarystart(birthdate, returnfiscal.censusend) <= eventstart OR eventend <= anniversaryend(birthdate, lastfiscal) THEN
-				returnfiscal.agecoincidecensus := 0;
-				returnbirth.agecoincidecensus := 0;
-				returnfiscal.intervalcount := 1 + 2 * ageyears(returnfiscal.censusstart, lastfiscal);
-				returnbirth.intervalcount := 1 + 2 * ageyears(returnbirth.censusstart, lastfiscal);
-			
-			-- All fiscal and birthday intervals
+		-- Determine the type of age interval
+		CASE returninterval.agestart
+			WHEN returninterval.censusstart THEN
+				returninterval.agecoincidecensus := 1;
 			ELSE
-				returnfiscal.agecoincidecensus := 0;
-				returnbirth.agecoincidecensus := 0;
-				returnfiscal.intervalcount := 2 * (1 + ageyears(returnfiscal.censusstart, lastfiscal));
-				returnbirth.intervalcount := 2 * (1 + ageyears(returnbirth.censusstart, lastfiscal));
+				returninterval.agecoincidecensus := 0;
 		END CASE;
 
-		-- Partition the event
-		WHILE returnfiscal.censusstart <= lastfiscal LOOP
+		-- Determine the type of the first interval
+		CASE returninterval.intervalstart
+			WHEN returninterval.agestart THEN
+				returninterval.agecoincideinterval := 1;
+			ELSE
+				returninterval.agecoincideinterval := 0;
+		END CASE;
 
-			-- Birthday interval
-			returnfiscal.agestart := anniversarystart(birthdate, returnfiscal.censusstart);
-			returnfiscal.ageend := anniversaryend(birthdate, returnfiscal.censusstart);
-			returnfiscal.intervalage := ageyears(birthdate, returnfiscal.agestart);
-			returnbirth.agestart := anniversarystart(birthdate, returnbirth.censusend);
-			returnbirth.ageend := anniversaryend(birthdate, returnbirth.censusend);
-			returnbirth.intervalage := ageyears(birthdate, returnbirth.agestart);
+		-- Determine the number of intervals
+		CASE
 
-			-- Intersection of fiscal and age intervals
-			returnfiscal.intervalstart := greatest(returnfiscal.censusstart, returnfiscal.agestart);
-			returnfiscal.intervalend := least(returnfiscal.censusend, returnfiscal.ageend);
-			returnbirth.intervalstart := greatest(returnbirth.censusstart, returnbirth.agestart);
-			returnbirth.intervalend := least(returnbirth.censusend, returnbirth.ageend);
+			-- Fiscal and age interval are the same
+			WHEN returninterval.agecoincidecensus = 1 THEN
+				returninterval.intervalcount := 1 + ageyears(returninterval.censusstart, fiscalstart(eventend));
 
-			-- Rectification of the intervals to the event boundaries
-			returnfiscal.durationstart := greatest(returnfiscal.intervalstart, eventstart);
-			returnfiscal.durationend := least(returnfiscal.intervalend, eventend);
-			returnbirth.durationstart := greatest(returnbirth.intervalstart, eventstart);
-			returnbirth.durationend := least(returnbirth.intervalend, eventend);
+			-- Start on the age interval and end on the fiscal interval
+			WHEN returninterval.agecoincideinterval = 1 AND anniversarystart(birthdate, eventend) < fiscalstart(eventend) THEN
+				returninterval.intervalcount := 2 * ageyears(returninterval.censusstart, fiscalstart(eventend));
 
-			-- Fiscal start and event start flag
-			CASE returnfiscal.durationstart
-				WHEN eventstart THEN
-					returnfiscal.intervalfirst := 1;
-				ELSE
-					returnfiscal.intervalfirst := 0;
-			END CASE;
-			
-			-- Birth start and event start flag
-			CASE returnbirth.durationstart
-				WHEN eventstart THEN
-					returnbirth.intervalfirst := 1;
-				ELSE
-					returnbirth.intervalfirst := 0;
-			END CASE;
+			-- Start on the age interval and end on the age interval
+			WHEN returninterval.agecoincideinterval = 1 THEN
+				returninterval.intervalcount := 1 + 2 * ageyears(returninterval.censusstart, fiscalstart(eventend));
 
-			-- Fiscal end and event end flag
-			CASE returnfiscal.durationend
-				WHEN eventend THEN
-					returnfiscal.intervallast := 1;
-				ELSE
-					returnfiscal.intervallast := 0;
-			END CASE;
-			
-			-- Birth end and event end flag
-			CASE returnbirth.durationend
-				WHEN eventend THEN
-					returnbirth.intervallast := 1;
-				ELSE
-					returnbirth.intervallast := 0;
-			END CASE;
+			-- Start on the fiscal interval and end on the fiscal interval
+			WHEN returninterval.agecoincideinterval = 0 AND anniversarystart(birthdate, eventend) < fiscalstart(eventend) THEN
+				returninterval.intervalcount := 1 + 2 * ageyears(returninterval.censusstart, fiscalstart(eventend));
+				
+			-- Start on the fiscal interval and end on the age interval
+			ELSE
+				returninterval.intervalcount := 2 * (1 + ageyears(returninterval.censusstart, fiscalstart(eventend)));
+		END CASE;
 
-			-- Assign duration, increment, and send
-			CASE
-				WHEN returnfiscal.durationstart <= returnfiscal.durationend THEN
-					localcount := 1 + localcount;
-					returnfiscal.durationdays := 1 + returnfiscal.durationend - returnfiscal.durationstart;
-					returnfiscal.intervalorder := localcount;
-					PIPE ROW (returnfiscal);
-				ELSE
-					returnfiscal.durationdays := 0;
-					returnfiscal.intervalorder := localcount;
-			END CASE;
-			CASE
-				WHEN returnbirth.agecoincidecensus = 1 THEN
-					returnbirth.durationdays := 0;
-					returnbirth.intervalorder := localcount;
-				WHEN returnbirth.durationstart <= returnbirth.durationend THEN
-					localcount := 1 + localcount;
-					returnbirth.durationdays := 1 + returnbirth.durationend - returnbirth.durationstart;
-					returnbirth.intervalorder := localcount;
-					PIPE ROW (returnbirth);
-				ELSE
-					returnbirth.durationdays := 0;
-					returnbirth.intervalorder := localcount;
-			END CASE;
+		-- Test for one record
+		CASE returninterval.intervalcount
+			WHEN 1 THEN
+				NULL;
+			ELSE
+				returninterval.intervallast := 0;
+		END CASE;
 
-			-- Increment fiscal interval
-			returnfiscal.censusstart := add_months(returnfiscal.censusstart, 12);
-			returnfiscal.censusend := add_months(returnfiscal.censusend, 12);
-			returnbirth.censusstart := add_months(returnbirth.censusstart, 12);
-			returnbirth.censusend := add_months(returnbirth.censusend, 12);
-		END LOOP;
+		-- Determine the loop cases
+		CASE
+		
+			-- No op for only one record
+			WHEN returninterval.intervallast = 1 THEN
+				NULL;
+
+			-- Fiscal and census coincide
+			WHEN returninterval.agecoincidecensus = 1 THEN
+				LOOP
+
+					-- Current interval
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
+
+					-- Next interval
+					returninterval.intervalorder := 1 + returninterval.intervalorder;
+					returninterval.censusstart := add_months(returninterval.censusstart, 12);
+					returninterval.censusend := add_months(returninterval.censusend, 12);
+					returninterval.agestart := returninterval.censusstart;
+					returninterval.ageend := returninterval.censusend;
+					returninterval.intervalstart := returninterval.censusstart;
+					returninterval.intervalend := returninterval.censusend;
+					returninterval.durationstart := returninterval.intervalstart;
+					EXIT WHEN eventend <= returninterval.intervalend;
+				END LOOP;
+
+			-- Start on age interval
+			WHEN returninterval.agecoincideinterval = 1 THEN
+				LOOP
+
+					-- Age interval
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
+
+					-- Fiscal interval
+					returninterval.intervalorder := 1 + returninterval.intervalorder;
+					returninterval.agecoincideinterval := 0;
+					returninterval.censusstart := add_months(returninterval.censusstart, 12);
+					returninterval.censusend := add_months(returninterval.censusend, 12);
+					returninterval.intervalstart := returninterval.censusstart;
+					returninterval.intervalend := returninterval.ageend;
+					returninterval.durationstart := returninterval.intervalstart;
+					EXIT WHEN eventend <= returninterval.intervalend;
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
+
+					-- Next age interval
+					returninterval.intervalorder := 1 + returninterval.intervalorder;
+					returninterval.agecoincideinterval := 1;
+					returninterval.agestart := anniversarystart(birthdate, returninterval.censusend);
+					returninterval.ageend := anniversaryend(birthdate, returninterval.censusend);
+					returninterval.intervalstart := returninterval.agestart;
+					returninterval.intervalend := returninterval.censusend;
+					returninterval.durationstart := returninterval.intervalstart;
+					EXIT WHEN eventend <= returninterval.intervalend;
+				END LOOP;
+		
+			-- Start on fiscal interval
+			ELSE
+				LOOP
+
+					-- Fiscal interval
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
+
+					-- Age interval
+					returninterval.intervalorder := 1 + returninterval.intervalorder;
+					returninterval.agecoincideinterval := 1;
+					returninterval.agestart := anniversarystart(birthdate, returninterval.censusend);
+					returninterval.ageend := anniversaryend(birthdate, returninterval.censusend);
+					returninterval.intervalstart := returninterval.agestart;
+					returninterval.intervalend := returninterval.censusend;
+					returninterval.durationstart := returninterval.intervalstart;
+					EXIT WHEN eventend <= returninterval.intervalend;
+					returninterval.durationend := returninterval.intervalend;
+					returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+					PIPE ROW (returninterval);
+
+					-- Next census interval
+					returninterval.intervalorder := 1 + returninterval.intervalorder;
+					returninterval.agecoincideinterval := 0;
+					returninterval.censusstart := add_months(returninterval.censusstart, 12);
+					returninterval.censusend := add_months(returninterval.censusend, 12);
+					returninterval.intervalstart := returninterval.censusstart;
+					returninterval.intervalend := returninterval.ageend;
+					returninterval.durationstart := returninterval.intervalstart;
+					EXIT WHEN eventend <= returninterval.intervalend;
+				END LOOP;
+		END CASE;
+
+		-- Common finalization
+		returninterval.intervallast := 1;
+		returninterval.durationend := eventend;
+		returninterval.durationdays := 1 + returninterval.durationend - returninterval.durationstart;
+		PIPE ROW (returninterval);
 		RETURN;
 	END generatecensus;
 
 	/*
-	 *  Truncate an event into fiscal years, subpartitioned by the birthday.
+	 *  Chidi Anagonye's Time Knife. Truncate an event into fiscal years, subpartitioned by
+	 *  the birthday.
 	 */
 	FUNCTION generatecensus
 	(
@@ -485,48 +516,48 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		birthdate IN DATE
 	)
 	RETURN censusintervals PIPELINED DETERMINISTIC AS
-		returncensus censusinterval;
+		returninterval censusinterval;
 	BEGIN
 
 		-- Fiscal, age, and duration boundaries
-		returncensus.censusstart := fiscalstart(eventdate);
-		returncensus.censusend := fiscalend(eventdate);
-		returncensus.agestart := anniversarystart(birthdate, eventdate);
-		returncensus.ageend := anniversaryend(birthdate, eventdate);
-		returncensus.intervalstart := greatest(returncensus.censusstart, returncensus.agestart);
-		returncensus.intervalend := least(returncensus.censusend, returncensus.ageend);
-		returncensus.durationstart := eventdate;
-		returncensus.durationend := eventdate;
+		returninterval.censusstart := fiscalstart(eventdate);
+		returninterval.censusend := fiscalend(eventdate);
+		returninterval.agestart := anniversarystart(birthdate, eventdate);
+		returninterval.ageend := anniversaryend(birthdate, eventdate);
+		returninterval.intervalstart := greatest(returninterval.censusstart, returninterval.agestart);
+		returninterval.intervalend := least(returninterval.censusend, returninterval.ageend);
+		returninterval.durationstart := eventdate;
+		returninterval.durationend := eventdate;
 
 		-- Order, count, duration, and age
-		returncensus.intervalfirst := 1;
-		returncensus.intervallast := 1;
-		returncensus.intervalcount := 1;
-		returncensus.intervalorder := 1;
-		returncensus.durationdays := 1;
-		returncensus.intervalage := ageyears(birthdate, returncensus.agestart);
+		returninterval.intervalfirst := 1;
+		returninterval.intervallast := 1;
+		returninterval.intervalcount := 1;
+		returninterval.intervalorder := 1;
+		returninterval.durationdays := 1;
+		returninterval.intervalage := ageyears(birthdate, returninterval.agestart);
 
 		-- Assign the event to an interval
-		CASE returncensus.censusstart
+		CASE returninterval.censusstart
 
 			-- Birthday interval coincides with the fiscal interval
-			WHEN returncensus.agestart THEN
-				returncensus.agecoincidecensus := 1;
-				returncensus.agecoincideinterval := 1;
+			WHEN returninterval.agestart THEN
+				returninterval.agecoincidecensus := 1;
+				returninterval.agecoincideinterval := 1;
 
 			-- Interval starting on the fiscal year start
-			WHEN returncensus.intervalstart THEN
-				returncensus.agecoincidecensus := 0;
-				returncensus.agecoincideinterval := 0;
+			WHEN returninterval.intervalstart THEN
+				returninterval.agecoincidecensus := 0;
+				returninterval.agecoincideinterval := 0;
 
 			-- Interval starting on the birthday
 			ELSE
-				returncensus.agecoincidecensus := 0;
-				returncensus.agecoincideinterval := 1;
+				returninterval.agecoincidecensus := 0;
+				returninterval.agecoincideinterval := 1;
 		END CASE;
 
 		-- Send
-		PIPE ROW (returncensus);
+		PIPE ROW (returninterval);
 		RETURN;
 	END generatecensus;
 
