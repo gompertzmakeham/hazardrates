@@ -233,5 +233,10 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			EXECUTE IMMEDIATE localquery;
 		END IF;
 		COMMIT;
+
+		-- Final compile recompile
+		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
+		EXECUTE IMMEDIATE localquery;
+		COMMIT;
 	END refreshtable;
 END maintenanceutilities;
