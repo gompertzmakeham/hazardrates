@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW personsurveillance NOLOGGING COMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
+CREATE OR REPLACE VIEW personsurveillance AS
 SELECT
 
 	/*+ cardinality(a1, 1) */
@@ -28,9 +28,10 @@ FROM
 			a0.surveillancestart,
 			a0.surveillanceend
 		)
-	) a1;
+	) a1
+WITH READ ONLY;
 
-COMMENT ON MATERIALIZED VIEW personsurveillance IS 'For every person that at any time was covered by Alberta Healthcare Insurance list two surveillance intervals for each person, representing the corner cases of possible values for the birth and death dates. In the case of observational equipose the two records are identical.';
+COMMENT ON TABLE personsurveillance IS 'For every person that at any time was covered by Alberta Healthcare Insurance list two surveillance intervals for each person, representing the corner cases of possible values for the birth and death dates. In the case of observational equipose the two records are identical.';
 COMMENT ON COLUMN personsurveillance.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN personsurveillance.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN personsurveillance.birthdate IS 'Best estimate of the birth date from all adminstrative records, either least (U) or greatest (L) bound, depending on the corner case.';

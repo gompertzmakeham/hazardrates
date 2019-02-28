@@ -11,11 +11,12 @@ WITH
 			a0.cornercase,
 			a2.intervalstart,
 			a2.intervalend,
-			greatest
-			(
-				0,
-				1 + least(a0.extremumend, a2.durationend) - greatest(a0.extremumstart, a2.durationstart)
-			) staydays,
+			CASE
+				WHEN greatest(a0.extremumstart, a2.durationstart) <= least(a0.extremumend, a2.durationend) THEN
+					1 + least(a0.extremumend, a2.durationend) - greatest(a0.extremumstart, a2.durationstart)
+				ELSE
+					0
+			END staydays,
 			CASE
 				WHEN a2.durationstart BETWEEN a0.extremumstart AND a0.extremumend THEN
 					a2.intervalfirst
@@ -27,7 +28,13 @@ WITH
 					a2.intervallast
 				ELSE
 					0
-			END dischargecount
+			END dischargecount,
+			CASE
+				WHEN greatest(a0.extremumstart, a2.durationstart) <= least(a0.extremumend, a2.durationend) THEN
+					1
+				ELSE
+					0
+			END intersectingstays
 		FROM
 			personsurveillance a0
 			INNER JOIN
@@ -61,9 +68,11 @@ SELECT
 	CAST(SUM(a0.staydays) AS INTEGER) staydays,
 	CAST(SUM(a0.admissioncount) AS INTEGER) admissioncount,
 	CAST(SUM(a0.dischargecount) AS INTEGER) dischargecount,
-	CAST(COUNT(*) AS INTEGER) intersectingstays
+	CAST(SUM(a0.intersectingstays) AS INTEGER) intersectingstays
 FROM
 	eventdata a0
+WHERE
+	a0.staydays > 0
 GROUP BY
 	a0.uliabphn,
 	a0.cornercase,

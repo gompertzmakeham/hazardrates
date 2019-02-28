@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW personcensus NOLOGGING COMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
+CREATE OR REPLACE VIEW personcensus AS
 SELECT
 
 	/*+ cardinality(a1, 1) */
@@ -47,9 +47,10 @@ SELECT
 FROM
 	personsurveillance a0
 	CROSS JOIN
-	TABLE(hazardutilities.generatecensus(a0.extremumstart, a0.extremumend, a0.birthdate)) a1;
+	TABLE(hazardutilities.generatecensus(a0.extremumstart, a0.extremumend, a0.birthdate)) a1
+WITH READ ONLY;
 
-COMMENT ON MATERIALIZED VIEW personcensus IS 'For every person that at any time was covered by Alberta Healthcare Insurance partition the surviellance interval by the intersections of fiscal years and age years, rectified by the start and end of the surveillance interval.';
+COMMENT ON TABLE personcensus IS 'For every person that at any time was covered by Alberta Healthcare Insurance partition the surviellance interval by the intersections of fiscal years and age years, rectified by the start and end of the surveillance interval.';
 COMMENT ON COLUMN personcensus.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN personcensus.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN personcensus.censusstart IS 'Closed start of the fiscal year, April 1.';
