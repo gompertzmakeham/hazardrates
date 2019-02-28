@@ -4,7 +4,7 @@
 
 -- Utilization support
 DROP MATERIALIZED VIEW personutilization;
-DROP MATERIALIZED VIEW personcensus;
+DROP VIEW personcensus;
 
 -- Census structures
 DROP MATERIALIZED VIEW censusambulatorycare;
@@ -16,7 +16,7 @@ DROP MATERIALIZED VIEW censusprimarycare;
 DROP MATERIALIZED VIEW censussupportiveliving;
 
 -- Surveillance support
-DROP MATERIALIZED VIEW personsurveillance;
+DROP VIEW personsurveillance;
 DROP MATERIALIZED VIEW persondemographic;
 
 -- Surveillance structures
