@@ -408,7 +408,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		CASE
 		
 			-- No op for only one record
-			WHEN returninterval.intervallast = 1 THEN
+			WHEN returninterval.intervalfirst = 1 THEN
 				NULL;
 
 			-- Fiscal and census coincide

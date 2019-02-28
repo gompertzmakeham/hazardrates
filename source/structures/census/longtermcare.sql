@@ -1,42 +1,74 @@
 CREATE MATERIALIZED VIEW censuslongtermcare NOLOGGING COMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
-SELECT
+WITH
 
-	/*+ cardinality(a2, 1) */
+	-- Ingest all long term care events
+	eventdata AS
+	(
+		SELECT
+		
+			/*+ cardinality(a2, 1) */
+			a0.uliabphn,
+			a0.cornercase,
+			a2.intervalstart,
+			a2.intervalend,
+			greatest
+			(
+				0,
+				1 + least(a0.extremumend, a2.durationend) - greatest(a0.extremumstart, a2.durationstart)
+			) staydays,
+			CASE
+				WHEN a2.durationstart BETWEEN a0.extremumstart AND a0.extremumend THEN
+					a2.intervalfirst
+				ELSE
+					0
+			END admissioncount,
+			CASE
+				WHEN a2.durationend BETWEEN a0.extremumstart AND a0.extremumend THEN
+					a2.intervallast
+				ELSE
+					0
+			END dischargecount
+		FROM
+			personsurveillance a0
+			INNER JOIN
+			TABLE(continuing_care.accis.get_adt) a1
+			ON
+				a0.uliabphn = a1.uli_ab_phn
+				AND
+				a1.current_client_type_code = '10'
+				AND
+				COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM')) BETWEEN a1.admit_date AND TRUNC(SYSDATE, 'MM')
+				AND
+				COALESCE(a1.birth_date, a1.admit_date) <= COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM'))
+			CROSS JOIN
+			TABLE
+			(
+				hazardutilities.generatecensus
+				(
+					a1.admit_date,
+					COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM')),
+					a0.birthdate
+				)
+			) a2
+	)
+	
+-- Digest to one record per person per census interval partitioning the surveillance span
+SELECT
 	CAST(a0.uliabphn AS INTEGER) uliabphn,
 	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
-	CAST(a2.intervalstart AS DATE) intervalstart,
-	CAST(a2.intervalend AS DATE) intervalend,
-	CAST(SUM(a2.durationdays) AS INTEGER) staydays,
-	CAST(SUM(a2.intervalfirst) AS INTEGER) admissioncount,
-	CAST(SUM(a2.intervallast) AS INTEGER) dischargecount,
+	CAST(a0.intervalstart AS DATE) intervalstart,
+	CAST(a0.intervalend AS DATE) intervalend,
+	CAST(SUM(a0.staydays) AS INTEGER) staydays,
+	CAST(SUM(a0.admissioncount) AS INTEGER) admissioncount,
+	CAST(SUM(a0.dischargecount) AS INTEGER) dischargecount,
 	CAST(COUNT(*) AS INTEGER) intersectingstays
 FROM
-	personsurveillance a0
-	INNER JOIN
-	TABLE(continuing_care.accis.get_adt) a1
-	ON
-		a0.uliabphn = a1.uli_ab_phn
-		AND
-		a1.current_client_type_code = '10'
-		AND
-		COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM')) BETWEEN a1.admit_date AND TRUNC(SYSDATE, 'MM')
-		AND
-		COALESCE(a1.birth_date, a1.admit_date) <= COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM'))
-	CROSS JOIN
-	TABLE
-	(
-		hazardutilities.generatecensus
-		(
-			a1.admit_date,
-			COALESCE(a1.discharge_date, TRUNC(SYSDATE, 'MM')),
-			a0.birthdate
-		)
-	) a2
+	eventdata a0
 GROUP BY
 	a0.uliabphn,
 	a0.cornercase,
-	a2.intervalstart,
-	a2.intervalend;
+	a0.intervalstart,
+	a0.intervalend;
 
 COMMENT ON MATERIALIZED VIEW censuslongtermcare IS 'Utilization of long term care in census intervals of each person.';
 COMMENT ON COLUMN censuslongtermcare.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
