@@ -125,9 +125,9 @@ COMMENT ON COLUMN censuspharmacydispense.uliabphn IS 'Unique lifetime identifier
 COMMENT ON COLUMN censuspharmacydispense.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censuspharmacydispense.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censuspharmacydispense.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censuspharmacydispense.standarddailydoses IS 'Number of daily doses dispensed of therapeutics not subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.controlleddailydoses IS 'Number of daily doses dispensed of therapeutics subject to controlled substances regulations.';
-COMMENT ON COLUMN censuspharmacydispense.alldailydoses IS 'Number of daily doses dispensed of all therapeutics.';
+COMMENT ON COLUMN censuspharmacydispense.standarddailydoses IS 'Dispensed days supply of therapeutics not subject to controlled substances regulations.';
+COMMENT ON COLUMN censuspharmacydispense.controlleddailydoses IS 'Dispensed days supply of therapeutics subject to controlled substances regulations.';
+COMMENT ON COLUMN censuspharmacydispense.alldailydoses IS 'Dispensed days supply of all therapeutics.';
 COMMENT ON COLUMN censuspharmacydispense.standardtherapeutics IS 'Number of distinct dispensed therapeutics not subject to controlled substances regulations.';
 COMMENT ON COLUMN censuspharmacydispense.controlledtherapeutics IS 'Number of distinct dispensed therapeutics subject to controlled substances regulations.';
 COMMENT ON COLUMN censuspharmacydispense.alltherapeutics IS 'Number of distinct dispensed therapeutics.';
