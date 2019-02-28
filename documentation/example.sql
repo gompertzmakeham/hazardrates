@@ -18,6 +18,10 @@ SELECT
 	-- Start and end of life (obviously), deceased date is null when not observed
 	a1.birthdate,
 	a1.deceaseddate,
+	
+	-- Start and end of residency, null when not observed
+	a1.immigratedate,
+	a1.emigratedate,
 
 	-- Extent of surveillance observation
 	a0.surveillancestart,
