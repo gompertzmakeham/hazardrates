@@ -153,6 +153,6 @@ COMMENT ON COLUMN censuslaboratorycollection.uliabphn IS 'Unique lifetime identi
 COMMENT ON COLUMN censuslaboratorycollection.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censuslaboratorycollection.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censuslaboratorycollection.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censuslaboratorycollection.assaycount IS 'Number assays done of samples collected in the census interval.';
-COMMENT ON COLUMN censuslaboratorycollection.collectsitedays IS 'Number unique combinations of sites and days in the census interval where the person had a collection taken.';
-COMMENT ON COLUMN censuslaboratorycollection.collectdays IS 'Number of unique days in the census interval when the person had a collection taken.';
+COMMENT ON COLUMN censuslaboratorycollection.assaycount IS 'Number assays done of community laboratory samples collected in the census interval.';
+COMMENT ON COLUMN censuslaboratorycollection.collectsitedays IS 'Number unique combinations of community laboratory collection sites and days in the census interval where the person had a collection taken.';
+COMMENT ON COLUMN censuslaboratorycollection.collectdays IS 'Number of unique days in the census interval when the person had a community laboratory collection taken.';

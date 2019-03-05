@@ -84,7 +84,7 @@ COMMENT ON COLUMN censussupportiveliving.uliabphn IS 'Unique lifetime identifier
 COMMENT ON COLUMN censussupportiveliving.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censussupportiveliving.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censussupportiveliving.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censussupportiveliving.staydays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN censussupportiveliving.admissioncount IS 'Admissions in the census interval.';
-COMMENT ON COLUMN censussupportiveliving.dischargecount IS 'Discharges in the census interval.';
-COMMENT ON COLUMN censussupportiveliving.intersectingstays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN censussupportiveliving.staydays IS 'Naive sum of designated supportive living days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN censussupportiveliving.admissioncount IS 'Designated supportive living admissions in the census interval.';
+COMMENT ON COLUMN censussupportiveliving.dischargecount IS 'Designated supportive living discharges in the census interval.';
+COMMENT ON COLUMN censussupportiveliving.intersectingstays IS 'Designated supportive living stays intersecting with the census interval.';

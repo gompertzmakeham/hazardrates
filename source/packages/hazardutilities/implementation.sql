@@ -564,6 +564,347 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	END generatecensus;
 
 	/*
+	 *  Pivot a census utilization record to a columnar list of measures.
+	 */
+	FUNCTION generatemeasures
+	(
+		ambulatoryminutes IN INTEGER,
+		ambulatoryvisits IN INTEGER,
+		ambulatorysitedays IN INTEGER,
+		ambulatorydays IN INTEGER,
+		inpatientdays IN INTEGER,
+		inpatientadmissions IN INTEGER,
+		inpatientdischarges IN INTEGER,
+		inpatientstays IN INTEGER,
+		laboratoryassays IN INTEGER,
+		laboratorysitedays IN INTEGER,
+		laboratorydays IN INTEGER,
+		longtermcaredays IN INTEGER,
+		longtermcareadmissions IN INTEGER,
+		longtermcaredischarges IN INTEGER,
+		longtermcarestays IN INTEGER,
+		pharmacystandarddailydoses IN INTEGER,
+		pharmacycontrolleddailydoses IN INTEGER,
+		pharmacydailydoses IN INTEGER,
+		pharmacystandardtherapeutics IN INTEGER,
+		pharmacycontrolledtherapeutics IN INTEGER,
+		pharmacytherapeutics IN INTEGER,
+		pharmacystandardsitedays IN INTEGER,
+		pharmacycontrolledsitedays IN INTEGER,
+		pharmacysitedays IN INTEGER,
+		pharmacystandarddays IN INTEGER,
+		pharmacycontrolleddays IN INTEGER,
+		pharmacydays IN INTEGER,
+		anesthesiologyprocedures IN INTEGER,
+		consultprocedures IN INTEGER,
+		generalpracticeprocedures IN INTEGER,
+		pathologyprocedures IN INTEGER,
+		radiologyprocedures IN INTEGER,
+		specialtyprocedures IN INTEGER,
+		surgicalprocedures IN INTEGER,
+		primarycareprocedures IN INTEGER,
+		anesthesiologistsdays IN INTEGER,
+		consultprovidersdays IN INTEGER,
+		generalpractitionersdays IN INTEGER,
+		pathologistsdays IN INTEGER,
+		radiologistsdays IN INTEGER,
+		specialistsdays IN INTEGER,
+		surgeonsdays IN INTEGER,
+		primarycareproviderdays IN INTEGER,
+		anesthesiologydays IN INTEGER,
+		consultdays IN INTEGER,
+		generalpracticedays IN INTEGER,
+		pathologydays IN INTEGER,
+		radiologydays IN INTEGER,
+		specialtydays IN INTEGER,
+		surgerydays IN INTEGER,
+		primarycaredays IN INTEGER,
+		supportivelivingdays IN INTEGER,
+		supportivelivingadmissions IN INTEGER,
+		supportivelivingdischarges IN INTEGER,
+		supportivelivingstays IN INTEGER
+	)
+	RETURN censusmeasures PIPELINED DETERMINISTIC AS
+		localmeasure censusmeasure;
+	BEGIN
+		localmeasure.measurevalue := ambulatoryminutes;
+		localmeasure.measureidentifier := 'ambulatoryminutes';
+		localmeasure.measuredescription := 'Naive sum of emergency inpatient care days that intersected with the census interval, including overlapping stays.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := ambulatoryvisits;
+		localmeasure.measureidentifier := 'ambulatoryvisits';
+		localmeasure.measuredescription := 'Emergency ambulatory care visits in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := ambulatorysitedays;
+		localmeasure.measureidentifier := 'ambulatorysitedays';
+		localmeasure.measuredescription := 'Unique combinations of days and ambulatory care sites visited for an emergency in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := ambulatorydays;
+		localmeasure.measureidentifier := 'ambulatorydays';
+		localmeasure.measuredescription := 'Unique days of ambulatory care visits for an emergency in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := inpatientdays;
+		localmeasure.measureidentifier := 'inpatientdays';
+		localmeasure.measuredescription := 'Naive sum of emergency inpatient care days that intersected with the census interval, including overlapping stays.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := inpatientadmissions;
+		localmeasure.measureidentifier := 'inpatientadmissions';
+		localmeasure.measuredescription := 'Emergency inpatient care admissions in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := inpatientdischarges;
+		localmeasure.measureidentifier := 'inpatientdischarges';
+		localmeasure.measuredescription := 'Emergency inpatient care discharges in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := inpatientstays;
+		localmeasure.measureidentifier := 'inpatientstays';
+		localmeasure.measuredescription := 'Emergency inpatient care stays intersecting with the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := laboratoryassays;
+		localmeasure.measureidentifier := 'laboratoryassays';
+		localmeasure.measuredescription := 'Number assays done of community laboratory samples collected in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := laboratorysitedays;
+		localmeasure.measureidentifier := 'laboratorysitedays';
+		localmeasure.measuredescription := 'Number unique combinations of community laboratory collection sites and days in the census interval where the person had a collection taken.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := laboratorydays;
+		localmeasure.measureidentifier := 'laboratorydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person had a community laboratory collection taken.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := longtermcaredays;
+		localmeasure.measureidentifier := 'longtermcaredays';
+		localmeasure.measuredescription := 'Naive sum of long term care days that intersected with the census interval, including overlapping stays.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := longtermcareadmissions;
+		localmeasure.measureidentifier := 'longtermcareadmissions';
+		localmeasure.measuredescription := 'Long term care admissions in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := longtermcaredischarges;
+		localmeasure.measureidentifier := 'longtermcaredischarges';
+		localmeasure.measuredescription := 'Long term care discharges in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := longtermcarestays;
+		localmeasure.measureidentifier := 'longtermcarestays';
+		localmeasure.measuredescription := 'Long term care stays intersecting with the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacystandarddailydoses;
+		localmeasure.measureidentifier := 'pharmacystandarddailydoses';
+		localmeasure.measuredescription := 'Naive sum of days supply dispensed from a community pharmacy of standard prescription therapeutics not subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacycontrolleddailydoses;
+		localmeasure.measureidentifier := 'pharmacycontrolleddailydoses';
+		localmeasure.measuredescription := 'Naive sum of days supply dispensed from a community pharmacy of triple pad prescription therapeutics subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacydailydoses;
+		localmeasure.measureidentifier := 'pharmacydailydoses';
+		localmeasure.measuredescription := 'Naive sum of days supply dispensed from a community pharmacy of all prescription therapeutics.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacystandardtherapeutics;
+		localmeasure.measureidentifier := 'pharmacystandardtherapeutics';
+		localmeasure.measuredescription := 'Number of distinct standard prescription therapeutics dispensed from a community pharmacy not subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacycontrolledtherapeutics;
+		localmeasure.measureidentifier := 'pharmacycontrolledtherapeutics';
+		localmeasure.measuredescription := 'Number of distinct triple pad prescription therapeutics dispensed from a community pharmacy subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacytherapeutics;
+		localmeasure.measureidentifier := 'pharmacytherapeutics';
+		localmeasure.measuredescription := 'Number of distinct prescription therapeutics dispensed from a community pharmacy.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacystandardsitedays;
+		localmeasure.measureidentifier := 'pharmacystandardsitedays';
+		localmeasure.measuredescription := 'Number of unique combinations of community pharmacies and days in the census interval when the person was dispensed a standard prescription of a therapeutic not subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacycontrolledsitedays;
+		localmeasure.measureidentifier := 'pharmacycontrolledsitedays';
+		localmeasure.measuredescription := 'Number of unique combinations of community pharmacies and days in the census interval when the person was dispensed a triple pad prescription of a therapeutic subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacysitedays;
+		localmeasure.measureidentifier := 'pharmacysitedays';
+		localmeasure.measuredescription := 'Number of unique combinations of community pharmacies and days in the census interval when the person was dispensed any prescription therapeutic.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacystandarddays;
+		localmeasure.measureidentifier := 'pharmacystandarddays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person was dispensed from a community pharmacy a standard prescription of a therapeutic not subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacycontrolleddays;
+		localmeasure.measureidentifier := 'pharmacycontrolleddays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person was dispensed from a community pharmacy a triple pad prescription of a therapeutic subject to controlled substances regulations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pharmacydays;
+		localmeasure.measureidentifier := 'pharmacydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person was dispensed from a community pharmacy any prescription therapeutic.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := anesthesiologyprocedures;
+		localmeasure.measureidentifier := 'anesthesiologyprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by an anesthiologist in the role of most responsible procedure provider and specifically delivering care in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := consultprocedures;
+		localmeasure.measureidentifier := 'consultprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a provider when either their role was consult, assistant, or second, or the procedure was outside of their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := generalpracticeprocedures;
+		localmeasure.measureidentifier := 'generalpracticeprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pathologyprocedures;
+		localmeasure.measureidentifier := 'pathologyprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := radiologyprocedures;
+		localmeasure.measureidentifier := 'radiologyprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := specialtyprocedures;
+		localmeasure.measureidentifier := 'specialtyprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := surgicalprocedures;
+		localmeasure.measureidentifier := 'surgicalprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := primarycareprocedures;
+		localmeasure.measureidentifier := 'primarycareprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := anesthesiologistsdays;
+		localmeasure.measureidentifier := 'anesthesiologistsdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care anesthesiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := consultprovidersdays;
+		localmeasure.measureidentifier := 'consultprovidersdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care providers and days in the census interval when either their role was consult, assistant, or second, or the procedure was outside of their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := generalpractitionersdays;
+		localmeasure.measureidentifier := 'generalpractitionersdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pathologistsdays;
+		localmeasure.measureidentifier := 'pathologistsdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care pathologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := radiologistsdays;
+		localmeasure.measureidentifier := 'radiologistsdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := specialistsdays;
+		localmeasure.measureidentifier := 'specialistsdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care specialists other than an anesthesiologists, general practitioners, pathologists, radiologists, or surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := surgeonsdays;
+		localmeasure.measureidentifier := 'surgeonsdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := primarycareproviderdays;
+		localmeasure.measureidentifier := 'primarycareproviderdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care providers and unique days in the census interval when the person utilized primary care.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := anesthesiologydays;
+		localmeasure.measureidentifier := 'anesthesiologydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care anesthesiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := consultdays;
+		localmeasure.measureidentifier := 'consultdays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when either the primary care provider role was consult, assistant, or second, or the procedure was outside of their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := generalpracticedays;
+		localmeasure.measureidentifier := 'generalpracticedays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := pathologydays;
+		localmeasure.measureidentifier := 'pathologydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := radiologydays;
+		localmeasure.measureidentifier := 'radiologydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := specialtydays;
+		localmeasure.measureidentifier := 'specialtydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := surgerydays;
+		localmeasure.measureidentifier := 'surgerydays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care surgeon was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := primarycaredays;
+		localmeasure.measureidentifier := 'primarycaredays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person visited primary care in the community.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := supportivelivingdays;
+		localmeasure.measureidentifier := 'supportivelivingdays';
+		localmeasure.measuredescription := 'Naive sum of designated supportive living days that intersected with the census interval, including overlapping stays.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := supportivelivingadmissions;
+		localmeasure.measureidentifier := 'supportivelivingadmissions';
+		localmeasure.measuredescription := 'Designated supportive living admissions in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := supportivelivingdischarges;
+		localmeasure.measureidentifier := 'supportivelivingdischarges';
+		localmeasure.measuredescription := 'Designated supportive living discharges in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := supportivelivingstays;
+		localmeasure.measureidentifier := 'supportivelivingstays';
+		localmeasure.measuredescription := 'Designated supportive living stays intersecting with the census interval.';
+		PIPE ROW (localmeasure);
+		RETURN;
+	END generatemeasures;
+
+	/*
 	 *  Lower truncated years between start date and end date.
 	 */
 	FUNCTION ageyears

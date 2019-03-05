@@ -84,7 +84,7 @@ COMMENT ON COLUMN censuslongtermcare.uliabphn IS 'Unique lifetime identifier of 
 COMMENT ON COLUMN censuslongtermcare.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censuslongtermcare.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censuslongtermcare.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censuslongtermcare.staydays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN censuslongtermcare.admissioncount IS 'Admissions in the census interval.';
-COMMENT ON COLUMN censuslongtermcare.dischargecount IS 'Discharges in the census interval.';
-COMMENT ON COLUMN censuslongtermcare.intersectingstays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN censuslongtermcare.staydays IS 'Naive sum of long term care days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN censuslongtermcare.admissioncount IS 'Long term care admissions in the census interval.';
+COMMENT ON COLUMN censuslongtermcare.dischargecount IS 'Long term care discharges in the census interval.';
+COMMENT ON COLUMN censuslongtermcare.intersectingstays IS 'Long term care stays intersecting with the census interval.';

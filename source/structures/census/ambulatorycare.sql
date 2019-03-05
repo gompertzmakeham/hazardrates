@@ -139,7 +139,7 @@ COMMENT ON COLUMN censusambulatorycare.uliabphn IS 'Unique lifetime identifier o
 COMMENT ON COLUMN censusambulatorycare.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censusambulatorycare.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censusambulatorycare.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censusambulatorycare.visitminutes IS 'Naive sum of minutes that intersected with the census interval, including overlapping visits.';
-COMMENT ON COLUMN censusambulatorycare.visitcount IS 'Visits in the census interval.';
-COMMENT ON COLUMN censusambulatorycare.visitsitedays IS 'Unique combinations of days and sites visited in the census interval.';
-COMMENT ON COLUMN censusambulatorycare.visitdays IS 'Unique days of visits in the census interval.';
+COMMENT ON COLUMN censusambulatorycare.visitminutes IS 'Naive sum of emergency ambulatory care minutes that intersected with the census interval, including overlapping visits.';
+COMMENT ON COLUMN censusambulatorycare.visitcount IS 'Emergency ambulatory care visits in the census interval.';
+COMMENT ON COLUMN censusambulatorycare.visitsitedays IS 'Unique combinations of days and ambulatory care sites visited for an emergency in the census interval.';
+COMMENT ON COLUMN censusambulatorycare.visitdays IS 'Unique days of ambulatory care visits for an emergency in the census interval.';

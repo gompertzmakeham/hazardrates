@@ -84,6 +84,21 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	TYPE censusintervals IS TABLE OF censusinterval;
 
 	/*
+	 *  A single measure in a single census interval.
+	 */
+	TYPE censusmeasure IS RECORD
+	(
+		measurevalue INTEGER,
+		measureidentifier VARCHAR2(32),
+		measuredescription VARCHAR2(1024)
+	);
+
+	/*
+	 * A collection of census measures for a census interval.
+	 */
+	TYPE censusmeasures IS TABLE OF censusmeasure;
+
+	/*
 	 *  Map event data extremums of each person to a demographic interval.
 	 */
 	FUNCTION generatedemographic
@@ -145,6 +160,69 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 		birthdate IN DATE
 	)
 	RETURN censusintervals PIPELINED DETERMINISTIC;
+
+	/*
+	 *  Pivot a census utilization record to a columnar list of measures.
+	 */
+	FUNCTION generatemeasures
+	(
+		ambulatoryminutes IN INTEGER,
+		ambulatoryvisits IN INTEGER,
+		ambulatorysitedays IN INTEGER,
+		ambulatorydays IN INTEGER,
+		inpatientdays IN INTEGER,
+		inpatientadmissions IN INTEGER,
+		inpatientdischarges IN INTEGER,
+		inpatientstays IN INTEGER,
+		laboratoryassays IN INTEGER,
+		laboratorysitedays IN INTEGER,
+		laboratorydays IN INTEGER,
+		longtermcaredays IN INTEGER,
+		longtermcareadmissions IN INTEGER,
+		longtermcaredischarges IN INTEGER,
+		longtermcarestays IN INTEGER,
+		pharmacystandarddailydoses IN INTEGER,
+		pharmacycontrolleddailydoses IN INTEGER,
+		pharmacydailydoses IN INTEGER,
+		pharmacystandardtherapeutics IN INTEGER,
+		pharmacycontrolledtherapeutics IN INTEGER,
+		pharmacytherapeutics IN INTEGER,
+		pharmacystandardsitedays IN INTEGER,
+		pharmacycontrolledsitedays IN INTEGER,
+		pharmacysitedays IN INTEGER,
+		pharmacystandarddays IN INTEGER,
+		pharmacycontrolleddays IN INTEGER,
+		pharmacydays IN INTEGER,
+		anesthesiologyprocedures IN INTEGER,
+		consultprocedures IN INTEGER,
+		generalpracticeprocedures IN INTEGER,
+		pathologyprocedures IN INTEGER,
+		radiologyprocedures IN INTEGER,
+		specialtyprocedures IN INTEGER,
+		surgicalprocedures IN INTEGER,
+		primarycareprocedures IN INTEGER,
+		anesthesiologistsdays IN INTEGER,
+		consultprovidersdays IN INTEGER,
+		generalpractitionersdays IN INTEGER,
+		pathologistsdays IN INTEGER,
+		radiologistsdays IN INTEGER,
+		specialistsdays IN INTEGER,
+		surgeonsdays IN INTEGER,
+		primarycareproviderdays IN INTEGER,
+		anesthesiologydays IN INTEGER,
+		consultdays IN INTEGER,
+		generalpracticedays IN INTEGER,
+		pathologydays IN INTEGER,
+		radiologydays IN INTEGER,
+		specialtydays IN INTEGER,
+		surgerydays IN INTEGER,
+		primarycaredays IN INTEGER,
+		supportivelivingdays IN INTEGER,
+		supportivelivingadmissions IN INTEGER,
+		supportivelivingdischarges IN INTEGER,
+		supportivelivingstays IN INTEGER
+	)
+	RETURN censusmeasures PIPELINED DETERMINISTIC;
 
 	/*
 	 *  Lower truncated years between start date and end date.

@@ -88,7 +88,7 @@ COMMENT ON COLUMN censusinpatientcare.uliabphn IS 'Unique lifetime identifier of
 COMMENT ON COLUMN censusinpatientcare.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN censusinpatientcare.intervalstart IS 'Start date of the census interval which intersects with the event.';
 COMMENT ON COLUMN censusinpatientcare.intervalend IS 'End date of the census interval which intersects with the event.';
-COMMENT ON COLUMN censusinpatientcare.staydays IS 'Naive sum of stay days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN censusinpatientcare.admissioncount IS 'Admissions in the census interval.';
-COMMENT ON COLUMN censusinpatientcare.dischargecount IS 'Discharges in the census interval.';
-COMMENT ON COLUMN censusinpatientcare.intersectingstays IS 'Stays intersecting with the census interval.';
+COMMENT ON COLUMN censusinpatientcare.staydays IS 'Naive sum of emergency inpatient care days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN censusinpatientcare.admissioncount IS 'Emergency inpatient care admissions in the census interval.';
+COMMENT ON COLUMN censusinpatientcare.dischargecount IS 'Emergency inpatient care discharges in the census interval.';
+COMMENT ON COLUMN censusinpatientcare.intersectingstays IS 'Emergency inpatient care stays intersecting with the census interval.';
