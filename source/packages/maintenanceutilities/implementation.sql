@@ -27,6 +27,21 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 		ON
 			a0.table_name = localtable;
 
+	/** 
+	 *  Test for primary key existence.
+	 */
+	CURSOR primaryexists(localtable VARCHAR2) IS
+	SELECT
+		COUNT(a0.constraint_name) foundcount
+	FROM
+		dual
+		LEFT JOIN
+		sys.user_constraints a0
+		ON
+		a0.table_name = localtable
+		AND
+		a0.constraint_type = 'P';
+
 	/*
 	 *  Refresh state of a single materialized view.
 	 */
@@ -176,6 +191,18 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 				RETURN;
 		END CASE;
 
+		-- Test for presence of primary key
+		OPEN primaryexists(tablename);
+			FETCH primaryexists INTO localcount;
+		CLOSE primaryexists;
+
+		-- Disable primary key if found
+		IF localcount = 1 THEN
+			localquery := 'ALTER TABLE ' || tablename || ' DISABLE NOVALIDATE PRIMARY KEY DROP INDEX';
+			EXECUTE IMMEDIATE localquery;
+		END IF;
+		COMMIT;
+
 		-- Preemptively recompile
 		localquery := 'ALTER MATERIALIZED VIEW ' || localtable || ' COMPILE';
 		EXECUTE IMMEDIATE localquery;
@@ -218,6 +245,21 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			degree => 8,
 			granularity => 'ALL'
 		);
+		COMMIT;
+
+		-- Run parallel
+		localquery := 'ALTER SESSION FORCE PARALLEL DDL PARALLEL 8';
+		EXECUTE IMMEDIATE localquery;
+		localquery := 'ALTER SESSION FORCE PARALLEL DML PARALLEL 8';
+		EXECUTE IMMEDIATE localquery;
+		localquery := 'ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8';
+		EXECUTE IMMEDIATE localquery;
+
+		-- Re-enable primary key, if found
+		IF localcount = 1 THEN
+			localquery := 'ALTER TABLE ' || tablename || ' ENABLE VALIDATE PRIMARY KEY';
+			EXECUTE IMMEDIATE localquery;
+		END IF;
 		COMMIT;
 
 		-- Get the refresh state

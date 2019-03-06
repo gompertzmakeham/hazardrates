@@ -297,6 +297,8 @@ FROM
 		AND
 		a0.intervalend = a1.intervalend;
 
+ALTER TABLE personutilization ADD CONSTRAINT primaryutilization PRIMARY KEY (uliabphn, cornercase, intervalstart, intervalend);
+
 COMMENT ON MATERIALIZED VIEW personutilization IS 'For every person that at any time was covered by Alberta Healthcare Insurance partition the surviellance interval by the intersections of fiscal years and age years, rectified by the start and end of the surveillance interval.';
 COMMENT ON COLUMN personutilization.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN personutilization.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';

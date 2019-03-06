@@ -133,9 +133,9 @@ SELECT
 	/*
 	 *  Utilization in the census intervals, used as the numerators.
 	 */
-	a1.measurevalue utilizationmeasure,
-	a1.measureidentifier utilizationidentifier,
-	a1.measuredescription utilizationdescription,
+	COALESCE(a1.measurevalue, 0) utilizationmeasure,
+	COALESCE(a1.measureidentifier, 'nomeasures') utilizationidentifier,
+	COALESCE(a1.measuredescription, 'No utilization measured in the census interval.') utilizationdescription,
 	
 	-- Last refresh
 	a0.censoreddate

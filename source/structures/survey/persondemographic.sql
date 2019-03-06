@@ -124,6 +124,8 @@ FROM
 			COALESCE(a1.leastemigrate, a1.surveillanceend)
 		);
 
+ALTER TABLE persondemographic ADD CONSTRAINT primarydemographic PRIMARY KEY (uliabphn);
+
 COMMENT ON MATERIALIZED VIEW persondemographic IS 'For every person that at any time was covered by Alberta Healthcare Insurance Plan report the extremum dates on events of birth, death, immigation, emigration, surveillance start, and end.';
 COMMENT ON COLUMN persondemographic.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN persondemographic.sex IS 'Biological sex for use in physiological and metabolic determinants of health, not self identified gender: F female, M male.';
