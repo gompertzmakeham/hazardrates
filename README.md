@@ -11,7 +11,7 @@ Introduction
 
 Proactive methodological disclosure of a high resolution precision calibrated estimate of the Gompertz-Makeham Law of Mortality in annual census data consolidated from the healthcare administration data of all publicly funded services provided in a single geopolitical jurisdiction. This repository only contains the source code, and only for the purpose of peer review, validation, and replication. This repository does not contain any data, results, findings, figures, conclusions, or discussions.
 
-This code base is under active development, and is currently being tested against a data store of approximately 3 billion health utilization events, each containing roughly a couple hundred features, across 19 distinct data sets, covering approximately 6 million individual persons from the year 1993 to present day. The source events are dimensionally reduced using measure theoretically consistent temporal joins implemented in ad hoc map-reduce steps to generate approximately 300 million time intervals, each with roughly four dozen features.
+This code base is under active development, and is currently being tested against a data store of approximately 3 billion health utilization events, each containing roughly a couple hundred features, across 19 distinct data sets, covering approximately 6 million individual persons from the year 1993 to present day. The source events are dimensionally reduced using measure theoretically consistent temporal joins implemented in ad hoc map-reduce steps to generate approximately 175 million time intervals, each with roughly four dozen features.
 
 High resolution estimation of mortality and utilization hazard rates is accomplished by measuring the person-time denominator of the hazard rates to the single person-day, without any rounding or truncation to larger time scales. The precision of the hazard rate estimators are calibrated against the main source of epistemic uncertainty: clerical equivocation in the measurement, recording, and retention of the life events of birth, death, immigration, and emigration. The aleatoric uncertainty is estimated using standard errors formally derived by applying the Delta Method to the formal representation of the hazard rate estimators as equations of random variables. The existence, uniqueness, and consistency of the standard errors are left unproven, although a straightforward application of the usual asymptotic Maximum Likelihood theory should suffice.
 
@@ -29,7 +29,7 @@ The construction of the denominators and numerators of the hazard rate analysis 
 7. Ingest sequentially the reduced records per person per observation interval, mapping to a common data structure.
 8. Disgest sequentially the mapped common data struture, reducing by temporal join to one record per person per observation interval, containing the utilization and outcomes in that observation interval.
 
-An example of querying the terminal assets of this analysis is contained in the file `documentation\example.sql`.
+An example of querying the terminal assets of this analysis is contained in the files `documentation\exampledense.sql` and `documentation\examplecolumnar.sql`.
 
 Events
 ------
@@ -39,7 +39,17 @@ Definite observations, versus known to exist.
 Temporal Joins
 --------------
 
-In keeping with declarative languages, a measure theoretically consistent temporal join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a join is a measure theoretically consitent temporal join if the resulting data set represents a totally ordered partition of a bounded time span under the absolute set ordering.
+In keeping with declarative languages, a measure theoretically consistent temporal join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a join is a measure theoretically consitent temporal join if the resulting data set represents a totally ordered partition of a bounded time span under the absolute set ordering. Furthermore, the time intervals represented by any two records produced by a temporal join must intersect trivial, either being disjoint, or equal. Put more simply, a temporal join takes a time span,
+
+    |------------------------------------------------------------------------------------------|
+    
+ and partitions it into compact contiguous intervals, of possibly unequal lengths,
+
+    |--------|--------|--------------|-----|--------|--|--|---------------|------------|-------|
+    
+such that the produced data set contains at least one, and possibly arbitrarily more, records for each interval. A temporal join unambigously ascribes a definite set of features, from one or more records, to each moment in a time span, because there are neither gaps in the representation of time, nor non-trivial intersections between intervals. The Category of temporal joins also enjoy an elegant recursive structure, in that a second temporal join on a first temporal join is the measure theoretic (finite) refinement of the (finite) sigma algebra of the first temporal.
+
+Concretely, in the context of this project, for each surveillance time span during which a person's healthcare utilization was observed, we divide the time span into fiscal years, starting on April 1, and further subdivide each fiscal year on the person's birthday in the fiscal year; where if the birthday falls on April 1 the fiscal year is not subdivided. This is precisely what the function `hazardutilities.generatecensus` implements, taking three dates, a start date, an end date, and a date of birth.
 
 Equivocation and Equipoise
 --------------------------
