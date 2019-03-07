@@ -2,7 +2,7 @@ SELECT
 	COUNT(*) persons,
 	a0.albertacoverage
 FROM
-	persondemographic a0
+	ab_hzrd_rts_anlys.persondemographic a0
 GROUP BY
 	a0.albertacoverage;
 
@@ -33,7 +33,7 @@ WITH
 			a0.deceaseddateequipoise,
 			a0.uliabphn
 		FROM
-			persondemographic a0
+			ab_hzrd_rts_anlys.persondemographic a0
 		GROUP BY
 			a0.uliabphn,
 			a0.ageequipoise,

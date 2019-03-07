@@ -25,7 +25,7 @@ WITH
 					0
 			END orderlast
 		FROM
-			personcensus a0
+			ab_hzrd_rts_anlys.personcensus a0
 	)
 SELECT
 	a0.intervalfirst,
@@ -67,6 +67,6 @@ SELECT
 	END nextcontiguous,
 	a0.*
 FROM
-	personcensus a0
+	ab_hzrd_rts_anlys.personcensus a0
 ORDER BY
 	1 ASC NULLS FIRST;

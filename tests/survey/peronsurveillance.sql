@@ -1,7 +1,7 @@
 SELECT
 	a0.*
 FROM
-	personsurveillance a0
+	ab_hzrd_rts_anlys.personsurveillance a0
 WHERE
 	a0.extremumend < a0.extremumstart;
 
@@ -66,7 +66,7 @@ WITH
 				0
 			END deceasedlimitserror
 		FROM
-			personsurveillance a0
+			ab_hzrd_rts_anlys.personsurveillance a0
 	)
 SELECT
 	a0.cornercase,
@@ -102,7 +102,7 @@ SELECT
 	COUNT(DISTINCT a0.cornercase) OVER (PARTITION BY a0.uliabphn) cases,
 	a0.*
 FROM
-	personsurveillance a0
+	ab_hzrd_rts_anlys.personsurveillance a0
 ORDER BY
 	1 ASC NULLS FIRST,
 	3 ASC NULLS FIRST;
