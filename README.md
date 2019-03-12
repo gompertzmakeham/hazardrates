@@ -39,7 +39,7 @@ Definite observations, versus known to exist.
 Temporal Joins
 --------------
 
-In keeping with declarative languages, a measure theoretically consistent temporal join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a join is a measure theoretically consitent temporal join if the resulting data set represents a totally ordered partition of a bounded time span under the absolute set ordering. Furthermore, the time intervals represented by any two records produced by a temporal join must intersect trivial, either being disjoint, or equal. Put more simply, a temporal join takes a time span,
+In keeping with declarative languages, a Measure Theoretic consistent temporal join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a join is a Measure Theoretic consitent temporal join if the resulting data set represents a totally ordered partition of a bounded time span under the absolute set ordering. Furthermore, the time intervals represented by any two records produced by a temporal join must intersect trivial, either being disjoint, or equal. Put more simply, a temporal join takes a time span,
 
     |------------------------------------------------------------------------------------------|
     
@@ -47,7 +47,7 @@ In keeping with declarative languages, a measure theoretically consistent tempor
 
     |--------|--------|--------------|-----|--------|--|--|---------------|------------|-------|
     
-such that the produced data set contains at least one, and possibly arbitrarily more, records for each interval. A temporal join unambigously ascribes a definite set of features, from one or more records, to each moment in a time span, because there are neither gaps in the representation of time, nor non-trivial intersections between intervals. The Category of temporal joins also enjoys an elegant recursive structure, in that a second temporal join on a first temporal join is the measure theoretic (finite) refinement of the (finite) sigma algebra of the first temporal.
+such that the produced data set contains at least one, and possibly arbitrarily more, records for each interval. A temporal join unambigously ascribes a definite set of features, from one or more records, to each moment in a time span, because there are neither gaps in the representation of time, nor non-trivial intersections between intervals. Temporal joins are Category Theoretic closed, in that the composition of temporal joins is a temporal join, because sucessive temporal joins are measure theoretic (finite) refinements of the (finite) minimal sigma algebra to which the partition belongs.
 
 Concretely, in the context of this project, for each surveillance time span during which a person's healthcare utilization was observed, we divide the time span into fiscal years, starting on April 1, and further subdivide each fiscal year on the person's birthday in the fiscal year; where if the birthday falls on April 1 the fiscal year is not subdivided. This is precisely what the function `hazardutilities.generatecensus` implements, taking three dates, a start date, an end date, and a date of birth.
 
