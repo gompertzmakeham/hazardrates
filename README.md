@@ -81,7 +81,9 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
   - Not calibrated yet.
 - *Care Management* proprietary direct access (in staging).
   - Not calibrated yet.
-- *Emergency Medical services* proprietary direct access (in staging).
+- *Emergency Medical Services* proprietary direct access (in staging).
+  - Not calibrated yet.
+- *Health Link* proprietary direct access (in staging).
   - Not calibrated yet.
   
 Disclaimer
