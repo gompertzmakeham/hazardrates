@@ -79,6 +79,10 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
   - 4 data sources, phased adoption 2008, 2009, 2012, and 2014 onward; currently approximately 1 500 000 000 events.
 - *Diagnostic Imaging* proprietary direct access (in staging).
   - Not calibrated yet.
+- *Care Management* proprietary direct access (in staging).
+  - Not calibrated yet.
+- *Emergency Medical services* proprietary direct access (in staging).
+  - Not calibrated yet.
   
 Disclaimer
 ----------
