@@ -34,7 +34,11 @@ An example of querying the terminal assets of this analysis is contained in the 
 Events
 ------
 
-Definite observations, versus known to exist.
+Definite observations, versus known to exist. The impact of:
+
+* *Censoring* is what you do not know about the patients you have been observing because you cannot see into the future.
+* *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
+* *Immortal time bias* is what you do not know about observed patients because you cannot see into the past
 
 Temporal Joins
 --------------
