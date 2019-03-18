@@ -598,6 +598,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		anesthesiologyprocedures IN INTEGER,
 		consultprocedures IN INTEGER,
 		generalpracticeprocedures IN INTEGER,
+		obstetricprocedures IN INTEGER,
 		pathologyprocedures IN INTEGER,
 		radiologyprocedures IN INTEGER,
 		specialtyprocedures IN INTEGER,
@@ -606,6 +607,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		anesthesiologistsdays IN INTEGER,
 		consultprovidersdays IN INTEGER,
 		generalpractitionersdays IN INTEGER,
+		obstetriciansdays IN INTEGER,
 		pathologistsdays IN INTEGER,
 		radiologistsdays IN INTEGER,
 		specialistsdays IN INTEGER,
@@ -614,6 +616,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		anesthesiologydays IN INTEGER,
 		consultdays IN INTEGER,
 		generalpracticedays IN INTEGER,
+		obstetricdays IN INTEGER,
 		pathologydays IN INTEGER,
 		radiologydays IN INTEGER,
 		specialtydays IN INTEGER,
@@ -777,6 +780,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 		PIPE ROW (localmeasure);
 
+		localmeasure.measurevalue := obstetricprocedures;
+		localmeasure.measureidentifier := 'obstetricprocedures';
+		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a obstetrician-gynecologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
 		localmeasure.measurevalue := pathologyprocedures;
 		localmeasure.measureidentifier := 'pathologyprocedures';
 		localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
@@ -817,6 +825,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		localmeasure.measuredescription := 'Number of unique combinations of primary care general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 		PIPE ROW (localmeasure);
 
+		localmeasure.measurevalue := obstetriciansdays;
+		localmeasure.measureidentifier := 'obstetriciansdays';
+		localmeasure.measuredescription := 'Number of unique combinations of primary care obstetrician-gynecologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
 		localmeasure.measurevalue := pathologistsdays;
 		localmeasure.measureidentifier := 'pathologistsdays';
 		localmeasure.measuredescription := 'Number of unique combinations of primary care pathologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
@@ -855,6 +868,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		localmeasure.measurevalue := generalpracticedays;
 		localmeasure.measureidentifier := 'generalpracticedays';
 		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := obstetricdays;
+		localmeasure.measureidentifier := 'obstetricdays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care obstetrician-gynecologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 		PIPE ROW (localmeasure);
 
 		localmeasure.measurevalue := pathologydays;

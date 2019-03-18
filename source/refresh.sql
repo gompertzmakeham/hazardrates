@@ -10,16 +10,7 @@ ALTER PACKAGE maintenanceutilities COMPILE PACKAGE
 	PLSQL_CODE_TYPE = NATIVE
 	PLSQL_DEBUG = FALSE;
 
--- Step 2: Refresh person demographic sources
-SET SERVEROUTPUT ON;
-BEGIN
-	maintenanceutilities.dispatchjobs('demographics');
-EXCEPTION
-	WHEN OTHERS THEN
-		sys.dbms_output.put_line(SQLERRM);
-END;
-
--- Step 3: Refresh person surveillance sources
+-- Step 2: Refresh person surveillance sources
 SET SERVEROUTPUT ON;
 BEGIN
 	maintenanceutilities.dispatchjobs('surveillance');
@@ -28,10 +19,19 @@ EXCEPTION
 		sys.dbms_output.put_line(SQLERRM);
 END;
 
--- Step 4: Refresh person surveillance extremums
+-- Step 3: Refresh person demographic sources
 SET SERVEROUTPUT ON;
 BEGIN
-	maintenanceutilities.dispatchjobs('extremums');
+	maintenanceutilities.dispatchjobs('demographics');
+EXCEPTION
+	WHEN OTHERS THEN
+		sys.dbms_output.put_line(SQLERRM);
+END;
+
+-- Step 4: Refresh person fiscal census
+SET SERVEROUTPUT ON;
+BEGIN
+	maintenanceutilities.dispatchjobs('census');
 EXCEPTION
 	WHEN OTHERS THEN
 		sys.dbms_output.put_line(SQLERRM);
@@ -46,16 +46,7 @@ EXCEPTION
 		sys.dbms_output.put_line(SQLERRM);
 END;
 
--- Step 6: Refresh person fiscal census
-SET SERVEROUTPUT ON;
-BEGIN
-	maintenanceutilities.dispatchjobs('census');
-EXCEPTION
-	WHEN OTHERS THEN
-		sys.dbms_output.put_line(SQLERRM);
-END;
-
--- Step 7: Clean up
+-- Step 6: Clean up
 SET SERVEROUTPUT ON;
 BEGIN
 	maintenanceutilities.dropjobs;

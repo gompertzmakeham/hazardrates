@@ -210,6 +210,11 @@ SELECT
 	CAST(COALESCE(a1.generalpractitionersdays, 0) AS INTEGER) generalpractitionersdays,
 	CAST(COALESCE(a1.generalpracticedays, 0) AS INTEGER) generalpracticedays,
 
+	-- Primary care obstetric-gynecoloy utilization
+	CAST(COALESCE(a1.obstetricprocedures, 0) AS INTEGER) obstetricprocedures,
+	CAST(COALESCE(a1.obstetriciansdays, 0) AS INTEGER) obstetriciansdays,
+	CAST(COALESCE(a1.obstetricdays, 0) AS INTEGER) obstetricdays,
+
 	-- Primary care pathology utilization
 	CAST(COALESCE(a1.pathologyprocedures, 0) AS INTEGER) pathologyprocedures,
 	CAST(COALESCE(a1.pathologistsdays, 0) AS INTEGER) pathologistsdays,
