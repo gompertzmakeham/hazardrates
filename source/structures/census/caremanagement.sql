@@ -1,7 +1,7 @@
 CREATE MATERIALIZED VIEW censuscaremanagement NOLOGGING COMPRESS NOCACHE PARALLEL 8 BUILD DEFERRED REFRESH COMPLETE ON DEMAND AS
 WITH
 
-	-- Ingest all inpatient care events
+	-- Ingest all care management events
 	eventdata AS
 	(
 		SELECT
