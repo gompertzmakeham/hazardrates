@@ -78,6 +78,8 @@ CREATE OR REPLACE PACKAGE BODY maintenanceutilities AS
 			SELECT 'surveillance' sectionname, 'surveyvitalstatistics' tablename FROM dual UNION ALL
 			SELECT 'demographics' sectionname, 'persondemographic' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censusambulatorycare' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censuscaremanagement' tablename FROM dual UNION ALL
+			SELECT 'census' sectionname, 'censushomecare' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censusinpatientcare' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censuslaboratorycollection' tablename FROM dual UNION ALL
 			SELECT 'census' sectionname, 'censuslongtermcare' tablename FROM dual UNION ALL

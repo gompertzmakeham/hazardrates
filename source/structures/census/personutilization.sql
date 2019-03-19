@@ -31,6 +31,77 @@ WITH
 				a0.intervalend = a1.intervalend
 	),
 
+	-- Mix in care management
+	addcaremanager AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a1.manageddays, 0) caremanagerdays,
+			COALESCE(a1.allocationcount, 0) caremanagerallocations,
+			COALESCE(a1.releasecount, 0) caremanagerreleases,
+			COALESCE(a1.intersectingmanagement, 0) caremanagers
+		FROM
+			ambulatoryinpatient a0
+			FULL JOIN
+			censuscaremanagement a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+
+	-- Mix in home care activity
+	addhomecare AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.caremanagerdays, 0) caremanagerdays,
+			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
+			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
+			COALESCE(a0.caremanagers, 0) caremanagers,
+			COALESCE(a1.allactivities, 0) homecareactivities,
+			COALESCE(a1.allproviderdays, 0) homecarevisits,
+			COALESCE(a1.alldays, 0) homecaredays
+		FROM
+			addcaremanager a0
+			FULL JOIN
+			censushomecare a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+
 	-- Mix in laboratory
 	addlaboratory AS
 	(
@@ -47,11 +118,18 @@ WITH
 			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
 			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
 			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.caremanagerdays, 0) caremanagerdays,
+			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
+			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
+			COALESCE(a0.caremanagers, 0) caremanagers,
+			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a1.assaycount, 0) laboratoryassays,
 			COALESCE(a1.collectsitedays, 0) laboratorysitedays,
 			COALESCE(a1.collectdays, 0) laboratorydays
 		FROM
-			ambulatoryinpatient a0
+			addhomecare a0
 			FULL JOIN
 			censuslaboratorycollection a1
 			ON
@@ -80,6 +158,13 @@ WITH
 			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
 			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
 			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.caremanagerdays, 0) caremanagerdays,
+			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
+			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
+			COALESCE(a0.caremanagers, 0) caremanagers,
+			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
 			COALESCE(a0.laboratorydays, 0) laboratorydays,
@@ -117,6 +202,13 @@ WITH
 			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
 			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
 			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.caremanagerdays, 0) caremanagerdays,
+			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
+			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
+			COALESCE(a0.caremanagers, 0) caremanagers,
+			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
 			COALESCE(a0.laboratorydays, 0) laboratorydays,
@@ -166,6 +258,13 @@ WITH
 			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
 			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
 			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.caremanagerdays, 0) caremanagerdays,
+			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
+			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
+			COALESCE(a0.caremanagers, 0) caremanagers,
+			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
 			COALESCE(a0.laboratorydays, 0) laboratorydays,
@@ -240,6 +339,13 @@ SELECT
 	CAST(COALESCE(a0.inpatientadmissions, 0) AS INTEGER) inpatientadmissions,
 	CAST(COALESCE(a0.inpatientdischarges, 0) AS INTEGER) inpatientdischarges,
 	CAST(COALESCE(a0.inpatientstays, 0) AS INTEGER) inpatientstays,
+	CAST(COALESCE(a0.caremanagerdays, 0) AS INTEGER) caremanagerdays,
+	CAST(COALESCE(a0.caremanagerallocations, 0) AS INTEGER) caremanagerallocations,
+	CAST(COALESCE(a0.caremanagerreleases, 0) AS INTEGER) caremanagerreleases,
+	CAST(COALESCE(a0.caremanagers, 0) AS INTEGER) caremanagers,
+	CAST(COALESCE(a0.homecareactivities, 0) AS INTEGER) homecareactivities,
+	CAST(COALESCE(a0.homecarevisits, 0) AS INTEGER) homecarevisits,
+	CAST(COALESCE(a0.homecaredays, 0) AS INTEGER) homecaredays,
 	CAST(COALESCE(a0.laboratoryassays, 0) AS INTEGER) laboratoryassays,
 	CAST(COALESCE(a0.laboratorysitedays, 0) AS INTEGER) laboratorysitedays,
 	CAST(COALESCE(a0.laboratorydays, 0) AS INTEGER) laboratorydays,
@@ -318,6 +424,13 @@ COMMENT ON COLUMN personutilization.inpatientdays IS 'Naive sum of emergency inp
 COMMENT ON COLUMN personutilization.inpatientadmissions IS 'Emergency inpatient care admissions in the census interval.';
 COMMENT ON COLUMN personutilization.inpatientdischarges IS 'Emergency inpatient care discharges in the census interval.';
 COMMENT ON COLUMN personutilization.inpatientstays IS 'Emergency inpatient care stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.caremanagerdays IS 'Naive sum of days of professionals allocated to provide care, case, transition, or placement managment or coordination, that intersected with the census interval, including overlapping allocations.';
+COMMENT ON COLUMN personutilization.caremanagerallocations IS 'Allocations of professionals to provide care, case, transition, or placement managment or coordination.';
+COMMENT ON COLUMN personutilization.caremanagerreleases IS 'Release of professionals from providing care, case, transition, or placement managment or coordination.';
+COMMENT ON COLUMN personutilization.caremanagers IS 'Allocations of professionals providing care, case, transition, or placement managment or coordination that intersected with the census interval.';
+COMMENT ON COLUMN personutilization.homecareactivities IS 'Number of registered or regulated professional home care activities in the census interval.';
+COMMENT ON COLUMN personutilization.homecarevisits IS 'Number of unique combinations of registered or regulated professional home care providers and unique days in the census interval when the person utilized home care registered or regulated professional services.';
+COMMENT ON COLUMN personutilization.homecaredays IS 'Number of unique days in the census interval when the person visited utilized home care registered or regulated professional services.';
 COMMENT ON COLUMN personutilization.laboratoryassays IS 'Number assays done of community laboratory samples collected in the census interval.';
 COMMENT ON COLUMN personutilization.laboratorysitedays IS 'Number unique combinations of community laboratory collection sites and days in the census interval where the person had a collection taken.';
 COMMENT ON COLUMN personutilization.laboratorydays IS 'Number of unique days in the census interval when the person had a community laboratory collection taken.';

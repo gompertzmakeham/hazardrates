@@ -576,6 +576,13 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		inpatientadmissions IN INTEGER,
 		inpatientdischarges IN INTEGER,
 		inpatientstays IN INTEGER,
+		caremanagerdays IN INTEGER,
+		caremanagerallocations IN INTEGER,
+		caremanagerreleases IN INTEGER,
+		caremanagers IN INTEGER,
+		homecareactivities IN INTEGER,
+		homecarevisits IN INTEGER,
+		homecaredays IN INTEGER,
 		laboratoryassays IN INTEGER,
 		laboratorysitedays IN INTEGER,
 		laboratorydays IN INTEGER,
@@ -668,6 +675,41 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		localmeasure.measurevalue := inpatientstays;
 		localmeasure.measureidentifier := 'inpatientstays';
 		localmeasure.measuredescription := 'Emergency inpatient care stays intersecting with the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := caremanagerdays;
+		localmeasure.measureidentifier := 'caremanagerdays';
+		localmeasure.measuredescription := 'Naive sum of days of professionals allocated to provide care, case, transition, or placement managment or coordination, that intersected with the census interval, including overlapping allocations.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := caremanagerallocations;
+		localmeasure.measureidentifier := 'caremanagerallocations';
+		localmeasure.measuredescription := 'Allocations of professionals to provide care, case, transition, or placement managment or coordination.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := caremanagerreleases;
+		localmeasure.measureidentifier := 'caremanagerreleases';
+		localmeasure.measuredescription := 'Release of professionals from providing care, case, transition, or placement managment or coordination.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := caremanagers;
+		localmeasure.measureidentifier := 'caremanagers';
+		localmeasure.measuredescription := 'Allocations of professionals providing care, case, transition, or placement managment or coordination that intersected with the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecareactivities;
+		localmeasure.measureidentifier := 'homecareactivities';
+		localmeasure.measuredescription := 'Number of registered or regulated professional home care activities in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecarevisits;
+		localmeasure.measureidentifier := 'homecarevisits';
+		localmeasure.measuredescription := 'Number of unique combinations of registered or regulated professional home care providers and unique days in the census interval when the person utilized home care registered or regulated professional services.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecaredays;
+		localmeasure.measureidentifier := 'homecaredays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person visited utilized home care registered or regulated professional services.';
 		PIPE ROW (localmeasure);
 
 		localmeasure.measurevalue := laboratoryassays;
