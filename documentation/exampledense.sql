@@ -143,6 +143,23 @@ SELECT
 	CAST(COALESCE(a1.ambulatorysitedays, 0) AS INTEGER) ambulatorysitedays,
 	CAST(COALESCE(a1.ambulatorydays, 0) AS INTEGER) ambulatorydays,
 
+	-- Care management
+	CAST(COALESCE(a1.caremanagerdays, 0) AS INTEGER) caremanagerdays,
+	CAST(COALESCE(a1.caremanagerallocations, 0) AS INTEGER) caremanagerallocations,
+	CAST(COALESCE(a1.caremanagerreleases, 0) AS INTEGER) caremanagerreleases,
+	CAST(COALESCE(a1.caremanagers, 0) AS INTEGER) caremanagers,
+
+	-- Home care
+	CAST(COALESCE(a1.homecareprofessionalservices, 0) AS INTEGER) homecareprofessionalservices,
+	CAST(COALESCE(a1.homecaretransitionservices, 0) AS INTEGER) homecaretransitionservices,
+	CAST(COALESCE(a1.homecareservices, 0) AS INTEGER) homecareservices,
+	CAST(COALESCE(a1.homecareprofessionalvisits, 0) AS INTEGER) homecareprofessionalvisits,
+	CAST(COALESCE(a1.homecaretransitionvisits, 0) AS INTEGER) homecaretransitionvisits,
+	CAST(COALESCE(a1.homecarevisits, 0) AS INTEGER) homecarevisits,
+	CAST(COALESCE(a1.homecareprofessionaldays, 0) AS INTEGER) homecareprofessionaldays,
+	CAST(COALESCE(a1.homecaretransitiondays, 0) AS INTEGER) homecaretransitiondays,
+	CAST(COALESCE(a1.homecaredays, 0) AS INTEGER) homecaredays,
+
 	-- Inpatient care
 	CAST(COALESCE(a1.inpatientdays, 0) AS INTEGER) inpatientdays,
 	CAST(COALESCE(a1.inpatientadmissions, 0) AS INTEGER) inpatientadmissions,

@@ -85,8 +85,14 @@ WITH
 			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
 			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
 			COALESCE(a0.caremanagers, 0) caremanagers,
-			COALESCE(a1.allactivities, 0) homecareactivities,
+			COALESCE(a1.professionalactivities, 0) homecareprofessionalservices,
+			COALESCE(a1.transitionactivities, 0) homecaretransitionservices,
+			COALESCE(a1.allactivities, 0) homecareservices,
+			COALESCE(a1.professionalproviderdays, 0) homecareprofessionalvisits,
+			COALESCE(a1.transitionproviderdays, 0) homecaretransitionvisits,
 			COALESCE(a1.allproviderdays, 0) homecarevisits,
+			COALESCE(a1.professionaldays, 0) homecareprofessionaldays,
+			COALESCE(a1.transitiondays, 0) homecaretransitiondays,
 			COALESCE(a1.alldays, 0) homecaredays
 		FROM
 			addcaremanager a0
@@ -122,8 +128,14 @@ WITH
 			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
 			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
 			COALESCE(a0.caremanagers, 0) caremanagers,
-			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecareprofessionalservices, 0) homecareprofessionalservices,
+			COALESCE(a0.homecaretransitionservices, 0) homecaretransitionservices,
+			COALESCE(a0.homecareservices, 0) homecareservices,
+			COALESCE(a0.homecareprofessionalvisits, 0) homecareprofessionalvisits,
+			COALESCE(a0.homecaretransitionvisits, 0) homecaretransitionvisits,
 			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecareprofessionaldays, 0) homecareprofessionaldays,
+			COALESCE(a0.homecaretransitiondays, 0) homecaretransitiondays,
 			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a1.assaycount, 0) laboratoryassays,
 			COALESCE(a1.collectsitedays, 0) laboratorysitedays,
@@ -162,8 +174,14 @@ WITH
 			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
 			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
 			COALESCE(a0.caremanagers, 0) caremanagers,
-			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecareprofessionalservices, 0) homecareprofessionalservices,
+			COALESCE(a0.homecaretransitionservices, 0) homecaretransitionservices,
+			COALESCE(a0.homecareservices, 0) homecareservices,
+			COALESCE(a0.homecareprofessionalvisits, 0) homecareprofessionalvisits,
+			COALESCE(a0.homecaretransitionvisits, 0) homecaretransitionvisits,
 			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecareprofessionaldays, 0) homecareprofessionaldays,
+			COALESCE(a0.homecaretransitiondays, 0) homecaretransitiondays,
 			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
@@ -206,8 +224,14 @@ WITH
 			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
 			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
 			COALESCE(a0.caremanagers, 0) caremanagers,
-			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecareprofessionalservices, 0) homecareprofessionalservices,
+			COALESCE(a0.homecaretransitionservices, 0) homecaretransitionservices,
+			COALESCE(a0.homecareservices, 0) homecareservices,
+			COALESCE(a0.homecareprofessionalvisits, 0) homecareprofessionalvisits,
+			COALESCE(a0.homecaretransitionvisits, 0) homecaretransitionvisits,
 			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecareprofessionaldays, 0) homecareprofessionaldays,
+			COALESCE(a0.homecaretransitiondays, 0) homecaretransitiondays,
 			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
@@ -262,8 +286,14 @@ WITH
 			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
 			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
 			COALESCE(a0.caremanagers, 0) caremanagers,
-			COALESCE(a0.homecareactivities, 0) homecareactivities,
+			COALESCE(a0.homecareprofessionalservices, 0) homecareprofessionalservices,
+			COALESCE(a0.homecaretransitionservices, 0) homecaretransitionservices,
+			COALESCE(a0.homecareservices, 0) homecareservices,
+			COALESCE(a0.homecareprofessionalvisits, 0) homecareprofessionalvisits,
+			COALESCE(a0.homecaretransitionvisits, 0) homecaretransitionvisits,
 			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecareprofessionaldays, 0) homecareprofessionaldays,
+			COALESCE(a0.homecaretransitiondays, 0) homecaretransitiondays,
 			COALESCE(a0.homecaredays, 0) homecaredays,
 			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
 			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
@@ -343,8 +373,14 @@ SELECT
 	CAST(COALESCE(a0.caremanagerallocations, 0) AS INTEGER) caremanagerallocations,
 	CAST(COALESCE(a0.caremanagerreleases, 0) AS INTEGER) caremanagerreleases,
 	CAST(COALESCE(a0.caremanagers, 0) AS INTEGER) caremanagers,
-	CAST(COALESCE(a0.homecareactivities, 0) AS INTEGER) homecareactivities,
+	CAST(COALESCE(a0.homecareprofessionalservices, 0) AS INTEGER) homecareprofessionalservices,
+	CAST(COALESCE(a0.homecaretransitionservices, 0) AS INTEGER) homecaretransitionservices,
+	CAST(COALESCE(a0.homecareservices, 0) AS INTEGER) homecareservices,
+	CAST(COALESCE(a0.homecareprofessionalvisits, 0) AS INTEGER) homecareprofessionalvisits,
+	CAST(COALESCE(a0.homecaretransitionvisits, 0) AS INTEGER) homecaretransitionvisits,
 	CAST(COALESCE(a0.homecarevisits, 0) AS INTEGER) homecarevisits,
+	CAST(COALESCE(a0.homecareprofessionaldays, 0) AS INTEGER) homecareprofessionaldays,
+	CAST(COALESCE(a0.homecaretransitiondays, 0) AS INTEGER) homecaretransitiondays,
 	CAST(COALESCE(a0.homecaredays, 0) AS INTEGER) homecaredays,
 	CAST(COALESCE(a0.laboratoryassays, 0) AS INTEGER) laboratoryassays,
 	CAST(COALESCE(a0.laboratorysitedays, 0) AS INTEGER) laboratorysitedays,
@@ -428,9 +464,15 @@ COMMENT ON COLUMN personutilization.caremanagerdays IS 'Naive sum of days of pro
 COMMENT ON COLUMN personutilization.caremanagerallocations IS 'Allocations of professionals to provide care, case, transition, or placement managment or coordination.';
 COMMENT ON COLUMN personutilization.caremanagerreleases IS 'Release of professionals from providing care, case, transition, or placement managment or coordination.';
 COMMENT ON COLUMN personutilization.caremanagers IS 'Allocations of professionals providing care, case, transition, or placement managment or coordination that intersected with the census interval.';
-COMMENT ON COLUMN personutilization.homecareactivities IS 'Number of registered or regulated professional home care activities in the census interval.';
-COMMENT ON COLUMN personutilization.homecarevisits IS 'Number of unique combinations of registered or regulated professional home care providers and unique days in the census interval when the person utilized home care registered or regulated professional services.';
-COMMENT ON COLUMN personutilization.homecaredays IS 'Number of unique days in the census interval when the person visited utilized home care registered or regulated professional services.';
+COMMENT ON COLUMN personutilization.homecareprofessionalservices IS 'Number of of home care activities provided by a registered, regulated, or licensed professional in the census interval.';
+COMMENT ON COLUMN personutilization.homecaretransitionservices IS 'Number of of transition, or placement activities provided by a registered, regulated, or licensed professional in the census interval.';
+COMMENT ON COLUMN personutilization.homecareservices IS 'Number of of home care, transition, or placement activities provided by a registered, regulated, or licensed professional in the census interval.';
+COMMENT ON COLUMN personutilization.homecareprofessionalvisits IS 'Number of unique combinations of days and registered, regulated, or licensed professionals when the professional provided at least one home care service to the person in the census interval.';
+COMMENT ON COLUMN personutilization.homecaretransitionvisits IS 'Number of unique combinations of days and registered, regulated, or licensed professionals when the professional provided at least one transition, or placement service to the person in the census interval.';
+COMMENT ON COLUMN personutilization.homecarevisits IS 'Number of unique combinations of days and registered, regulated, or licensed professionals when the professional provided at least one home care, transition, or placement service to the person in the census interval.';
+COMMENT ON COLUMN personutilization.homecareprofessionaldays IS 'Number of unique days in the census interval when the person was provided home care services by a registered or regulated professional.';
+COMMENT ON COLUMN personutilization.homecaretransitiondays IS 'Number of unique days in the census interval when the person was provided transition, or placement services by a registered or regulated professional.';
+COMMENT ON COLUMN personutilization.homecaredays IS 'Number of unique days in the census interval when the person was provided home care, transition, or placement services by a registered or regulated professional.';
 COMMENT ON COLUMN personutilization.laboratoryassays IS 'Number assays done of community laboratory samples collected in the census interval.';
 COMMENT ON COLUMN personutilization.laboratorysitedays IS 'Number unique combinations of community laboratory collection sites and days in the census interval where the person had a collection taken.';
 COMMENT ON COLUMN personutilization.laboratorydays IS 'Number of unique days in the census interval when the person had a community laboratory collection taken.';

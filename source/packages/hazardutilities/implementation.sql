@@ -580,8 +580,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		caremanagerallocations IN INTEGER,
 		caremanagerreleases IN INTEGER,
 		caremanagers IN INTEGER,
-		homecareactivities IN INTEGER,
+		homecareprofessionalservices IN INTEGER,
+		homecaretransitionservices IN INTEGER,
+		homecareservices IN INTEGER,
+		homecareprofessionalvisits IN INTEGER,
+		homecaretransitionvisits IN INTEGER,
 		homecarevisits IN INTEGER,
+		homecareprofessionaldays IN INTEGER,
+		homecaretransitiondays IN INTEGER,
 		homecaredays IN INTEGER,
 		laboratoryassays IN INTEGER,
 		laboratorysitedays IN INTEGER,
@@ -697,19 +703,49 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		localmeasure.measuredescription := 'Allocations of professionals providing care, case, transition, or placement managment or coordination that intersected with the census interval.';
 		PIPE ROW (localmeasure);
 
-		localmeasure.measurevalue := homecareactivities;
-		localmeasure.measureidentifier := 'homecareactivities';
-		localmeasure.measuredescription := 'Number of registered or regulated professional home care activities in the census interval.';
+		localmeasure.measurevalue := homecareprofessionalservices;
+		localmeasure.measureidentifier := 'homecareprofessionalservices';
+		localmeasure.measuredescription := 'Number of of home care activities provided by a registered, regulated, or licensed professional in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecaretransitionservices;
+		localmeasure.measureidentifier := 'homecaretransitionservices';
+		localmeasure.measuredescription := 'Number of of transition, or placement activities provided by a registered, regulated, or licensed professional in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecareservices;
+		localmeasure.measureidentifier := 'homecareservices';
+		localmeasure.measuredescription := 'Number of of home care, transition, or placement activities provided by a registered, regulated, or licensed professional in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecareprofessionalvisits;
+		localmeasure.measureidentifier := 'homecareprofessionalvisits';
+		localmeasure.measuredescription := 'Number of unique combinations of days and registered, regulated, or licensed professionals when the professional provided at least one home care service to the person in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecaretransitionvisits;
+		localmeasure.measureidentifier := 'homecaretransitionvisits';
+		localmeasure.measuredescription := 'Number of unique combinations of days and registered, regulated, or licensed professionals when the professional provided at least one transition, or placement service to the person in the census interval.';
 		PIPE ROW (localmeasure);
 
 		localmeasure.measurevalue := homecarevisits;
 		localmeasure.measureidentifier := 'homecarevisits';
-		localmeasure.measuredescription := 'Number of unique combinations of registered or regulated professional home care providers and unique days in the census interval when the person utilized home care registered or regulated professional services.';
+		localmeasure.measuredescription := 'Number of unique combinations of days and registered, regulated, or licensed professionals when the professional provided at least one home care, transition, or placement service to the person in the census interval.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecareprofessionaldays;
+		localmeasure.measureidentifier := 'homecareprofessionaldays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person was provided home care services by a registered or regulated professional.';
+		PIPE ROW (localmeasure);
+
+		localmeasure.measurevalue := homecaretransitiondays;
+		localmeasure.measureidentifier := 'homecaretransitiondays';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person was provided transition, or placement services by a registered or regulated professional.';
 		PIPE ROW (localmeasure);
 
 		localmeasure.measurevalue := homecaredays;
 		localmeasure.measureidentifier := 'homecaredays';
-		localmeasure.measuredescription := 'Number of unique days in the census interval when the person visited utilized home care registered or regulated professional services.';
+		localmeasure.measuredescription := 'Number of unique days in the census interval when the person was provided home care, transition, or placement services by a registered or regulated professional.';
 		PIPE ROW (localmeasure);
 
 		localmeasure.measurevalue := laboratoryassays;
