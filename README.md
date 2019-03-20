@@ -83,7 +83,7 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
   - 4 data sources, phased adoption 2008, 2009, 2012, and 2014 onward; currently approximately 1 500 000 000 events.
 - *Care Management* proprietary direct access (Civica, Meditech).
   - 2 data sources phased adoption 2008, 2010, and 2012 onward; currently approximately 2 800 000 events.
-- *Home Care Activity*proprietary direct access (Civica, Meditech, StrataHealth).
+- *Home Care Activity* proprietary direct access (Civica, Meditech, StrataHealth).
   - 3 data sources, phased adoption 2008, 2010, and 2012 onward; currently approximately 70 000 000 events.
 - *Diagnostic Imaging* proprietary direct access (in staging).
   - Not calibrated yet.
