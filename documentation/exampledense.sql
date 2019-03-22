@@ -60,10 +60,10 @@ SELECT
 	CAST(a0.emigratedateequipoise AS INTEGER) emigratedateequipoise,
 
 	-- In migration observed flag is equal in both surveillance extremums
-	CAST(a0.immigrateobservationequipoise AS INTEGER),
+	CAST(a0.immigrateobservationequipoise AS INTEGER) immigrateobservationequipoise,
 
 	-- Out migration observed flag is equal in both surveillance extremums
-	CAST(a0.emigrateobservationequipoise AS INTEGER) immigrateobservationequipoise,
+	CAST(a0.emigrateobservationequipoise AS INTEGER) emigrateobservationequipoise,
 
 	-- Surveillance extremum start dates are equal
 	CAST(a0.surveillancestartequipoise AS INTEGER) surveillancestartequipoise,

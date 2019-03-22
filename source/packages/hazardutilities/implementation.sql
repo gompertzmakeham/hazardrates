@@ -648,7 +648,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		IF ambulatoryminutes > 0 THEN
 			localmeasure.measurevalue := ambulatoryminutes;
 			localmeasure.measureidentifier := 'ambulatoryminutes';
-			localmeasure.measuredescription := 'Naive sum of emergency inpatient care days that intersected with the census interval, including overlapping stays.';
+			localmeasure.measuredescription := 'Naive sum of emergency ambulatory care minutes that intersected with the census interval, including overlapping visits.';
 			PIPE ROW (localmeasure);
 
 			localmeasure.measurevalue := ambulatoryvisits;
