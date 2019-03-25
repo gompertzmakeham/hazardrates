@@ -79,7 +79,8 @@ CASE [hazardrate]
     WHEN 'CAREMANAGERS' THEN
         1000
             * ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
-            * SUM([CAREMANAGERS]) / SUM([DURATIONDAYS])
+            * SUM([CAREMANAGERS])
+            / SUM([DURATIONDAYS])
     WHEN 'CAREMANAGERPERCENTUTILIZATION' THEN
         100
             * SUM(IIF([CAREMANAGERS] > 0, [DURATIONDAYS], 0))
