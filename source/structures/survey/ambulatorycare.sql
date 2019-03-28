@@ -61,7 +61,12 @@ WITH
 
 			-- Coverage by insurer
 			1 albertacoverage,
-			CAST(NULL AS INTEGER) firstnations,
+			CASE a0.resppay
+				WHEN '05' THEN
+					1
+				ELSE
+					0
+			END firstnations,
 			
 			-- Birth observed
 			CASE
@@ -87,7 +92,7 @@ WITH
 		WHERE
 			hazardutilities.cleanphn(a0.phn) IS NOT NULL
 			AND
-			a0.resppay = '01'
+			a0.resppay IN ('01', '02', '05')
 			AND
 			hazardutilities.cleandate(a0.visdate) <= TRUNC(SYSDATE, 'MM')
 			AND
@@ -158,7 +163,12 @@ WITH
 
 			-- Coverage by insurer
 			1 albertacoverage,
-			CAST(NULL AS INTEGER) firstnations,
+			CASE a0.resppay
+				WHEN '05' THEN
+					1
+				ELSE
+					0
+			END firstnations,
 			
 			-- Birth observed
 			CASE
@@ -184,7 +194,7 @@ WITH
 		WHERE
 			hazardutilities.cleanphn(a0.phn) IS NOT NULL
 			AND
-			a0.resppay = '01'
+			a0.resppay IN ('01', '02', '05')
 			AND
 			hazardutilities.cleandate(a0.visit_date) <= TRUNC(SYSDATE, 'MM')
 			AND

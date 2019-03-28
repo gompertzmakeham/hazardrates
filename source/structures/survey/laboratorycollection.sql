@@ -112,7 +112,12 @@ WITH
 
 			-- Coverage can be asserted by not refuted
 			1 albertacoverage,
-			CAST(NULL AS INTEGER) firstnations,
+			CASE a0.clnt_bill_id
+				WHEN 'ZINDIAN AFFAIRS' THEN
+					1
+				ELSE
+					0
+			END firstnations,
 			
 			-- Birth observation
 			CASE
@@ -129,7 +134,17 @@ WITH
 		WHERE
 			hazardutilities.cleanphn(a0.clnt_phn) IS NOT NULL
 			AND
-			a0.clnt_bill_id IN ('AB PHN', 'REFERRED IN SPECIMEN', 'ZAADL', 'ZBLUE CROSS', 'ZLANDED IMMIGRANT', 'ZPERSONAL HEALTH NUMBER', 'ZSOCIAL SERVICES')
+			a0.clnt_bill_id IN 
+			(
+				'AB PHN',
+				'REFERRED IN SPECIMEN',
+				'ZAADL',
+				'ZBLUE CROSS',
+				'ZINDIAN AFFAIRS',
+				'ZLANDED IMMIGRANT',
+				'ZPERSONAL HEALTH NUMBER',
+				'ZSOCIAL SERVICES'
+			)
 			AND
 			a0.collect_dt BETWEEN COALESCE(a0.clnt_birth_dt, a0.collect_dt) AND TRUNC(SYSDATE, 'MM')
 		UNION ALL
