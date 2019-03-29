@@ -29,16 +29,7 @@ The construction of the denominators and numerators of the hazard rate analysis 
 7. Ingest sequentially the reduced records per person per observation interval, mapping to a common data structure.
 8. Disgest sequentially the mapped common data struture, reducing by temporal join to one record per person per observation interval, containing the utilization and outcomes in that observation interval.
 
-An example of querying the terminal assets of this analysis is contained in the files `documentation\exampledense.sql` and `documentation\examplecolumnar.sql`.
-
-Events
-------
-
-Definite observations, versus known to exist. The impact of:
-
-* *Censoring* is what you do not know about the patients you have been observing because you cannot see into the future.
-* *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
-* *Immortal time bias* is what you do not know about observed patients because you cannot see into the past
+Currently the build process is contained in `sources\refresh.sql`; which for the time being will remain partly manual because of idiosyncratic crashes that occur during table builds, possibly due to locking of the underlying table sources. An example of querying the terminal assets of this analysis is contained in the files `documentation\exampledense.sql` and `documentation\examplecolumnar.sql`.
 
 Temporal Joins
 --------------
@@ -53,7 +44,62 @@ In keeping with declarative languages, a Measure Theoretic consistent temporal j
     
 such that the produced data set contains at least one, and possibly arbitrarily more, records for each interval. A temporal join unambigously ascribes a definite set of features, from one or more records, to each moment in a time span, because there are neither gaps in the representation of time, nor non-trivial intersections between intervals. Temporal joins are Category Theoretic closed, in that the composition of temporal joins is a temporal join, because sucessive temporal joins are measure theoretic (finite) refinements of the (finite) minimal sigma algebra to which the partition belongs.
 
+Given two intervals a temporal join will generate one, two, or three records. If the intervals have identical boundaries the result will be a single record containing the characteristics of the two source intervals:
+
+    |--------------------|
+               a                 
+    
+    |--------------------|
+               b
+               
+    |--------------------|
+             a & b
+
+If the boundaries of the intervals are exactly contiguous the result will be two records:
+
+    |-------|
+        a
+    
+            |------------|
+                   b
+    
+    |-------|------------|
+        a          b
+
+If the intervals intersect non-trivial the result will be three records:
+
+    |-----------------|
+           a
+           
+              |-----------------|
+                    b
+                    
+    |---------|-------|---------|
+         a      a & b      b
+         
+Finally if the intervals are fully disjoint and not contiguous the result will also be three records:
+
+    |---------|
+         a
+    
+                         |-------------------|
+                                  b
+                                  
+    |---------|----------|-------------------|                       
+          a     ~(a & b)           b
+
+This construction can be composed on iteratively for as many intervals as there are, because the Category of Temporal Joins is measure theoretic closed with respect to refinement. Fortunatelty much fast techniques can be found than the naive iteration by either sort by the boundary dates and then back searching or, in the case of the methods in this analysis, by explicitly constructing the intervals based on the provided events.
+
 Concretely, in the context of this project, for each surveillance time span during which a person's healthcare utilization was observed, we divide the time span into fiscal years, starting on April 1, and further subdivide each fiscal year on the person's birthday in the fiscal year; where if the birthday falls on April 1 the fiscal year is not subdivided. This is precisely what the function `hazardutilities.generatecensus` implements, taking three dates, a start date, an end date, and a date of birth.
+
+Events
+------
+
+Definite observations, versus known to exist. The impact of:
+
+* *Censoring* is what you do not know about the patients you have been observing because you cannot see into the future.
+* *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
+* *Immortal time bias* is what you do not know about observed patients because you cannot see into the past
 
 Equivocation and Equipoise
 --------------------------
