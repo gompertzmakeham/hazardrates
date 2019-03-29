@@ -101,10 +101,14 @@ Definite observations, versus known to exist. The impact of:
 * *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
 * *Immortal time bias* is what you do not know about observed patients because you cannot see into the past
 
-Equivocation and Equipoise
---------------------------
+Precision and Uncertainty Calibration
+-------------------------------------
 
-Using clerical equivocation to calibrate precision and measurement uncertainty.
+Using clerical equivocation and equipoise to calibrate precision and measurement uncertainty.
+
+* shortest lifespan and longest lifespan
+* lifespan interferometry, epistemicy measurement uncertainty from a minimaxi estimator, minimum covariance-maximum variance
+* aleatory uncertainty from standard errors, correlations between lifespans of a single person, correlations between numerator and denominator or harzard rate.
 
 Data Sources
 ------------
