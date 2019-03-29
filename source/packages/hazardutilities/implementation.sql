@@ -572,10 +572,26 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		ambulatoryvisits IN INTEGER,
 		ambulatorysitedays IN INTEGER,
 		ambulatorydays IN INTEGER,
+		ambulatoryprivateminutes IN INTEGER,
+		ambulatoryprivatevisits IN INTEGER,
+		ambulatoryprivatesitedays IN INTEGER,
+		ambulatoryprivatedays IN INTEGER,
+		ambulatoryworkminutes IN INTEGER,
+		ambulatoryworkvisits IN INTEGER,
+		ambulatoryworksitedays IN INTEGER,
+		ambulatoryworkdays IN INTEGER,
 		inpatientdays IN INTEGER,
 		inpatientadmissions IN INTEGER,
 		inpatientdischarges IN INTEGER,
 		inpatientstays IN INTEGER,
+		inpatientprivatedays IN INTEGER,
+		inpatientprivateadmissions IN INTEGER,
+		inpatientprivatedischarges IN INTEGER,
+		inpatientprivatestays IN INTEGER,
+		inpatientworkdays IN INTEGER,
+		inpatientworkadmissions IN INTEGER,
+		inpatientworkdischarges IN INTEGER,
+		inpatientworkstays IN INTEGER,
 		caremanagerdays IN INTEGER,
 		caremanagerallocations IN INTEGER,
 		caremanagerreleases IN INTEGER,
@@ -667,6 +683,52 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			PIPE ROW (localmeasure);
 		END IF;
 
+		-- Elide empty ambulatory private casualty records
+		IF ambulatoryprivateminutes > 0 THEN
+			localmeasure.measurevalue := ambulatoryprivateminutes;
+			localmeasure.measureidentifier := 'ambulatoryprivateminutes';
+			localmeasure.measuredescription := 'Naive sum of emergency ambulatory care minutes, for private casualties, that intersected with the census interval, including overlapping visits.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := ambulatoryprivatevisits;
+			localmeasure.measureidentifier := 'ambulatoryprivatevisits';
+			localmeasure.measuredescription := 'Emergency ambulatory care visits, for private casualties, in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := ambulatoryprivatesitedays;
+			localmeasure.measureidentifier := 'ambulatoryprivatesitedays';
+			localmeasure.measuredescription := 'Unique combinations of days and ambulatory care sites visited for a private casualty emergency in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := ambulatoryprivatedays;
+			localmeasure.measureidentifier := 'ambulatoryprivatedays';
+			localmeasure.measuredescription := 'Unique days of ambulatory care visits for a private casualty emergency in the census interval.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty ambulatory workplace casualty records
+		IF ambulatoryworkminutes > 0 THEN
+			localmeasure.measurevalue := ambulatoryworkminutes;
+			localmeasure.measureidentifier := 'ambulatoryworkminutes';
+			localmeasure.measuredescription := 'Naive sum of emergency ambulatory care minutes, for workplace casualties, that intersected with the census interval, including overlapping visits.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := ambulatoryworkvisits;
+			localmeasure.measureidentifier := 'ambulatoryworkvisits';
+			localmeasure.measuredescription := 'Emergency ambulatory care visits, for workplace casualties, in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := ambulatoryworksitedays;
+			localmeasure.measureidentifier := 'ambulatoryworksitedays';
+			localmeasure.measuredescription := 'Unique combinations of days and ambulatory care sites visited for a workplace casualty emergency in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := ambulatoryworkdays;
+			localmeasure.measureidentifier := 'ambulatoryworkdays';
+			localmeasure.measuredescription := 'Unique days of ambulatory care visits for a workplace casualty emergency in the census interval.';
+			PIPE ROW (localmeasure);
+		END IF;
+
 		-- Elide empty inpatient records
 		IF inpatientdays > 0 THEN
 			localmeasure.measurevalue := inpatientdays;
@@ -687,6 +749,52 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measurevalue := inpatientstays;
 			localmeasure.measureidentifier := 'inpatientstays';
 			localmeasure.measuredescription := 'Emergency inpatient care stays intersecting with the census interval.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty inpatient private casualty records
+		IF inpatientprivatedays > 0 THEN
+			localmeasure.measurevalue := inpatientprivatedays;
+			localmeasure.measureidentifier := 'inpatientprivatedays';
+			localmeasure.measuredescription := 'Naive sum of emergency inpatient care days, for private casualties, that intersected with the census interval, including overlapping stays.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := inpatientprivateadmissions;
+			localmeasure.measureidentifier := 'inpatientprivateadmissions';
+			localmeasure.measuredescription := 'Emergency inpatient care admissions, for private casualties, in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := inpatientprivatedischarges;
+			localmeasure.measureidentifier := 'inpatientprivatedischarges';
+			localmeasure.measuredescription := 'Emergency inpatient care discharges, for private casualties, in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := inpatientprivatestays;
+			localmeasure.measureidentifier := 'inpatientprivatestays';
+			localmeasure.measuredescription := 'Emergency inpatient care stays, for private casualties, intersecting with the census interval.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty inpatient workplace casualty records
+		IF inpatientworkdays > 0 THEN
+			localmeasure.measurevalue := inpatientworkdays;
+			localmeasure.measureidentifier := 'inpatientworkdays';
+			localmeasure.measuredescription := 'Naive sum of emergency inpatient care days, for workplace casualties, that intersected with the census interval, including overlapping stays.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := inpatientworkadmissions;
+			localmeasure.measureidentifier := 'inpatientworkadmissions';
+			localmeasure.measuredescription := 'Emergency inpatient care admissions, for workplace casualties, in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := inpatientworkdischarges;
+			localmeasure.measureidentifier := 'inpatientworkdischarges';
+			localmeasure.measuredescription := 'Emergency inpatient care discharges, for workplace casualties, in the census interval.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := inpatientworkstays;
+			localmeasure.measureidentifier := 'inpatientworkstays';
+			localmeasure.measuredescription := 'Emergency inpatient care stays, for workplace casualties, intersecting with the census interval.';
 			PIPE ROW (localmeasure);
 		END IF;
 

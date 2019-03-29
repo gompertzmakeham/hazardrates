@@ -189,7 +189,7 @@ COMMENT ON COLUMN censusambulatorycare.workvisitminutes IS 'Naive sum of emergen
 COMMENT ON COLUMN censusambulatorycare.privatevisitminutes IS 'Naive sum of emergency ambulatory care minutes, for private casualties, that intersected with the census interval, including overlapping visits.';
 COMMENT ON COLUMN censusambulatorycare.visitminutes IS 'Naive sum of emergency ambulatory care minutes that intersected with the census interval, including overlapping visits.';
 COMMENT ON COLUMN censusambulatorycare.workvisitcount IS 'Emergency ambulatory care visits, for workplace casualties, in the census interval.';
-COMMENT ON COLUMN censusambulatorycare.privatevisitcount IS 'Emergency ambulatory care visits in the census interval.';
+COMMENT ON COLUMN censusambulatorycare.privatevisitcount IS 'Emergency ambulatory care visits, for private casualties, in the census interval.';
 COMMENT ON COLUMN censusambulatorycare.visitcount IS 'Emergency ambulatory care visits in the census interval.';
 COMMENT ON COLUMN censusambulatorycare.workvisitsitedays IS 'Unique combinations of days and ambulatory care sites visited for a workplace casualty emergency in the census interval.';
 COMMENT ON COLUMN censusambulatorycare.privatevisitsitedays IS 'Unique combinations of days and ambulatory care sites visited for a private casualty emergency in the census interval.';

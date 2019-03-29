@@ -137,11 +137,23 @@ SELECT
 	 *  Utilization in the census intervals, used as the numerators.
 	 */
 
-	-- Ambulatory care
+	-- Ambulatory care all utilization
 	CAST(COALESCE(a1.ambulatoryminutes, 0) AS INTEGER) ambulatoryminutes,
 	CAST(COALESCE(a1.ambulatoryvisits, 0) AS INTEGER) ambulatoryvisits,
 	CAST(COALESCE(a1.ambulatorysitedays, 0) AS INTEGER) ambulatorysitedays,
 	CAST(COALESCE(a1.ambulatorydays, 0) AS INTEGER) ambulatorydays,
+
+	-- Ambulatory care private casualty utilization
+	CAST(COALESCE(a1.ambulatoryprivateminutes, 0) AS INTEGER) ambulatoryprivateminutes,
+	CAST(COALESCE(a1.ambulatoryprivatevisits, 0) AS INTEGER) ambulatoryprivatevisits,
+	CAST(COALESCE(a1.ambulatoryprivatesitedays, 0) AS INTEGER) ambulatoryprivatesitedays,
+	CAST(COALESCE(a1.ambulatoryprivatedays, 0) AS INTEGER) ambulatoryprivatedays,
+
+	-- Ambulatory care workplace casualty utilization
+	CAST(COALESCE(a1.ambulatoryworkminutes, 0) AS INTEGER) ambulatoryworkminutes,
+	CAST(COALESCE(a1.ambulatoryworkvisits, 0) AS INTEGER) ambulatoryworkvisits,
+	CAST(COALESCE(a1.ambulatoryworksitedays, 0) AS INTEGER) ambulatoryworksitedays,
+	CAST(COALESCE(a1.ambulatoryworkdays, 0) AS INTEGER) ambulatoryworkdays,
 
 	-- Care management
 	CAST(COALESCE(a1.caremanagerdays, 0) AS INTEGER) caremanagerdays,
@@ -160,12 +172,24 @@ SELECT
 	CAST(COALESCE(a1.homecaretransitiondays, 0) AS INTEGER) homecaretransitiondays,
 	CAST(COALESCE(a1.homecaredays, 0) AS INTEGER) homecaredays,
 
-	-- Inpatient care
+	-- Inpatient care all utilization
 	CAST(COALESCE(a1.inpatientdays, 0) AS INTEGER) inpatientdays,
 	CAST(COALESCE(a1.inpatientadmissions, 0) AS INTEGER) inpatientadmissions,
 	CAST(COALESCE(a1.inpatientdischarges, 0) AS INTEGER) inpatientdischarges,
 	CAST(COALESCE(a1.inpatientstays, 0) AS INTEGER) inpatientstays,
-	
+
+	-- Inpatient care private casualty utilization
+	CAST(COALESCE(a1.inpatientprivatedays, 0) AS INTEGER) inpatientprivatedays,
+	CAST(COALESCE(a1.inpatientprivateadmissions, 0) AS INTEGER) inpatientprivateadmissions,
+	CAST(COALESCE(a1.inpatientprivatedischarges, 0) AS INTEGER) inpatientprivatedischarges,
+	CAST(COALESCE(a1.inpatientprivatestays, 0) AS INTEGER) inpatientprivatestays,
+
+	-- Inpatient care workplace casualty utilization
+	CAST(COALESCE(a1.inpatientworkdays, 0) AS INTEGER) inpatientworkdays,
+	CAST(COALESCE(a1.inpatientworkadmissions, 0) AS INTEGER) inpatientworkadmissions,
+	CAST(COALESCE(a1.inpatientworkdischarges, 0) AS INTEGER) inpatientworkdischarges,
+	CAST(COALESCE(a1.inpatientworkstays, 0) AS INTEGER) inpatientworkstays,
+
 	-- Laboratory collection
 	CAST(COALESCE(a1.laboratoryassays, 0) AS INTEGER) laboratoryassays,
 	CAST(COALESCE(a1.laboratorysitedays, 0) AS INTEGER) laboratorysitedays,

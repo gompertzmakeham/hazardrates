@@ -30,6 +30,8 @@ WITH
 			CASE
 				WHEN a0.se_start_date <= a0.rcpt_dob THEN
 					1
+				WHEN a0.se_birth_outcome IS NOT NULL THEN
+					1
 				ELSE
 					0
 			END surveillancebirth,
