@@ -95,7 +95,13 @@ Concretely, in the context of this project, for each surveillance time span duri
 Events
 ------
 
-Definite observations, versus known to exist. The impact of:
+Differentiation between:
+
+* transactionally recorded events
+* clerically recorded events
+* Existential bounds on events
+
+The impact of:
 
 * *Censoring* is what you do not know about the patients you have been observing because you cannot see into the future.
 * *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
@@ -106,8 +112,7 @@ Precision and Uncertainty Calibration
 
 Using clerical equivocation and equipoise to calibrate precision and measurement uncertainty.
 
-* shortest lifespan and longest lifespan
-* lifespan interferometry, epistemicy measurement uncertainty from a minimaxi estimator, minimum covariance-maximum variance
+* lifespan interferometry from clerical equivocation, epistemicy measurement uncertainty from a minimaxi estimator, minimum covariance-maximum variance, smaller than the uniform norm.
 * aleatory uncertainty from standard errors, correlations between lifespans of a single person, correlations between numerator and denominator or harzard rate.
 
 Data Sources
