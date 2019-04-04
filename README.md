@@ -112,7 +112,7 @@ Precision and Uncertainty Calibration
 
 Using clerical equivocation and equipoise to calibrate precision and measurement uncertainty.
 
-* lifespan interferometry from clerical equivocation, epistemicy measurement uncertainty from a minimaxi estimator, minimum covariance-maximum variance, smaller than the uniform norm.
+* lifespan interferometry from clerical equivocation, epistemicy measurement uncertainty from a minimaxi estimator, minimum covariance-maximum variance, smaller than the pointwise uniform norm.
 * aleatory uncertainty from standard errors, correlations between lifespans of a single person, correlations between numerator and denominator or harzard rate.
 
 Data Sources
