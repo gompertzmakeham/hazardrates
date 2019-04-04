@@ -161,8 +161,8 @@ SELECT
 	CAST(SUM(a1.worksitecount) AS INTEGER) workvisitsitedays,
 	CAST(SUM(a1.privatesitecount) AS INTEGER) privatevisitsitedays,
 	CAST(SUM(a1.sitecount) AS INTEGER) visitsitedays,
-	CAST(SUM(a0.workcasualty) AS INTEGER) workvisitdays,
-	CAST(SUM(a0.privatecasualty) AS INTEGER) privatevisitdays,
+	CAST(SUM(a1.workcasualty) AS INTEGER) workvisitdays,
+	CAST(SUM(a1.privatecasualty) AS INTEGER) privatevisitdays,
 	CAST(COUNT(*) AS INTEGER) visitdays
 FROM
 	personsurveillance a0

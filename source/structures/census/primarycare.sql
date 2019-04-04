@@ -43,7 +43,7 @@ WITH
 					0
 			END radiologist,
 			CASE
-				WHEN a0.pers_capb_prvd_spec_ad IN ('ANES', 'DIRD', 'GP', 'PATH', 'GNSG', 'NUSG', 'ORTH', 'PDSG', 'PLAS', 'THOR') THEN
+				WHEN a0.pers_capb_prvd_spec_ad IN ('ANES', 'DIRD', 'GP', 'OBGY', 'PATH', 'GNSG', 'NUSG', 'ORTH', 'PDSG', 'PLAS', 'THOR') THEN
 					0
 				ELSE
 					1

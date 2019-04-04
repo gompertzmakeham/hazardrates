@@ -5,6 +5,7 @@ SELECT
 	CAST(a0.uliabphn AS INTEGER) uliabphn,
 	CAST(a0.sex AS VARCHAR2(1)) sex,
 	CAST(a0.firstnations AS INTEGER) firstnations,
+	CAST(a0.maternalphn AS INTEGER) maternalphn,
 	CAST(a0.cornercase AS VARCHAR2(1)) cornercase,
 	CAST(a0.birthdate AS DATE) birthdate,
 	CAST(a0.deceaseddate AS DATE) deceaseddate,
@@ -76,6 +77,7 @@ COMMENT ON TABLE personcensus IS 'For every person that at any time was covered 
 COMMENT ON COLUMN personcensus.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN personcensus.sex IS 'Biological sex for use in physiological and metabolic determinants of health, not self identified gender: F female, M male.';
 COMMENT ON COLUMN personcensus.firstnations IS 'Presence of adminstrative indications of membership or status in first nations, aboriginal, indigenous, Metis, or Inuit communities: 1 yes, 0 no.';
+COMMENT ON COLUMN personcensus.maternalphn IS 'When known the unique lifetime identifier of the mother, Alberta provincial healthcare number, null otherwise.';
 COMMENT ON COLUMN personcensus.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN personcensus.birthdate IS 'Best estimate of the birth date from all adminstrative records, either least (U) or greatest (L) bound, depending on the corner case.';
 COMMENT ON COLUMN personcensus.deceaseddate IS 'Best estimate of the deceased date from all adminstrative records, either least (L) or greatest (U) bound, depending on the corner case, null when unknown.';

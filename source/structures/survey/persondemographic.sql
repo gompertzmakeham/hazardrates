@@ -50,6 +50,7 @@ SELECT
 	CAST(a0.uliabphn AS INTEGER) uliabphn,
 	CAST(a0.sex AS VARCHAR2(1)) sex,
 	CAST(a0.firstnations AS INTEGER) firstnations,
+	CAST(a2.maternalphn AS INTEGER) maternalphn,
 	CAST(a1.leastbirth AS DATE) leastbirth,
 	CAST(a1.greatestbirth AS DATE) greatestbirth,
 	CAST(a1.leastdeceased AS DATE) leastdeceased,
@@ -122,7 +123,11 @@ FROM
 			a1.surveillanceend,
 			COALESCE(a1.leastdeceased, a1.surveillanceend),
 			COALESCE(a1.leastemigrate, a1.surveillanceend)
-		);
+		)
+	LEFT JOIN
+	surveymothernewborn a2
+	ON
+		a0.uliabphn = a2.infantphn;
 
 ALTER TABLE persondemographic ADD CONSTRAINT primarydemographic PRIMARY KEY (uliabphn);
 
@@ -130,6 +135,7 @@ COMMENT ON MATERIALIZED VIEW persondemographic IS 'For every person that at any 
 COMMENT ON COLUMN persondemographic.uliabphn IS 'Unique lifetime identifier of the person, Alberta provincial healthcare number.';
 COMMENT ON COLUMN persondemographic.sex IS 'Biological sex for use in physiological and metabolic determinants of health, not self identified gender: F female, M male.';
 COMMENT ON COLUMN persondemographic.firstnations IS 'Presence of adminstrative indications of membership or status in first nations, aboriginal, indigenous, Metis, or Inuit communities: 1 yes, 0 no.';
+COMMENT ON COLUMN persondemographic.maternalphn IS 'When known the unique lifetime identifier of the mother, Alberta provincial healthcare number, null otherwise.';
 COMMENT ON COLUMN persondemographic.leastbirth IS 'Lower bound on the date of birth.';
 COMMENT ON COLUMN persondemographic.greatestbirth IS 'Upper bound on the date of birth.';
 COMMENT ON COLUMN persondemographic.leastdeceased IS 'Lower bound on the deceased date, null when unknown.';
