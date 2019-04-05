@@ -30,7 +30,7 @@ WITH
 			CASE
 				WHEN a0.se_start_date <= a0.rcpt_dob THEN
 					1
-				WHEN a0.se_birth_outcome IS NOT NULL THEN
+				WHEN a0.se_birth_outcome IS NOT NULL AND rcpt_age_se_yrs = 0 THEN
 					1
 				ELSE
 					0

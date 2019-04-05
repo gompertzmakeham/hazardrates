@@ -76,3 +76,27 @@ WHERE
 	ab_hzrd_rts_anlys.hazardutilities.cleandate(a0.admitdate || COALESCE(a0.admittime, '0000'), 'yyyymmddhh24mi') IS NOT NULL
 ORDER BY
 	10 ASC NULLS FIRST;
+	
+-- Primary care new borns
+WITH
+	ingestdata AS
+	(
+		SELECT
+			CASE SUM(CASE WHEN a0.se_birth_outcome IS NULL THEN 0 ELSE 1 END) OVER (PARTITION BY substr(a0.claim_id_cls, 1, 13))
+				WHEN 0 THEN
+					0
+				ELSE
+					1
+			END nearnewborn,
+			a0.*
+		FROM
+			ahsdrrconform.ab_claims a0
+	)
+SELECT
+	a0.*
+FROM
+	ingestdata a0
+WHERE
+	a0.nearnewborn = 1
+ORDER BY
+	a0.claim_id_cls;
