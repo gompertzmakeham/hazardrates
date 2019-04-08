@@ -166,6 +166,7 @@ CREATE OR REPLACE PACKAGE hazardutilities AS
 	 */
 	FUNCTION generatemeasures
 	(
+		livenewborns IN INTEGER,
 		ambulatoryminutes IN INTEGER,
 		ambulatoryvisits IN INTEGER,
 		ambulatorysitedays IN INTEGER,

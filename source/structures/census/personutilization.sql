@@ -16,7 +16,7 @@ WITH
 			COALESCE(a0.privatevisitminutes, 0) ambulatoryprivateminutes,
 			COALESCE(a0.privatevisitcount, 0) ambulatoryprivatevisits,
 			COALESCE(a0.privatevisitsitedays, 0) ambulatoryprivatesitedays,
-			COALESCE(a0.privatetvisitdays, 0) ambulatoryprivatedays,
+			COALESCE(a0.privatevisitdays, 0) ambulatoryprivatedays,
 			COALESCE(a0.workvisitminutes, 0) ambulatoryworkminutes,
 			COALESCE(a0.workvisitcount, 0) ambulatoryworkvisits,
 			COALESCE(a0.workvisitsitedays, 0) ambulatoryworksitedays,
@@ -284,6 +284,73 @@ WITH
 				a0.intervalend = a1.intervalend
 	),
 
+	-- Mix in mother-newborn
+	addmothernewborn AS
+	(
+		SELECT
+			COALESCE(a0.uliabphn, a1.uliabphn) uliabphn,
+			COALESCE(a0.cornercase, a1.cornercase) cornercase,
+			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
+			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a1.livenewborns, 0) livenewborns,
+			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
+			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
+			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
+			COALESCE(a0.ambulatorydays, 0) ambulatorydays,
+			COALESCE(a0.ambulatoryprivateminutes, 0) ambulatoryprivateminutes,
+			COALESCE(a0.ambulatoryprivatevisits, 0) ambulatoryprivatevisits,
+			COALESCE(a0.ambulatoryprivatesitedays, 0) ambulatoryprivatesitedays,
+			COALESCE(a0.ambulatoryprivatedays, 0) ambulatoryprivatedays,
+			COALESCE(a0.ambulatoryworkminutes, 0) ambulatoryworkminutes,
+			COALESCE(a0.ambulatoryworkvisits, 0) ambulatoryworkvisits,
+			COALESCE(a0.ambulatoryworksitedays, 0) ambulatoryworksitedays,
+			COALESCE(a0.ambulatoryworkdays, 0) ambulatoryworkdays,
+			COALESCE(a0.inpatientdays, 0) inpatientdays,
+			COALESCE(a0.inpatientadmissions, 0) inpatientadmissions,
+			COALESCE(a0.inpatientdischarges, 0) inpatientdischarges,
+			COALESCE(a0.inpatientstays, 0) inpatientstays,
+			COALESCE(a0.inpatientprivatedays, 0) inpatientprivatedays,
+			COALESCE(a0.inpatientprivateadmissions, 0) inpatientprivateadmissions,
+			COALESCE(a0.inpatientprivatedischarges, 0) inpatientprivatedischarges,
+			COALESCE(a0.inpatientprivatestays, 0) inpatientprivatestays,
+			COALESCE(a0.inpatientworkdays, 0) inpatientworkdays,
+			COALESCE(a0.inpatientworkadmissions, 0) inpatientworkadmissions,
+			COALESCE(a0.inpatientworkdischarges, 0) inpatientworkdischarges,
+			COALESCE(a0.inpatientworkstays, 0) inpatientworkstays,
+			COALESCE(a0.caremanagerdays, 0) caremanagerdays,
+			COALESCE(a0.caremanagerallocations, 0) caremanagerallocations,
+			COALESCE(a0.caremanagerreleases, 0) caremanagerreleases,
+			COALESCE(a0.caremanagers, 0) caremanagers,
+			COALESCE(a0.homecareprofessionalservices, 0) homecareprofessionalservices,
+			COALESCE(a0.homecaretransitionservices, 0) homecaretransitionservices,
+			COALESCE(a0.homecareservices, 0) homecareservices,
+			COALESCE(a0.homecareprofessionalvisits, 0) homecareprofessionalvisits,
+			COALESCE(a0.homecaretransitionvisits, 0) homecaretransitionvisits,
+			COALESCE(a0.homecarevisits, 0) homecarevisits,
+			COALESCE(a0.homecareprofessionaldays, 0) homecareprofessionaldays,
+			COALESCE(a0.homecaretransitiondays, 0) homecaretransitiondays,
+			COALESCE(a0.homecaredays, 0) homecaredays,
+			COALESCE(a0.laboratoryassays, 0) laboratoryassays,
+			COALESCE(a0.laboratorysitedays, 0) laboratorysitedays,
+			COALESCE(a0.laboratorydays, 0) laboratorydays,
+			COALESCE(a0.longtermcareadmissions, 0) longtermcareadmissions,
+			COALESCE(a0.longtermcaredischarges, 0) longtermcaredischarges,
+			COALESCE(a0.longtermcaredays, 0) longtermcaredays,
+			COALESCE(a0.longtermcarestays, 0) longtermcarestays
+		FROM
+			addlongtermcare a0
+			FULL JOIN
+			censusmothernewborn a1
+			ON
+				a0.uliabphn = a1.uliabphn
+				AND
+				a0.cornercase = a1.cornercase
+				AND
+				a0.intervalstart = a1.intervalstart
+				AND
+				a0.intervalend = a1.intervalend
+	),
+
 	-- Mix in pharmacy
 	addpharmacy AS
 	(
@@ -292,6 +359,7 @@ WITH
 			COALESCE(a0.cornercase, a1.cornercase) cornercase,
 			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
 			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.livenewborns, 0) livenewborns,
 			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
 			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
 			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
@@ -349,7 +417,7 @@ WITH
 			COALESCE(a1.controlleddays, 0) pharmacycontrolleddays,
 			COALESCE(a1.alldays, 0) pharmacydays
 		FROM
-			addlongtermcare a0
+			addmothernewborn a0
 			FULL JOIN
 			censuspharmacydispense a1
 			ON
@@ -370,6 +438,7 @@ WITH
 			COALESCE(a0.cornercase, a1.cornercase) cornercase,
 			COALESCE(a0.intervalstart, a1.intervalstart) intervalstart,
 			COALESCE(a0.intervalend, a1.intervalend) intervalend,
+			COALESCE(a0.livenewborns, 0) livenewborns,
 			COALESCE(a0.ambulatoryminutes, 0) ambulatoryminutes,
 			COALESCE(a0.ambulatoryvisits, 0) ambulatoryvisits,
 			COALESCE(a0.ambulatorysitedays, 0) ambulatorysitedays,
@@ -473,6 +542,7 @@ SELECT
 	CAST(COALESCE(a0.cornercase, a1.cornercase) AS VARCHAR2(1)) cornercase,
 	CAST(COALESCE(a0.intervalstart, a1.intervalstart) AS DATE) intervalstart,
 	CAST(COALESCE(a0.intervalend, a1.intervalend) AS DATE) intervalend,
+	CAST(COALESCE(a0.livenewborns, 0) AS INTEGER) livenewborns,
 	CAST(COALESCE(a0.ambulatoryminutes, 0) AS INTEGER) ambulatoryminutes,
 	CAST(COALESCE(a0.ambulatoryvisits, 0) AS INTEGER) ambulatoryvisits,
 	CAST(COALESCE(a0.ambulatorysitedays, 0) AS INTEGER) ambulatorysitedays,
@@ -580,6 +650,7 @@ COMMENT ON COLUMN personutilization.uliabphn IS 'Unique lifetime identifier of t
 COMMENT ON COLUMN personutilization.cornercase IS 'Extremum of the observations of the birth and death dates: L greatest birth date and least deceased date, U least birth date and greatest deceased date.';
 COMMENT ON COLUMN personutilization.intervalstart IS 'Closed start of the intersection of the fiscal year and the age interval.';
 COMMENT ON COLUMN personutilization.intervalend IS 'Closed end of the intersection of the fiscal year and the age interval.';
+COMMENT ON COLUMN personutilization.livenewborns IS 'Naive count of live newborns delivered by the mother in the census interval, minimal plausibility checks.';
 COMMENT ON COLUMN personutilization.ambulatoryminutes IS 'Naive sum of emergency ambulatory care minutes that intersected with the census interval, including overlapping visits.';
 COMMENT ON COLUMN personutilization.ambulatoryvisits IS 'Emergency ambulatory care visits in the census interval.';
 COMMENT ON COLUMN personutilization.ambulatorysitedays IS 'Unique combinations of days and ambulatory care sites visited for an emergency in the census interval.';

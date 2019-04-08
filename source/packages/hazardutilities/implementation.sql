@@ -568,6 +568,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	 */
 	FUNCTION generatemeasures
 	(
+		livenewborns IN INTEGER,
 		ambulatoryminutes IN INTEGER,
 		ambulatoryvisits IN INTEGER,
 		ambulatorysitedays IN INTEGER,
@@ -659,6 +660,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 	RETURN censusmeasures PIPELINED DETERMINISTIC AS
 		localmeasure censusmeasure;
 	BEGIN
+
+		-- Elide empty newborns records
+		IF livenewborns > 0 THEN
+			localmeasure.measurevalue := livenewborns;
+			localmeasure.measureidentifier := 'livenewborns';
+			localmeasure.measuredescription := 'Naive count of live newborns delivered by the mother in the census interval, minimal plausibility checks.';
+			PIPE ROW (localmeasure);
+		END IF;
 
 		-- Elide empty ambulatory records
 		IF ambulatoryminutes > 0 THEN

@@ -16,6 +16,7 @@ FROM
 	(
 		hazardutilities.generatemeasures
 		(
+			a0.livenewborns,
 			a0.ambulatoryminutes,
 			a0.ambulatoryvisits,
 			a0.ambulatorysitedays,
