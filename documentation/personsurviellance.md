@@ -1,5 +1,0 @@
-Person Surveillance
-===================
-
-Methodology
------------
