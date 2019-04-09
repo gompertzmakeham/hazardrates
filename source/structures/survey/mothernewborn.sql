@@ -5,59 +5,59 @@ WITH
 	ingest2015 AS
 	(
 		SELECT
-			ab_hzrd_rts_anlys.hazardutilities.cleanphn(a0.primary_uli_m) maternalphn,
-			ab_hzrd_rts_anlys.hazardutilities.cleanphn(a0.primary_uli_c) infantphn
+			hazardutilities.cleanphn(a0.primary_uli_m) maternalphn,
+			hazardutilities.cleanphn(a0.primary_uli_c) infantphn
 		FROM
 			vital_stats_dsp.ex_vs_bth_2000_2015 a0
 		WHERE
-			ab_hzrd_rts_anlys.hazardutilities.cleanphn(a0.primary_uli_m) IS NOT NULL
+			hazardutilities.cleanphn(a0.primary_uli_m) IS NOT NULL
 			AND
-			ab_hzrd_rts_anlys.hazardutilities.cleanphn(a0.primary_uli_c) IS NOT NULL
+			hazardutilities.cleanphn(a0.primary_uli_c) IS NOT NULL
 		GROUP BY
-			ab_hzrd_rts_anlys.hazardutilities.cleanphn(a0.primary_uli_m),
-			ab_hzrd_rts_anlys.hazardutilities.cleanphn(a0.primary_uli_c)
+			hazardutilities.cleanphn(a0.primary_uli_m),
+			hazardutilities.cleanphn(a0.primary_uli_c)
 	),
 
 	-- Vital statistics 2000 to 2016
 	ingest2016 AS
 	(
 		SELECT
-			COALESCE(a0.maternalphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_m_1)) maternalphn,
-			COALESCE(a0.infantphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1)) infantphn
+			COALESCE(a0.maternalphn, hazardutilities.cleanphn(a1.stkh_num_m_1)) maternalphn,
+			COALESCE(a0.infantphn, hazardutilities.cleanphn(a1.stkh_num_1)) infantphn
 		FROM
 			ingest2015 a0
 			FULL JOIN
 			vital_stats_dsp.ex_ah_bth_2000_2016 a1
 			ON
-				a0.infantphn = ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1)
+				a0.infantphn = hazardutilities.cleanphn(a1.stkh_num_1)
 		WHERE
-			COALESCE(a0.maternalphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_m_1)) IS NOT NULL
+			COALESCE(a0.maternalphn, hazardutilities.cleanphn(a1.stkh_num_m_1)) IS NOT NULL
 			AND
-			COALESCE(a0.infantphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1)) IS NOT NULL
+			COALESCE(a0.infantphn, hazardutilities.cleanphn(a1.stkh_num_1)) IS NOT NULL
 		GROUP BY
-			COALESCE(a0.maternalphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_m_1)),
-			COALESCE(a0.infantphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1))
+			COALESCE(a0.maternalphn, hazardutilities.cleanphn(a1.stkh_num_m_1)),
+			COALESCE(a0.infantphn, hazardutilities.cleanphn(a1.stkh_num_1))
 	),
 
 	-- Vital statistics 2015 to 2017
 	ingest2017 AS
 	(
 		SELECT
-			COALESCE(a0.maternalphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_m_1)) maternalphn,
-			COALESCE(a0.infantphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1)) infantphn
+			COALESCE(a0.maternalphn, hazardutilities.cleanphn(a1.stkh_num_m_1)) maternalphn,
+			COALESCE(a0.infantphn, hazardutilities.cleanphn(a1.stkh_num_1)) infantphn
 		FROM
 			ingest2016 a0
 			FULL JOIN
 			vital_stats_dsp.ahs_bth_2015_2017 a1
 			ON
-				a0.infantphn = ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1)
+				a0.infantphn = hazardutilities.cleanphn(a1.stkh_num_1)
 		WHERE
-			COALESCE(a0.maternalphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_m_1)) IS NOT NULL
+			COALESCE(a0.maternalphn, hazardutilities.cleanphn(a1.stkh_num_m_1)) IS NOT NULL
 			AND
-			COALESCE(a0.infantphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1)) IS NOT NULL
+			COALESCE(a0.infantphn, hazardutilities.cleanphn(a1.stkh_num_1)) IS NOT NULL
 		GROUP BY
-			COALESCE(a0.maternalphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_m_1)),
-			COALESCE(a0.infantphn, ab_hzrd_rts_anlys.hazardutilities.cleanphn(a1.stkh_num_1))
+			COALESCE(a0.maternalphn, hazardutilities.cleanphn(a1.stkh_num_m_1)),
+			COALESCE(a0.infantphn, hazardutilities.cleanphn(a1.stkh_num_1))
 	)
 	
 -- Digest to one record per newborn
