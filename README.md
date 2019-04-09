@@ -29,7 +29,7 @@ The construction of the denominators and numerators of the hazard rate analysis 
 7. Ingest sequentially the reduced records per person per observation interval, mapping to a common data structure.
 8. Disgest sequentially the mapped common data struture, reducing by temporal join to one record per person per observation interval, containing the utilization and outcomes in that observation interval.
 
-Currently the build process is contained in `sources\refresh.sql`; which for the time being will remain partly manual because of idiosyncratic crashes that occur during table builds, possibly due to locking of the underlying table sources. An example of querying the terminal assets of this analysis is contained in the files `documentation\exampledense.sql` and `documentation\examplecolumnar.sql`.
+Currently the build process is contained in [refresh.sql](source/refresh.sql); which for the time being will remain partly manual because of idiosyncratic crashes that occur during table builds, possibly due to locking of the underlying table sources. An example of querying the terminal assets of this analysis is contained in the files [exampledense.sql](documentation\exampledense.sql) and [examplecolumnar.sql](documentation\examplecolumnar.sql).
 
 Temporal Joins
 --------------
