@@ -10,6 +10,11 @@ CASE [hazardrate]
             * ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * SUM([INTERVALEMIGRATE])
             / SUM([DURATIONDAYS])
+    WHEN 'LIVENEWBORNS' THEN
+        1000
+            * ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
+            * SUM([LIVENEWBORNS])
+            / SUM([DURATIONDAYS])
     WHEN 'AMBULATORYMINUTES' THEN
         ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * SUM([AMBULATORYMINUTES])

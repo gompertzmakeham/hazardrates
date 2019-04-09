@@ -10,6 +10,11 @@ CASE [hazardrate]
             * ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * SUM(IIF([CORNERCASE] = 'L', [INTERVALEMIGRATE], 0))
             / SUM(IIF([CORNERCASE] = 'L', [DURATIONDAYS], 0))
+    WHEN 'LIVENEWBORNS' THEN
+        1000
+            * ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
+            * SUM(IIF([CORNERCASE] = 'L', [LIVENEWBORNS], 0))
+            / SUM(IIF([CORNERCASE] = 'L', [DURATIONDAYS], 0))
     WHEN 'AMBULATORYMINUTES' THEN
         ATTR(1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * SUM(IIF([CORNERCASE] = 'L', [AMBULATORYMINUTES], 0))

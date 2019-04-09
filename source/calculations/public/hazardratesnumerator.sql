@@ -8,6 +8,10 @@ CASE [hazardrate]
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [INTERVALEMIGRATE]
+    WHEN 'LIVENEWBORNS' THEN
+        1000
+            * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
+            * [LIVENEWBORNS]
     WHEN 'AMBULATORYMINUTES' THEN
         (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [AMBULATORYMINUTES]
