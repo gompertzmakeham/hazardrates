@@ -37,13 +37,19 @@ WITH
 					0
 			END pathologist,
 			CASE
+				WHEN a0.pers_capb_prvd_spec_ad = 'PSYC' THEN
+					1
+				ELSE
+					0
+			END psychiatrist,
+			CASE
 				WHEN a0.pers_capb_prvd_spec_ad = 'DIRD' THEN
 					1
 				ELSE
 					0
 			END radiologist,
 			CASE
-				WHEN a0.pers_capb_prvd_spec_ad IN ('ANES', 'DIRD', 'GP', 'OBGY', 'PATH', 'GNSG', 'NUSG', 'ORTH', 'PDSG', 'PLAS', 'THOR') THEN
+				WHEN a0.pers_capb_prvd_spec_ad IN ('ANES', 'DIRD', 'GP', 'OBGY', 'PATH', 'PSYC', 'GNSG', 'NUSG', 'ORTH', 'PDSG', 'PLAS', 'THOR') THEN
 					0
 				ELSE
 					1
@@ -128,6 +134,7 @@ WITH
 			MAX(a0.generalpractitioner * a0.primaryprovider) generalpractitioner,
 			MAX(a0.obstetrician * a0.primaryprovider) obstetrician,
 			MAX(a0.pathologist * a0.primaryprovider) pathologist,
+			MAX(a0.psychiatrist * a0.primaryprovider) psychiatrist,
 			MAX(a0.radiologist * a0.primaryprovider) radiologist,
 			MAX(a0.specialist * a0.primaryprovider) specialist,
 			MAX(a0.surgeon * a0.primaryprovider) surgeon,
@@ -136,6 +143,7 @@ WITH
 			SUM(a0.generalpractitioner * a0.primaryprovider) generalpracticeprocedures,
 			SUM(a0.obstetrician * a0.primaryprovider) obstetricprocedures,
 			SUM(a0.pathologist * a0.primaryprovider) pathologyprocedures,
+			SUM(a0.psychiatrist * a0.primaryprovider) psychiatryprocedures,
 			SUM(a0.radiologist * a0.primaryprovider) radiologyprocedures,
 			SUM(a0.specialist * a0.primaryprovider) specialtyprocedures,
 			SUM(a0.surgeon * a0.primaryprovider) surgicalprocedures,
@@ -159,6 +167,7 @@ WITH
 			MAX(a0.generalpractitioner) generalpractitioner,
 			MAX(a0.obstetrician) obstetrician,
 			MAX(a0.pathologist) pathologist,
+			MAX(a0.psychiatrist) psychiatrist,
 			MAX(a0.radiologist) radiologist,
 			MAX(a0.specialist) specialist,
 			MAX(a0.surgeon) surgeon,
@@ -167,6 +176,7 @@ WITH
 			SUM(a0.generalpracticeprocedures) generalpracticeprocedures,
 			SUM(a0.obstetricprocedures) obstetricprocedures,
 			SUM(a0.pathologyprocedures) pathologyprocedures,
+			SUM(a0.psychiatryprocedures) psychiatryprocedures,
 			SUM(a0.radiologyprocedures) radiologyprocedures,
 			SUM(a0.specialtyprocedures) specialtyprocedures,
 			SUM(a0.surgicalprocedures) surgicalprocedures,
@@ -176,6 +186,7 @@ WITH
 			SUM(a0.generalpractitioner) generalpractitioners,
 			SUM(a0.obstetrician) obstetricians,
 			SUM(a0.pathologist) pathologists,
+			SUM(a0.psychiatrist) psychiatrists,
 			SUM(a0.radiologist) radiologists,
 			SUM(a0.specialist) specialists,
 			SUM(a0.surgeon) surgeons,
@@ -200,6 +211,7 @@ SELECT
 	CAST(SUM(a1.generalpracticeprocedures) AS INTEGER) generalpracticeprocedures,
 	CAST(SUM(a1.obstetricprocedures) AS INTEGER) obstetricprocedures,
 	CAST(SUM(a1.pathologyprocedures) AS INTEGER) pathologyprocedures,
+	CAST(SUM(a1.psychiatryprocedures) AS INTEGER) psychiatryprocedures,
 	CAST(SUM(a1.radiologyprocedures) AS INTEGER) radiologyprocedures,
 	CAST(SUM(a1.specialtyprocedures) AS INTEGER) specialtyprocedures,
 	CAST(SUM(a1.surgicalprocedures) AS INTEGER) surgicalprocedures,
@@ -209,6 +221,7 @@ SELECT
 	CAST(SUM(a1.generalpractitioners) AS INTEGER) generalpractitionersdays,
 	CAST(SUM(a1.obstetricians) AS INTEGER) obstetriciansdays,
 	CAST(SUM(a1.pathologists) AS INTEGER) pathologistsdays,
+	CAST(SUM(a1.psychiatrists) AS INTEGER) psychiatristsdays,
 	CAST(SUM(a1.radiologists) AS INTEGER) radiologistsdays,
 	CAST(SUM(a1.specialists) AS INTEGER) specialistsdays,
 	CAST(SUM(a1.surgeons) AS INTEGER) surgeonsdays,
@@ -218,6 +231,7 @@ SELECT
 	CAST(SUM(a1.generalpractitioner) AS INTEGER) generalpracticedays,
 	CAST(SUM(a1.obstetrician) AS INTEGER) obstetricdays,
 	CAST(SUM(a1.pathologist) AS INTEGER) pathologydays,
+	CAST(SUM(a1.psychiatrist) AS INTEGER) psychiatrydays,
 	CAST(SUM(a1.radiologist) AS INTEGER) radiologydays,
 	CAST(SUM(a1.specialist) AS INTEGER) specialtydays,
 	CAST(SUM(a1.surgeon) AS INTEGER) surgerydays,
@@ -248,6 +262,7 @@ COMMENT ON COLUMN censusprimarycare.consultprocedures IS 'Number of primary care
 COMMENT ON COLUMN censusprimarycare.generalpracticeprocedures IS 'Number of primary care procedures in the census interval delivered by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.obstetricprocedures IS 'Number of primary care procedures in the census interval delivered by a obstetrician-gynecologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.pathologyprocedures IS 'Number of primary care procedures in the census interval delivered by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.psychiatryprocedures IS 'Number of primary care procedures in the census interval delivered by a psychiatrist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.radiologyprocedures IS 'Number of primary care procedures in the census interval delivered by a radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.specialtyprocedures IS 'Number of primary care procedures in the census interval delivered by a specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.surgicalprocedures IS 'Number of primary care procedures in the census interval delivered by a surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
@@ -257,6 +272,7 @@ COMMENT ON COLUMN censusprimarycare.consultprovidersdays IS 'Number of unique co
 COMMENT ON COLUMN censusprimarycare.generalpractitionersdays IS 'Number of unique combinations of primary care general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.obstetriciansdays IS 'Number of unique combinations of primary care obstetrician-gynecologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.pathologistsdays IS 'Number of unique combinations of primary care pathologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.psychiatristsdays IS 'Number of unique combinations of primary care psychiatrists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.radiologistsdays IS 'Number of unique combinations of primary care radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.specialistsdays IS 'Number of unique combinations of primary care specialists other than an anesthesiologists, general practitioners, pathologists, radiologists, or surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.surgeonsdays IS 'Number of unique combinations of primary care surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
@@ -266,6 +282,7 @@ COMMENT ON COLUMN censusprimarycare.consultdays IS 'Number of unique days in the
 COMMENT ON COLUMN censusprimarycare.generalpracticedays IS 'Number of unique days in the census interval when a primary care general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.obstetricdays IS 'Number of unique days in the census interval when a primary care obstetrician-gynecologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.pathologydays IS 'Number of unique days in the census interval when a primary care pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN censusprimarycare.psychiatrydays IS 'Number of unique days in the census interval when a primary care psychiatrist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.radiologydays IS 'Number of unique days in the census interval when a primary care radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN censusprimarycare.specialtydays IS 'Number of unique days in the census interval when a primary care specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
 COMMENT ON COLUMN censusprimarycare.surgerydays IS 'Number of unique days in the census interval when a primary care surgeon was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';

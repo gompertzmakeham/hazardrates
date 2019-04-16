@@ -630,6 +630,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		generalpracticeprocedures IN INTEGER,
 		obstetricprocedures IN INTEGER,
 		pathologyprocedures IN INTEGER,
+		psychiatryprocedures IN INTEGER,
 		radiologyprocedures IN INTEGER,
 		specialtyprocedures IN INTEGER,
 		surgicalprocedures IN INTEGER,
@@ -639,6 +640,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		generalpractitionersdays IN INTEGER,
 		obstetriciansdays IN INTEGER,
 		pathologistsdays IN INTEGER,
+		psychiatristsdays IN INTEGER,
 		radiologistsdays IN INTEGER,
 		specialistsdays IN INTEGER,
 		surgeonsdays IN INTEGER,
@@ -648,6 +650,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		generalpracticedays IN INTEGER,
 		obstetricdays IN INTEGER,
 		pathologydays IN INTEGER,
+		psychiatrydays IN INTEGER,
 		radiologydays IN INTEGER,
 		specialtydays IN INTEGER,
 		surgerydays IN INTEGER,
@@ -1081,6 +1084,24 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measurevalue := pathologydays;
 			localmeasure.measureidentifier := 'pathologydays';
 			localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty psychiatry records
+		IF psychiatryprocedures > 0 THEN
+			localmeasure.measurevalue := psychiatryprocedures;
+			localmeasure.measureidentifier := 'psychiatryprocedures';
+			localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a psychiatrist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := psychiatristsdays;
+			localmeasure.measureidentifier := 'psychiatristsdays';
+			localmeasure.measuredescription := 'Number of unique combinations of primary care psychiatrists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := psychiatrydays;
+			localmeasure.measureidentifier := 'psychiatrydays';
+			localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care psychiatrist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 			PIPE ROW (localmeasure);
 		END IF;
 

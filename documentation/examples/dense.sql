@@ -263,6 +263,11 @@ SELECT
 	CAST(COALESCE(a1.pathologyprocedures, 0) AS INTEGER) pathologyprocedures,
 	CAST(COALESCE(a1.pathologistsdays, 0) AS INTEGER) pathologistsdays,
 	CAST(COALESCE(a1.pathologydays, 0) AS INTEGER) pathologydays,
+
+	-- Primary care psychiatry utilization
+	CAST(COALESCE(a1.psychiatryprocedures, 0) AS INTEGER) psychiatryprocedures,
+	CAST(COALESCE(a1.psychiatristsdays, 0) AS INTEGER) psychiatristsdays,
+	CAST(COALESCE(a1.psychiatrydays, 0) AS INTEGER) psychiatrydays,
 	
 	-- Primary care radiology utilization
 	CAST(COALESCE(a1.radiologyprocedures, 0) AS INTEGER) radiologyprocedures,

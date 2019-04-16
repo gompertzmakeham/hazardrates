@@ -500,6 +500,7 @@ WITH
 			COALESCE(a1.generalpracticeprocedures, 0) generalpracticeprocedures,
 			COALESCE(a1.obstetricprocedures, 0) obstetricprocedures,
 			COALESCE(a1.pathologyprocedures, 0) pathologyprocedures,
+			COALESCE(a1.psychiatryprocedures, 0) psychiatryprocedures,
 			COALESCE(a1.radiologyprocedures, 0) radiologyprocedures,
 			COALESCE(a1.specialtyprocedures, 0) specialtyprocedures,
 			COALESCE(a1.surgicalprocedures, 0) surgicalprocedures,
@@ -509,6 +510,7 @@ WITH
 			COALESCE(a1.generalpractitionersdays, 0) generalpractitionersdays,
 			COALESCE(a1.obstetriciansdays, 0) obstetriciansdays,
 			COALESCE(a1.pathologistsdays, 0) pathologistsdays,
+			COALESCE(a1.psychiatristsdays, 0) psychiatristsdays,
 			COALESCE(a1.radiologistsdays, 0) radiologistsdays,
 			COALESCE(a1.specialistsdays, 0) specialistsdays,
 			COALESCE(a1.surgeonsdays, 0) surgeonsdays,
@@ -518,6 +520,7 @@ WITH
 			COALESCE(a1.generalpracticedays, 0) generalpracticedays,
 			COALESCE(a1.obstetricdays, 0) obstetricdays,
 			COALESCE(a1.pathologydays, 0) pathologydays,
+			COALESCE(a1.psychiatrydays, 0) psychiatrydays,
 			COALESCE(a1.radiologydays, 0) radiologydays,
 			COALESCE(a1.specialtydays, 0) specialtydays,
 			COALESCE(a1.surgerydays, 0) surgerydays,
@@ -604,6 +607,7 @@ SELECT
 	CAST(COALESCE(a0.generalpracticeprocedures, 0) AS INTEGER) generalpracticeprocedures,
 	CAST(COALESCE(a0.obstetricprocedures, 0) AS INTEGER) obstetricprocedures,
 	CAST(COALESCE(a0.pathologyprocedures, 0) AS INTEGER) pathologyprocedures,
+	CAST(COALESCE(a0.psychiatryprocedures, 0) AS INTEGER) psychiatryprocedures,
 	CAST(COALESCE(a0.radiologyprocedures, 0) AS INTEGER) radiologyprocedures,
 	CAST(COALESCE(a0.specialtyprocedures, 0) AS INTEGER) specialtyprocedures,
 	CAST(COALESCE(a0.surgicalprocedures, 0) AS INTEGER) surgicalprocedures,
@@ -613,6 +617,7 @@ SELECT
 	CAST(COALESCE(a0.generalpractitionersdays, 0) AS INTEGER) generalpractitionersdays,
 	CAST(COALESCE(a0.obstetriciansdays, 0) AS INTEGER) obstetriciansdays,
 	CAST(COALESCE(a0.pathologistsdays, 0) AS INTEGER) pathologistsdays,
+	CAST(COALESCE(a0.psychiatristsdays, 0) AS INTEGER) psychiatristsdays,
 	CAST(COALESCE(a0.radiologistsdays, 0) AS INTEGER) radiologistsdays,
 	CAST(COALESCE(a0.specialistsdays, 0) AS INTEGER) specialistsdays,
 	CAST(COALESCE(a0.surgeonsdays, 0) AS INTEGER) surgeonsdays,
@@ -622,6 +627,7 @@ SELECT
 	CAST(COALESCE(a0.generalpracticedays, 0) AS INTEGER) generalpracticedays,
 	CAST(COALESCE(a0.obstetricdays, 0) AS INTEGER) obstetricdays,
 	CAST(COALESCE(a0.pathologydays, 0) AS INTEGER) pathologydays,
+	CAST(COALESCE(a0.psychiatrydays, 0) AS INTEGER) psychiatrydays,
 	CAST(COALESCE(a0.radiologydays, 0) AS INTEGER) radiologydays,
 	CAST(COALESCE(a0.specialtydays, 0) AS INTEGER) specialtydays,
 	CAST(COALESCE(a0.surgerydays, 0) AS INTEGER) surgerydays,
@@ -712,6 +718,7 @@ COMMENT ON COLUMN personutilization.consultprocedures IS 'Number of primary care
 COMMENT ON COLUMN personutilization.generalpracticeprocedures IS 'Number of primary care procedures in the census interval delivered by a general practitioner in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN personutilization.obstetricprocedures IS 'Number of primary care procedures in the census interval delivered by a obstetrician-gynecologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN personutilization.pathologyprocedures IS 'Number of primary care procedures in the census interval delivered by a pathologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+COMMENT ON COLUMN personutilization.psychiatryprocedures IS 'Number of primary care procedures in the census interval delivered by a psychiatrist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN personutilization.radiologyprocedures IS 'Number of primary care procedures in the census interval delivered by a radiologist in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN personutilization.specialtyprocedures IS 'Number of primary care procedures in the census interval delivered by a specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 COMMENT ON COLUMN personutilization.surgicalprocedures IS 'Number of primary care procedures in the census interval delivered by a surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
@@ -721,6 +728,7 @@ COMMENT ON COLUMN personutilization.consultprovidersdays IS 'Number of unique co
 COMMENT ON COLUMN personutilization.generalpractitionersdays IS 'Number of unique combinations of primary care general practitioners and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.obstetriciansdays IS 'Number of unique combinations of primary care obstetrician-gynecologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.pathologistsdays IS 'Number of unique combinations of primary care pathologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.psychiatristsdays IS 'Number of unique combinations of primary care psychiatrists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.radiologistsdays IS 'Number of unique combinations of primary care radiologists and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.specialistsdays IS 'Number of unique combinations of primary care specialists other than an anesthesiologists, general practitioners, pathologists, radiologists, or surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.surgeonsdays IS 'Number of unique combinations of primary care surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
@@ -730,6 +738,7 @@ COMMENT ON COLUMN personutilization.consultdays IS 'Number of unique days in the
 COMMENT ON COLUMN personutilization.generalpracticedays IS 'Number of unique days in the census interval when a primary care general practitioner was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.obstetricdays IS 'Number of unique days in the census interval when a primary care obstetrician-gynecologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.pathologydays IS 'Number of unique days in the census interval when a primary care pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+COMMENT ON COLUMN personutilization.psychiatrydays IS 'Number of unique days in the census interval when a primary care psychiatrist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.radiologydays IS 'Number of unique days in the census interval when a primary care radiologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.specialtydays IS 'Number of unique days in the census interval when a primary care specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
 COMMENT ON COLUMN personutilization.surgerydays IS 'Number of unique days in the census interval when a primary care surgeon was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
