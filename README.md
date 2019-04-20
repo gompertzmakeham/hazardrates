@@ -21,7 +21,7 @@ Overview
 The construction of the denominators and numerators of the hazard rate analysis broadly proceeds in 11 steps of ad hoc map-reduce and dynamic reconstitution, to produce records of person census intervals:
 
 1. Ingest independently and in parallel the external administrative data sources, mapping the clerically records of life events and demographic information.
-2. Digest independently and in parallel the mapped data sources from step 1, reducing each source to one record per person. The files in the [survey](source/strutures/survey) folder contain steps 1 and 2.
+2. Digest independently and in parallel the mapped data sources from step 1, reducing each source to one record per person. The files in the [survey](tree/master/source/strutures/survey) folder contain steps 1 and 2.
 3. Ingest sequentially the reduced data sources from step 2, mapping into a common structure.
 4. Digest sequentially the mapped common structure from step 3, reducing to one master record per person, containing the extremums of life event dates. The file [persondemographic.sql](source/structures/survey/persondemographic.sql) contains steps 3 and 4.
 5. Dynamically reconstitute the pair of surveillance extremums for each person from step 4. This process is contained in the file [personsurveillance.sql](source/structures/survey/personsurveillance.sql).
