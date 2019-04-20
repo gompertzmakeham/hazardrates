@@ -38,7 +38,7 @@ Currently the build process is contained in [refresh.sql](source/refresh.sql); w
 Temporal Joins
 --------------
 
-In keeping with declarative languages, a Measure Theory consistent Temporal Join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a join is a Measure Theoretic consistent temporal join if the resulting data set represents a totally ordered partition of a bounded time span under the absolute set ordering. Furthermore, the time intervals represented by any two records produced by a temporal join must intersect trivial, either being disjoint, or equal. Put more simply, a temporal join takes a time span,
+In keeping with declarative languages, a [Measure Theory](https://en.wikipedia.org/wiki/Measure_(mathematics)) consistent Temporal Join on a longitudinal data set is defined by the global characteristics of the resulting data set. Specifically, a [relational algebra](https://en.wikipedia.org/wiki/Relational_algebra) join is a Measure Theory consistent Temporal Join if the resulting data set represents a [totally ordered](https://en.wikipedia.org/wiki/Total_order) [partition](https://en.wikipedia.org/wiki/Partition_of_a_set) of a bounded time span under the absolute set ordering. Furthermore, the time intervals represented by any two records produced by a Temporal Join must intersect trivial, either being disjoint, or equal. Put more simply, a Temporal Join takes a time span,
 
     |--------------------------------------------------------------------------------------|
 
@@ -46,9 +46,9 @@ In keeping with declarative languages, a Measure Theory consistent Temporal Join
 
     |-------|--------|-------------|-----|--------|--|--|--------------|-----------|-------|
 
-such that the produced data set contains at least one, and possibly arbitrarily more, records for each interval. A temporal join unambigously ascribes a definite set of features, from one or more records, to each moment in a time span, because there are neither gaps in the representation of time, nor non-trivial intersections between intervals. Temporal joins are Category Theoretic closed, in that the composition of temporal joins is a temporal join, because sucessive temporal joins are measure theoretic (finite) refinements of the (finite) minimal sigma algebra to which the partition belongs.
+such that the produced data set contains at least one, and possibly arbitrarily more, records for each interval. A Temporal Join unambiguously ascribes a definite set of features, from one or more records, to each moment in a time span, because there are neither gaps in the representation of time, nor non-trivial intersections between intervals. Temporal Joins are [Category Theory](https://en.wikipedia.org/wiki/Category_theory) closed, in that the [composition](https://en.wikipedia.org/wiki/Composition_operator) of Temporal Joins is a Temporal Join, because successive Temporal Joins are Measure Theory (finite) [refinements](https://en.wikipedia.org/wiki/Sigma-algebra#Combining_%CF%83-algebras) of the (finite) minimal [sigma algebra](https://en.wikipedia.org/wiki/Sigma-algebra) to which the partition belongs.
 
-Given two intervals a temporal join will generate one, two, or three records. If the intervals have identical boundaries the result will be a single record containing the characteristics of the two source intervals:
+Given two intervals a Temporal Join will generate one, two, or three records. If the intervals have identical boundaries the result will be a single record containing the characteristics of the two source intervals:
 
     |--------------------|
                a                 
@@ -92,7 +92,7 @@ Finally if the intervals are fully disjoint and not contiguous the result will a
     |---------|----------|-------------------|                       
           a     ~(a & b)           b
 
-This construction can be composed iteratively on any (finite) number of intervals, because the Category of Temporal Joins is Measure Theoretic closed with respect to refinement. Fortunatelty much fast techniques can be found than the naive iteration by either sort by the boundary dates and then back searching or, in the case of the methods in this analysis, by explicitly constructing the intervals based on the provided events.
+This construction can be composed in iteration on any (finite) number of intervals, because the Category of Temporal Joins is Measure Theory closed with respect to refinement. Fortunately much faster techniques can be found than the naive iteration, exploiting either sorting on the boundary dates and then back searching, or in the case of the methods in this analysis, by explicitly constructing the intervals based on the bounds of the events.
 
 Concretely, in the context of this project, for each surveillance time span during which a person's healthcare utilization was observed, we divide the time span into fiscal years, starting on April 1, and further subdivide each fiscal year on the person's birthday in the fiscal year; where if the birthday falls on April 1 the fiscal year is not subdivided. This is precisely what the function [hazardutilities.generatecensus](source/packages/hazardutilities/interface.sql) implements, taking three dates, a start date, an end date, and a date of birth.
 
@@ -111,13 +111,31 @@ The impact of:
 * *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
 * *Immortal time bias* is what you do not know about observed patients because you cannot see into the past
 
-Precision and Uncertainty Calibration
--------------------------------------
+Epistemic Uncertainty
+---------------------
 
-Using clerical equivocation and equipoise to calibrate precision and measurement uncertainty.
+We measure epistemic uncertainty using Clerical Equivocation Interferometry against the clerical recording of the lifespan events of birth, death, immigration, and emigration. This technique begins by identifying, for each person, the shortest and longest lifespan possible given all the clerical events. Given entry events `O`, and exit events `X`, we generate two lifespans, the longest and the shortest:
 
-* lifespan interferometry from clerical equivocation, epistemicy measurement uncertainty from a minimaxi estimator, minimum covariance-maximum variance, smaller than the pointwise uniform norm.
-* aleatory uncertainty from standard errors, correlations between lifespans of a single person, correlations between numerator and denominator or harzard rate.
+    O-----O--O---O----O----------------------------------X--X------X-X-X----------X
+
+    |-----------------------------------------------------------------------------|
+
+                      |----------------------------------|
+
+Within each lifespan, we then identify the shortest possible surveillance interval within the shortest lifespan, and the longest possible surveillance interval within in the longest
+lifespan.
+
+* Transactional dates are fixed, but age may change due to clerical uncertainty, moving events to different age buckets.
+* Shortest is not the upper bound, longest is not the lower bound, they can even cross
+* Not the uniform norm bound either
+* The envelope is a mini-maxi estimator, minimum covariance, maximum variance.
+
+It is a *reasonable* estimate of epistemic uncertainty. It is not the maximum variance possible due to clerical equivocation, but it is a reasonable amount. Combinatoric methods could provide broader bounds, but the computational trade-offs in terms of expediency of the analysis were not worth it at this time.
+
+Aleatory Uncertainty
+--------------------
+
+We measure aleatory uncertainty using a non-parametric standard error of the hazard rate estimator. *embed Codecog LaTeX images*
 
 Data Sources
 ------------
