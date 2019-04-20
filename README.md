@@ -92,7 +92,7 @@ Finally if the intervals are fully disjoint and not contiguous the result will a
     |---------|----------|-------------------|                       
           a     ~(a & b)           b
 
-This construction can be composed in iteration on any (finite) number of intervals, because the Category of Temporal Joins is Measure Theory closed with respect to refinement. Fortunately much faster techniques can be found than the naive iteration, exploiting either sorting on the boundary dates and then back searching, or in the case of the methods in this analysis, by explicitly constructing the intervals based on the bounds of the events.
+This construction can be composed by iteration on any (finite) number of intervals, because the Category of Temporal Joins is Measure Theory closed with respect to refinement. Fortunately much faster techniques can be found than the naive iteration, exploiting either sorting on the boundary dates and then back searching, or in the case of the methods in this analysis, by explicitly constructing the intervals based on the bounds of the events.
 
 Concretely, in the context of this project, for each surveillance time span during which a person's healthcare utilization was observed, we divide the time span into fiscal years, starting on April 1, and further subdivide each fiscal year on the person's birthday in the fiscal year; where if the birthday falls on April 1 the fiscal year is not subdivided. This is precisely what the function [hazardutilities.generatecensus](source/packages/hazardutilities/interface.sql) implements, taking three dates, a start date, an end date, and a date of birth.
 
