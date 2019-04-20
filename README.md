@@ -21,13 +21,13 @@ Overview
 The construction of the denominators and numerators of the hazard rate analysis broadly proceeds in 11 steps of ad hoc map-reduce and dynamic reconstitution, to produce records of person census intervals:
 
 1. Ingest independently and in parallel the external administrative data sources, mapping the clerically records of life events and demographic information.
-2. Digest independently and in parallel the mapped data sources from step 1, reducing each source to one record per person. The files in the [survey](source/strutures/survey) folder contain steps 1 and 2.
+2. Digest independently and in parallel the mapped data sources from step 1, reducing each source to one record per person. The files in the [survey](https://github.com/gompertzmakeham/hazardrates/tree/master/source/structures/survey) folder contain steps 1 and 2.
 3. Ingest sequentially the reduced data sources from step 2, mapping into a common structure.
 4. Digest sequentially the mapped common structure from step 3, reducing to one master record per person, containing the extremums of life event dates. The file [persondemographic.sql](source/structures/survey/persondemographic.sql) contains steps 3 and 4.
 5. Dynamically reconstitute the pair of surveillance extremums for each person from step 4. This process is contained in the file [personsurveillance.sql](source/structures/survey/personsurveillance.sql).
 6. Dynamically reconstitute the census intervals for each surveillance extremum from step 5. This process is contained in the file [personcensus.sql](source/structures/census/personcensus.sql).
 7. Ingest independently and in parallel the external administrative data sources, mapping the transactional records of utilization events and the event details.
-8. Digest independently and in parallel the mapped data sources from step 7, reducing each source to one record per person per census interval, using the dynamically generated census intervals from step 6. The files in the [census](source/structures/census) folder contains steps 7 and 8.
+8. Digest independently and in parallel the mapped data sources from step 7, reducing each source to one record per person per census interval, using the dynamically generated census intervals from step 6. The files in the [census](https://github.com/gompertzmakeham/hazardrates/tree/master/source/structures/census) folder contains steps 7 and 8.
 9. Ingest sequentially the reduced records per person per census interval from step 8, mapping to a common data structure.
 10. Digest sequentially the mapped common data structure from step 9, reducing by Temporal Joins to one record per person per census interval, containing the utilization in that census interval. The file [personutilization.sql](source/structures/census/personutilization.sql) contains steps 9 and 10.
 11. Dynamically reconstitute a columnar list of utilization measures, eliding trivial measures. This is contained in
