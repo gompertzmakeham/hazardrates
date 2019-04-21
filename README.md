@@ -99,6 +99,8 @@ Concretely, in the context of this project, for each surveillance time span duri
 Events
 ------
 
+The administrative data sources we work has three modalities of recording information about events: existential, clerical, and transactional. Transactional recording of events occurs at the time of the event, is general completed by the person delivering the service recorded in the transaction, and may record information about prior events during the process of collecting information about the current event, examples include: visits to inpatient care, dispensing of prescribed pharmaceuticals at community pharmacy, and delivery of home care. Clerical recording of events occurs after the event has occurred, requiring recall on the part of the participants of the event, usually in the form of self-report by the recipient of services, examples include: symptom onset, birth dates, and provincial migration dates. Finally existential records record a broad time interval during which an event was known to have occurred, these are usual recorded in the contexts of administrative registrations in programs, and time intervals of data capture by administrative information systems, examples include: year of coverage start, quarter of inpatient record capture, and registration for home care.
+
 Differentiation between:
 
 * transactionally recorded events
