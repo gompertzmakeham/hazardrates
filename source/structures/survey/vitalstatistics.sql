@@ -122,12 +122,12 @@ WITH
 			a0.birth_date <= TRUNC(SYSDATE, 'MM')
 		UNION ALL
 
-		-- Deaths 2010 to 2016
+		-- Deaths 2003 to 2010
 		SELECT
 			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					CAST(NULL AS DATE)
 				ELSE
 					a0.birth_date
@@ -136,7 +136,7 @@ WITH
 
 			-- Service boundaries
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					a0.dethdate
 				WHEN a0.birth_date IS NULL THEN
 					a0.dethdate
@@ -153,7 +153,7 @@ WITH
 			
 			-- Calendar year boundaries of least service
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					hazardutilities.calendarstart(a0.dethdate)
 				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarstart(a0.dethdate)
@@ -167,7 +167,96 @@ WITH
 					hazardutilities.calendarstart(a0.dethdate)
 			END leastsurveillancestart,
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
+					hazardutilities.calendarend(a0.dethdate)
+				WHEN a0.birth_date IS NULL THEN
+					hazardutilities.calendarend(a0.dethdate)
+				WHEN a0.inf_deth = 1 THEN
+					hazardutilities.calendarend(a0.birth_date)
+				WHEN a0.neonatal = 1 THEN
+					hazardutilities.calendarend(a0.birth_date)
+				WHEN a0.early_neo = 1 THEN
+					hazardutilities.calendarend(a0.birth_date)
+				ELSE
+					hazardutilities.calendarend(a0.dethdate)
+			END leastsurveillanceend,
+
+			-- Calendar year boundaries of greatest service
+			hazardutilities.calendarstart(a0.dethdate) greatestsurveillancestart,
+			hazardutilities.calendarend(a0.dethdate) greatestsurveillanceend,
+
+			-- Definitive coverage
+			1 albertacoverage,
+			CAST(NULL AS INTEGER) firstnations,
+			
+			-- Birth observed
+			CASE
+				WHEN a0.inf_deth = 1 THEN
+					1
+				WHEN a0.neonatal = 1 THEN
+					1
+				WHEN a0.early_neo = 1 THEN
+					1
+				ELSE
+					0
+			END surveillancebirth,
+			1 surveillancedeceased,
+			CAST(NULL AS INTEGER) surveillanceimmigrate,
+			CAST(NULL AS INTEGER) surveillanceemigrate
+		FROM
+			vital_stats_dsp.ahs_dth_2003_2010 a0
+		WHERE
+			hazardutilities.cleanphn(a0.stkh_num_1) IS NOT NULL
+			AND
+			a0.dethdate BETWEEN COALESCE(a0.birth_date, a0.dethdate) AND TRUNC(SYSDATE, 'MM')
+		UNION ALL
+
+		-- Deaths 2010 to 2016
+		SELECT
+			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
+			hazardutilities.cleansex(a0.sex) sex,
+			CASE
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
+					CAST(NULL AS DATE)
+				ELSE
+					a0.birth_date
+			END birthdate,
+			a0.dethdate deceaseddate,
+
+			-- Service boundaries
+			CASE
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
+					a0.dethdate
+				WHEN a0.birth_date IS NULL THEN
+					a0.dethdate
+				WHEN a0.inf_deth = 1 THEN
+					a0.birth_date
+				WHEN a0.neonatal = 1 THEN
+					a0.birth_date
+				WHEN a0.early_neo = 1 THEN
+					a0.birth_date
+				ELSE
+					a0.dethdate
+			END leastservice,
+			a0.dethdate greatestservice,
+			
+			-- Calendar year boundaries of least service
+			CASE
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
+					hazardutilities.calendarstart(a0.dethdate)
+				WHEN a0.birth_date IS NULL THEN
+					hazardutilities.calendarstart(a0.dethdate)
+				WHEN a0.inf_deth = 1 THEN
+					hazardutilities.calendarstart(a0.birth_date)
+				WHEN a0.neonatal = 1 THEN
+					hazardutilities.calendarstart(a0.birth_date)
+				WHEN a0.early_neo = 1 THEN
+					hazardutilities.calendarstart(a0.birth_date)
+				ELSE
+					hazardutilities.calendarstart(a0.dethdate)
+			END leastsurveillancestart,
+			CASE
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					hazardutilities.calendarend(a0.dethdate)
 				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarend(a0.dethdate)
@@ -216,7 +305,7 @@ WITH
 			hazardutilities.cleanphn(a0.stkh_num_1) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					CAST(NULL AS DATE)
 				ELSE
 					a0.birth_date
@@ -225,7 +314,7 @@ WITH
 
 			-- Service boundaries
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					a0.dethdate
 				WHEN a0.birth_date IS NULL THEN
 					a0.dethdate
@@ -242,7 +331,7 @@ WITH
 			
 			-- Calendar year boundaries of least service
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					hazardutilities.calendarstart(a0.dethdate)
 				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarstart(a0.dethdate)
@@ -256,7 +345,7 @@ WITH
 					hazardutilities.calendarstart(a0.dethdate)
 			END leastsurveillancestart,
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					hazardutilities.calendarend(a0.dethdate)
 				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarend(a0.dethdate)
@@ -305,7 +394,7 @@ WITH
 			hazardutilities.cleanphn(a0.primary_uli) uliabphn,
 			hazardutilities.cleansex(a0.sex) sex,
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					CAST(NULL AS DATE)
 				ELSE
 					a0.birth_date
@@ -314,7 +403,7 @@ WITH
 
 			-- Service boundaries
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					a0.dethdate
 				WHEN a0.birth_date IS NULL THEN
 					a0.dethdate
@@ -331,7 +420,7 @@ WITH
 			
 			-- Calendar year boundaries of least service
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					hazardutilities.calendarstart(a0.dethdate)
 				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarstart(a0.dethdate)
@@ -345,7 +434,7 @@ WITH
 					hazardutilities.calendarstart(a0.dethdate)
 			END leastsurveillancestart,
 			CASE
-				WHEN a0.birth_date < add_months(a0.dethdate, -12 * COALESCE(a0.age_yrs, a0.age)) THEN
+				WHEN a0.birth_date < add_months(a0.dethdate, -12 * (1 + COALESCE(a0.age_yrs, a0.age))) THEN
 					hazardutilities.calendarend(a0.dethdate)
 				WHEN a0.birth_date IS NULL THEN
 					hazardutilities.calendarend(a0.dethdate)
