@@ -21,6 +21,8 @@ parameter:
     * `Average Daily Demographic Cumulative Contours`
     * `Age Dependent Hazard Rate (Linear)`
     * `Age Dependent Hazard Rate (Logarithmic)`
+    * `Settings`
+    * `Settings and Filters`
     * `[statistic_hazardratemaximum]`
     * `[statistic_hazardrateminimum]`
     * `[statistic_populationfemalesmaximum]`
@@ -68,6 +70,7 @@ parameter:
     * `[HOMECAREPERCENTUTILIZATION]`
     * `[HOMECAREPROFESSIONALPERCENTUTILIZATION]`
     * `[HOMECARETRANSITIONPERCENTUTILIZATION]`
+    * `[LABORATORYPERCENTUTILIZATION]`
     * `[LONGTERMCAREPERCENTUTILIZATION]`
     * `[ALLDOSESPERDISPENSEDPERSON]`
     * `[PHARMACYPERCENTDISPENSED]`
@@ -86,24 +89,32 @@ parameter:
     * `[SPECIALTYPERCENTUTILIZATION]`
     * `[SURGERYPERCENTUTILIZATION]`
     * `[SUPPORTIVELIVINGPERCENTUTILIZATION]`
-8. In `hazardratespublic.twb` create a new live connection to the `hazardrates` table named
+8. Create fields:
+    * `[statistic_hazardratedenominator]`
+    * `[statistic_hazardratenumerator]`
+9. Edit the calculations in the fields:
+    * `[statistic_hazardrate]`
+    * `[statistic_hazardratelower]`
+    * `[statistic_hazardrateupper]`
+    * `[variable_hazardraterecommended]`
+10. In `hazardratespublic.twb` create a new live connection to the `hazardrates` table named
 `hazardratespublic`, ensuring that the `Initial SQL...` opens a parallel session.
 
 ```SQL
 ALTER SESSION FORCE PARALLEL QUERY PARALLEL 8
 ```
 
-9. Reset the names and ensure `integer` types are not coerced into `float` types.
-10. Edit the aliases in the dimensions:
+11. Reset the names and ensure `integer` types are not coerced into `float` types.
+12. Edit the aliases in the dimensions:
     * `[CORNERCASE]`
         - `Longest Lifespan`
         - `Shortest Lifespan`
     * `[SEX]`
         - `Female`
         - `Male` 
-11. Replace the `hazardratesprivate` data source with the `hazardratespublic` data source,
+13. Replace the `hazardratesprivate` data source with the `hazardratespublic` data source,
 and close `hazardratesprivate`.
-12. Change the following measures to dimensions:
+14. Change the following measures to dimensions:
     * `[AGECOINCIDECENSUS]`
     * `[AGECOINCIDEINTERVAL]`
     * `[AGEEQUIPOISE]`
@@ -124,7 +135,7 @@ and close `hazardratesprivate`.
     * `[SURVEILLANCEENDEQUIPOISE]`
     * `[SURVEILLANCESTARTEQUIPOISE]`
     * `[ULIABPHN]`
-13. Convert the following dimensions to continuous:
+15. Convert the following dimensions to continuous:
     * `[AGEEND]`
     * `[AGESTART]`
     * `[BIRTHDATE]`
@@ -145,7 +156,12 @@ and close `hazardratesprivate`.
     * `[INTERVALSTART]`
     * `[SURVEILLANCEEND]`
     * `[SURVEILLANCESTART]`
-14. Edit the aliases of the `[Measure Names]` in the `Sample Sizes` worksheet:
+16. Ensure the following fields remain measures and have a default aggregation of sum:
+    * `[INTERVALBIRTH]`
+    * `[INTERVALDECEASED]`
+    * `[INTERVALEMIGRATE]`
+    * `[INTERVALIMMIGRATE]`
+17. Edit the aliases of the `[Measure Names]` in the `Sample Sizes` worksheet:
     * `Community Laboratory Assays`
     * `Community Pharmacy Dispensed`
     * `Primary Care Procedures`
@@ -161,19 +177,20 @@ and close `hazardratesprivate`.
     * `Births`
     * `Provincial Emigrants`
     * `Deaths`
-15. Hide unused dimensions, leave `[statistic_hazardrate]` visible as a courtesy.
-16. Triple check that all sensitive fields are suppressed so that the aggregates are
+18. Hide unused dimensions.
+19. Double check that all sensitive fields are suppressed so that the aggregates are
+provincial; not including the calculated dimensions, only the following dimensions should be
+shown:
+    * `[CENSUSSTART]`
+    * `[CENSUSEND]`
+    * `[CORNERCASE]`
+    * `[INTERVALAGE]`
+    * `[SEX]`
+    * `[CENSOREDDATE]`
+20. Create extract `hazardratespublic.hyper`, aggregating to the visible dimensions.
+21. Triple check that all sensitive fields are suppressed so that the aggregates are
 provincial.
-17. Create extract `hazardratespublic.hyper`, aggregating to the visible dimensions.
-18. Triple check, again, that all sensitive fields are suppressed so that the aggregates are
-provincial.
-19. Create fields:
-    * `[statistic_hazardratedenominator]`
-    * `[statistic_hazardratenumerator]`
-20. Edit the calculations in the fields:
-    * `[statistic_hazardratelower]`
-    * `[statistic_hazardrateupper]`
-    * `[variable_hazardraterecommended]`
-21. Publish on Tableau public.
+23. Hide all the worksheets.
+24. Publish on Tableau public.
 
 *Hopefully after this it is just refreshes until pushing back the aggregates.*
