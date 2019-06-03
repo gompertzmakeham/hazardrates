@@ -254,6 +254,11 @@ SELECT
 	CAST(COALESCE(a1.generalpractitionersdays, 0) AS INTEGER) generalpractitionersdays,
 	CAST(COALESCE(a1.generalpracticedays, 0) AS INTEGER) generalpracticedays,
 
+	-- Primary care geriatric utilization
+	CAST(COALESCE(a1.geriatricprocedures, 0) AS INTEGER) geriatricprocedures,
+	CAST(COALESCE(a1.geriatriciansdays, 0) AS INTEGER) geriatriciansdays,
+	CAST(COALESCE(a1.geriatricdays, 0) AS INTEGER) geriatricdays,
+
 	-- Primary care obstetric-gynecoloy utilization
 	CAST(COALESCE(a1.obstetricprocedures, 0) AS INTEGER) obstetricprocedures,
 	CAST(COALESCE(a1.obstetriciansdays, 0) AS INTEGER) obstetriciansdays,
@@ -263,6 +268,16 @@ SELECT
 	CAST(COALESCE(a1.pathologyprocedures, 0) AS INTEGER) pathologyprocedures,
 	CAST(COALESCE(a1.pathologistsdays, 0) AS INTEGER) pathologistsdays,
 	CAST(COALESCE(a1.pathologydays, 0) AS INTEGER) pathologydays,
+
+	-- Primary care pediatric utilization
+	CAST(COALESCE(a1.pediatricprocedures, 0) AS INTEGER) pediatricprocedures,
+	CAST(COALESCE(a1.pediatriciansdays, 0) AS INTEGER) pediatriciansdays,
+	CAST(COALESCE(a1.pediatricdays, 0) AS INTEGER) pediatricdays,
+
+	-- Primary care pathology utilization
+	CAST(COALESCE(a1.pediatricsurgeryprocedures, 0) AS INTEGER) pediatricsurgeryprocedures,
+	CAST(COALESCE(a1.pediatricsurgeonsdays, 0) AS INTEGER) pediatricsurgeonsdays,
+	CAST(COALESCE(a1.pediatricsurgerydays, 0) AS INTEGER) pediatricsurgerydays,
 
 	-- Primary care psychiatry utilization
 	CAST(COALESCE(a1.psychiatryprocedures, 0) AS INTEGER) psychiatryprocedures,
