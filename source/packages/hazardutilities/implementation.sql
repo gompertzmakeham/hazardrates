@@ -628,8 +628,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		anesthesiologyprocedures IN INTEGER,
 		consultprocedures IN INTEGER,
 		generalpracticeprocedures IN INTEGER,
+		geriatricprocedures IN INTEGER,
 		obstetricprocedures IN INTEGER,
 		pathologyprocedures IN INTEGER,
+		pediatricprocedures IN INTEGER,
+		pediatricsurgeryprocedures IN INTEGER,
 		psychiatryprocedures IN INTEGER,
 		radiologyprocedures IN INTEGER,
 		specialtyprocedures IN INTEGER,
@@ -638,8 +641,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		anesthesiologistsdays IN INTEGER,
 		consultprovidersdays IN INTEGER,
 		generalpractitionersdays IN INTEGER,
+		geriatriciansdays IN INTEGER,
 		obstetriciansdays IN INTEGER,
 		pathologistsdays IN INTEGER,
+		pediatriciansdays IN INTEGER,
+		pediatricsurgeonsdays IN INTEGER,
 		psychiatristsdays IN INTEGER,
 		radiologistsdays IN INTEGER,
 		specialistsdays IN INTEGER,
@@ -648,8 +654,11 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		anesthesiologydays IN INTEGER,
 		consultdays IN INTEGER,
 		generalpracticedays IN INTEGER,
+		geriatricdays IN INTEGER,
 		obstetricdays IN INTEGER,
 		pathologydays IN INTEGER,
+		pediatricdays IN INTEGER,
+		pediatricsurgerydays IN INTEGER,
 		psychiatrydays IN INTEGER,
 		radiologydays IN INTEGER,
 		specialtydays IN INTEGER,
@@ -1051,6 +1060,24 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			PIPE ROW (localmeasure);
 		END IF;
 
+		-- Elide empty geriatric records
+		IF geriatricprocedures > 0 THEN
+			localmeasure.measurevalue := geriatricprocedures;
+			localmeasure.measureidentifier := 'geriatricprocedures';
+			localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a geriatrician in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := geriatriciansdays;
+			localmeasure.measureidentifier := 'geriatriciansdays';
+			localmeasure.measuredescription := 'Number of unique combinations of primary care geriatricians and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := geriatricdays;
+			localmeasure.measureidentifier := 'geriatricdays';
+			localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care geriatrician was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+		END IF;
+
 		-- Elide empty obstetrics and gynecology records
 		IF obstetriciansdays > 0 THEN
 			localmeasure.measurevalue := obstetricprocedures;
@@ -1084,6 +1111,42 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measurevalue := pathologydays;
 			localmeasure.measureidentifier := 'pathologydays';
 			localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care pathologist was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty pediatric records
+		IF pediatricprocedures > 0 THEN
+			localmeasure.measurevalue := pediatricprocedures;
+			localmeasure.measureidentifier := 'pediatricprocedures';
+			localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a pediatrician in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := pediatriciansdays;
+			localmeasure.measureidentifier := 'pediatriciansdays';
+			localmeasure.measuredescription := 'Number of unique combinations of primary care pediatricians and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := pediatricdays;
+			localmeasure.measureidentifier := 'pediatricdays';
+			localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care pediatrician was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty pediatric surgery records
+		IF pediatricsurgeryprocedures > 0 THEN
+			localmeasure.measurevalue := pediatricsurgeryprocedures;
+			localmeasure.measureidentifier := 'pediatricsurgeryprocedures';
+			localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a pediatric surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := pediatricsurgeonsdays;
+			localmeasure.measureidentifier := 'pediatricsurgeonsdays';
+			localmeasure.measuredescription := 'Number of unique combinations of primary care pediatric surgeons and days in the census interval when the provider was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
+			PIPE ROW (localmeasure);
+
+			localmeasure.measurevalue := pediatricsurgerydays;
+			localmeasure.measureidentifier := 'pediatricsurgerydays';
+			localmeasure.measuredescription := 'Number of unique days in the census interval when a primary care pediatric surgeon was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 			PIPE ROW (localmeasure);
 		END IF;
 
