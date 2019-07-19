@@ -275,7 +275,7 @@ SELECT
 	CAST(COALESCE(a1.pediatricdays, 0) AS INTEGER) pediatricdays,
 
 	-- Primary care pathology utilization
-	CAST(COALESCE(a1.pediatricsurgeryprocedures, 0) AS INTEGER) pediatricsurgeryprocedures,
+	CAST(COALESCE(a1.pediatricsurgicalprocedures, 0) AS INTEGER) pediatricsurgicalprocedures,
 	CAST(COALESCE(a1.pediatricsurgeonsdays, 0) AS INTEGER) pediatricsurgeonsdays,
 	CAST(COALESCE(a1.pediatricsurgerydays, 0) AS INTEGER) pediatricsurgerydays,
 
@@ -300,6 +300,14 @@ SELECT
 	CAST(COALESCE(a1.surgerydays, 0) AS INTEGER) surgerydays,
 
 	-- Supportive living
+	CAST(COALESCE(a1.designateddays, 0) AS INTEGER) designateddays,
+	CAST(COALESCE(a1.designatedadmissions, 0) AS INTEGER) designatedadmissions,
+	CAST(COALESCE(a1.designateddischarges, 0) AS INTEGER) designateddischarges,
+	CAST(COALESCE(a1.designatedstays, 0) AS INTEGER) designatedstays,
+	CAST(COALESCE(a1.nondesignateddays, 0) AS INTEGER) nondesignateddays,
+	CAST(COALESCE(a1.nondesignatedadmissions, 0) AS INTEGER) nondesignatedadmissions,
+	CAST(COALESCE(a1.nondesignateddischarges, 0) AS INTEGER) nondesignateddischarges,
+	CAST(COALESCE(a1.nondesignatedstays, 0) AS INTEGER) nondesignatedstays,
 	CAST(COALESCE(a1.supportivelivingdays, 0) AS INTEGER) supportivelivingdays,
 	CAST(COALESCE(a1.supportivelivingadmissions, 0) AS INTEGER) supportivelivingadmissions,
 	CAST(COALESCE(a1.supportivelivingdischarges, 0) AS INTEGER) supportivelivingdischarges,

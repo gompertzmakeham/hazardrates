@@ -632,7 +632,7 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		obstetricprocedures IN INTEGER,
 		pathologyprocedures IN INTEGER,
 		pediatricprocedures IN INTEGER,
-		pediatricsurgeryprocedures IN INTEGER,
+		pediatricsurgicalprocedures IN INTEGER,
 		psychiatryprocedures IN INTEGER,
 		radiologyprocedures IN INTEGER,
 		specialtyprocedures IN INTEGER,
@@ -664,6 +664,14 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		specialtydays IN INTEGER,
 		surgerydays IN INTEGER,
 		primarycaredays IN INTEGER,
+		designateddays IN INTEGER,
+		designatedadmissions IN INTEGER,
+		designateddischarges IN INTEGER,
+		designatedstays IN INTEGER,
+		nondesignateddays IN INTEGER,
+		nondesignatedadmissions IN INTEGER,
+		nondesignateddischarges IN INTEGER,
+		nondesignatedstays IN INTEGER,
 		supportivelivingdays IN INTEGER,
 		supportivelivingadmissions IN INTEGER,
 		supportivelivingdischarges IN INTEGER,
@@ -757,15 +765,19 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measuredescription := 'Naive sum of emergency inpatient care days that intersected with the census interval, including overlapping stays.';
 			PIPE ROW (localmeasure);
 
-			localmeasure.measurevalue := inpatientadmissions;
-			localmeasure.measureidentifier := 'inpatientadmissions';
-			localmeasure.measuredescription := 'Emergency inpatient care admissions in the census interval.';
-			PIPE ROW (localmeasure);
+			IF inpatientadmissions > 0 THEN
+				localmeasure.measurevalue := inpatientadmissions;
+				localmeasure.measureidentifier := 'inpatientadmissions';
+				localmeasure.measuredescription := 'Emergency inpatient care admissions in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
-			localmeasure.measurevalue := inpatientdischarges;
-			localmeasure.measureidentifier := 'inpatientdischarges';
-			localmeasure.measuredescription := 'Emergency inpatient care discharges in the census interval.';
-			PIPE ROW (localmeasure);
+			IF inpatientdischarges > 0 THEN
+				localmeasure.measurevalue := inpatientdischarges;
+				localmeasure.measureidentifier := 'inpatientdischarges';
+				localmeasure.measuredescription := 'Emergency inpatient care discharges in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
 			localmeasure.measurevalue := inpatientstays;
 			localmeasure.measureidentifier := 'inpatientstays';
@@ -780,15 +792,19 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measuredescription := 'Naive sum of emergency inpatient care days, for private casualties, that intersected with the census interval, including overlapping stays.';
 			PIPE ROW (localmeasure);
 
-			localmeasure.measurevalue := inpatientprivateadmissions;
-			localmeasure.measureidentifier := 'inpatientprivateadmissions';
-			localmeasure.measuredescription := 'Emergency inpatient care admissions, for private casualties, in the census interval.';
-			PIPE ROW (localmeasure);
+			IF inpatientprivateadmissions > 0 THEN
+				localmeasure.measurevalue := inpatientprivateadmissions;
+				localmeasure.measureidentifier := 'inpatientprivateadmissions';
+				localmeasure.measuredescription := 'Emergency inpatient care admissions, for private casualties, in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
-			localmeasure.measurevalue := inpatientprivatedischarges;
-			localmeasure.measureidentifier := 'inpatientprivatedischarges';
-			localmeasure.measuredescription := 'Emergency inpatient care discharges, for private casualties, in the census interval.';
-			PIPE ROW (localmeasure);
+			IF inpatientprivatedischarges > 0 THEN
+				localmeasure.measurevalue := inpatientprivatedischarges;
+				localmeasure.measureidentifier := 'inpatientprivatedischarges';
+				localmeasure.measuredescription := 'Emergency inpatient care discharges, for private casualties, in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
 			localmeasure.measurevalue := inpatientprivatestays;
 			localmeasure.measureidentifier := 'inpatientprivatestays';
@@ -803,15 +819,19 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measuredescription := 'Naive sum of emergency inpatient care days, for workplace casualties, that intersected with the census interval, including overlapping stays.';
 			PIPE ROW (localmeasure);
 
-			localmeasure.measurevalue := inpatientworkadmissions;
-			localmeasure.measureidentifier := 'inpatientworkadmissions';
-			localmeasure.measuredescription := 'Emergency inpatient care admissions, for workplace casualties, in the census interval.';
-			PIPE ROW (localmeasure);
+			IF inpatientworkadmissions > 0 THEN
+				localmeasure.measurevalue := inpatientworkadmissions;
+				localmeasure.measureidentifier := 'inpatientworkadmissions';
+				localmeasure.measuredescription := 'Emergency inpatient care admissions, for workplace casualties, in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
-			localmeasure.measurevalue := inpatientworkdischarges;
-			localmeasure.measureidentifier := 'inpatientworkdischarges';
-			localmeasure.measuredescription := 'Emergency inpatient care discharges, for workplace casualties, in the census interval.';
-			PIPE ROW (localmeasure);
+			IF inpatientworkdischarges > 0 THEN
+				localmeasure.measurevalue := inpatientworkdischarges;
+				localmeasure.measureidentifier := 'inpatientworkdischarges';
+				localmeasure.measuredescription := 'Emergency inpatient care discharges, for workplace casualties, in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
 			localmeasure.measurevalue := inpatientworkstays;
 			localmeasure.measureidentifier := 'inpatientworkstays';
@@ -826,15 +846,19 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measuredescription := 'Naive sum of days of professionals allocated to provide care, case, transition, or placement managment or coordination, that intersected with the census interval, including overlapping allocations.';
 			PIPE ROW (localmeasure);
 
-			localmeasure.measurevalue := caremanagerallocations;
-			localmeasure.measureidentifier := 'caremanagerallocations';
-			localmeasure.measuredescription := 'Allocations of professionals to provide care, case, transition, or placement managment or coordination.';
-			PIPE ROW (localmeasure);
+			IF caremanagerallocations > 0 THEN
+				localmeasure.measurevalue := caremanagerallocations;
+				localmeasure.measureidentifier := 'caremanagerallocations';
+				localmeasure.measuredescription := 'Allocations of professionals to provide care, case, transition, or placement managment or coordination.';
+				PIPE ROW (localmeasure);
+			END IF;
 
-			localmeasure.measurevalue := caremanagerreleases;
-			localmeasure.measureidentifier := 'caremanagerreleases';
-			localmeasure.measuredescription := 'Release of professionals from providing care, case, transition, or placement managment or coordination.';
-			PIPE ROW (localmeasure);
+			IF caremanagerreleases > 0 THEN
+				localmeasure.measurevalue := caremanagerreleases;
+				localmeasure.measureidentifier := 'caremanagerreleases';
+				localmeasure.measuredescription := 'Release of professionals from providing care, case, transition, or placement managment or coordination.';
+				PIPE ROW (localmeasure);
+			END IF;
 
 			localmeasure.measurevalue := caremanagers;
 			localmeasure.measureidentifier := 'caremanagers';
@@ -921,15 +945,19 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 			localmeasure.measuredescription := 'Naive sum of long term care days that intersected with the census interval, including overlapping stays.';
 			PIPE ROW (localmeasure);
 
-			localmeasure.measurevalue := longtermcareadmissions;
-			localmeasure.measureidentifier := 'longtermcareadmissions';
-			localmeasure.measuredescription := 'Long term care admissions in the census interval.';
-			PIPE ROW (localmeasure);
+			IF longtermcareadmissions > 0 THEN
+				localmeasure.measurevalue := longtermcareadmissions;
+				localmeasure.measureidentifier := 'longtermcareadmissions';
+				localmeasure.measuredescription := 'Long term care admissions in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
-			localmeasure.measurevalue := longtermcaredischarges;
-			localmeasure.measureidentifier := 'longtermcaredischarges';
-			localmeasure.measuredescription := 'Long term care discharges in the census interval.';
-			PIPE ROW (localmeasure);
+			IF longtermcaredischarges > 0 THEN
+				localmeasure.measurevalue := longtermcaredischarges;
+				localmeasure.measureidentifier := 'longtermcaredischarges';
+				localmeasure.measuredescription := 'Long term care discharges in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
 
 			localmeasure.measurevalue := longtermcarestays;
 			localmeasure.measureidentifier := 'longtermcarestays';
@@ -1133,9 +1161,9 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		END IF;
 
 		-- Elide empty pediatric surgery records
-		IF pediatricsurgeryprocedures > 0 THEN
-			localmeasure.measurevalue := pediatricsurgeryprocedures;
-			localmeasure.measureidentifier := 'pediatricsurgeryprocedures';
+		IF pediatricsurgicalprocedures > 0 THEN
+			localmeasure.measurevalue := pediatricsurgicalprocedures;
+			localmeasure.measureidentifier := 'pediatricsurgicalprocedures';
 			localmeasure.measuredescription := 'Number of primary care procedures in the census interval delivered by a pediatric surgeon in the role of most responsible procedure provider and specifically delivering procedures in their specialty.';
 			PIPE ROW (localmeasure);
 
@@ -1241,25 +1269,83 @@ CREATE OR REPLACE PACKAGE BODY hazardutilities AS
 		END IF;
 
 		-- Elide empty designated supportive living records
+		IF designateddays > 0 THEN
+			localmeasure.measurevalue := designateddays;
+			localmeasure.measureidentifier := 'designateddays';
+			localmeasure.measuredescription := 'Naive sum of designated supportive living days that intersected with the census interval, including overlapping stays.';
+			PIPE ROW (localmeasure);
+
+			IF designatedadmissions > 0 THEN
+				localmeasure.measurevalue := designatedadmissions;
+				localmeasure.measureidentifier := 'designatedadmissions';
+				localmeasure.measuredescription := 'Designated supportive living admissions in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
+
+			IF designateddischarges > 0 THEN
+				localmeasure.measurevalue := designateddischarges;
+				localmeasure.measureidentifier := 'designateddischarges';
+				localmeasure.measuredescription := 'Designated supportive living discharges in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
+
+			localmeasure.measurevalue := designatedstays;
+			localmeasure.measureidentifier := 'designatedstays';
+			localmeasure.measuredescription := 'Designated supportive living stays intersecting with the census interval.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty non-designated supportive living records
+		IF nondesignateddays > 0 THEN
+			localmeasure.measurevalue := nondesignateddays;
+			localmeasure.measureidentifier := 'nondesignateddays';
+			localmeasure.measuredescription := 'Naive sum of non-designated supportive living days that intersected with the census interval, including overlapping stays.';
+			PIPE ROW (localmeasure);
+
+			IF nondesignatedadmissions > 0 THEN
+				localmeasure.measurevalue := nondesignatedadmissions;
+				localmeasure.measureidentifier := 'nondesignatedadmissions';
+				localmeasure.measuredescription := 'Non-designated supportive living admissions in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
+
+			IF nondesignateddischarges > 0 THEN
+				localmeasure.measurevalue := nondesignateddischarges;
+				localmeasure.measureidentifier := 'nondesignateddischarges';
+				localmeasure.measuredescription := 'Non-designated supportive living discharges in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
+
+			localmeasure.measurevalue := nondesignatedstays;
+			localmeasure.measureidentifier := 'nondesignatedstays';
+			localmeasure.measuredescription := 'Non-designated supportive living stays intersecting with the census interval.';
+			PIPE ROW (localmeasure);
+		END IF;
+
+		-- Elide empty supportive living records
 		IF supportivelivingdays > 0 THEN
 			localmeasure.measurevalue := supportivelivingdays;
 			localmeasure.measureidentifier := 'supportivelivingdays';
-			localmeasure.measuredescription := 'Naive sum of designated supportive living days that intersected with the census interval, including overlapping stays.';
+			localmeasure.measuredescription := 'Naive sum of supportive living days that intersected with the census interval, including overlapping stays.';
 			PIPE ROW (localmeasure);
-	
-			localmeasure.measurevalue := supportivelivingadmissions;
-			localmeasure.measureidentifier := 'supportivelivingadmissions';
-			localmeasure.measuredescription := 'Designated supportive living admissions in the census interval.';
-			PIPE ROW (localmeasure);
-	
-			localmeasure.measurevalue := supportivelivingdischarges;
-			localmeasure.measureidentifier := 'supportivelivingdischarges';
-			localmeasure.measuredescription := 'Designated supportive living discharges in the census interval.';
-			PIPE ROW (localmeasure);
-	
+
+			IF supportivelivingadmissions > 0 THEN
+				localmeasure.measurevalue := supportivelivingadmissions;
+				localmeasure.measureidentifier := 'supportivelivingadmissions';
+				localmeasure.measuredescription := 'Supportive living admissions in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
+
+			IF supportivelivingdischarges > 0 THEN
+				localmeasure.measurevalue := supportivelivingdischarges;
+				localmeasure.measureidentifier := 'supportivelivingdischarges';
+				localmeasure.measuredescription := 'Supportive living discharges in the census interval.';
+				PIPE ROW (localmeasure);
+			END IF;
+
 			localmeasure.measurevalue := supportivelivingstays;
 			localmeasure.measureidentifier := 'supportivelivingstays';
-			localmeasure.measuredescription := 'Designated supportive living stays intersecting with the census interval.';
+			localmeasure.measuredescription := 'Supportive living stays intersecting with the census interval.';
 			PIPE ROW (localmeasure);
 		END IF;
 		RETURN;

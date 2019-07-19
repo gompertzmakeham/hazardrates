@@ -650,6 +650,14 @@ SELECT
 	CAST(COALESCE(a0.specialtydays, 0) AS INTEGER) specialtydays,
 	CAST(COALESCE(a0.surgerydays, 0) AS INTEGER) surgerydays,
 	CAST(COALESCE(a0.primarycaredays, 0) AS INTEGER) primarycaredays,
+	CAST(COALESCE(a1.designateddays, 0) AS INTEGER) designateddays,
+	CAST(COALESCE(a1.designatedadmissions, 0) AS INTEGER) designatedadmissions,
+	CAST(COALESCE(a1.designateddischarges, 0) AS INTEGER) designateddischarges,
+	CAST(COALESCE(a1.designatedstays, 0) AS INTEGER) designatedstays,
+	CAST(COALESCE(a1.nondesignateddays, 0) AS INTEGER) nondesignateddays,
+	CAST(COALESCE(a1.nondesignatedadmissions, 0) AS INTEGER) nondesignatedadmissions,
+	CAST(COALESCE(a1.nondesignateddischarges, 0) AS INTEGER) nondesignateddischarges,
+	CAST(COALESCE(a1.nondesignatedstays, 0) AS INTEGER) nondesignatedstays,
 	CAST(COALESCE(a1.staydays, 0) AS INTEGER) supportivelivingdays,
 	CAST(COALESCE(a1.admissioncount, 0) AS INTEGER) supportivelivingadmissions,
 	CAST(COALESCE(a1.dischargecount, 0) AS INTEGER) supportivelivingdischarges,
@@ -770,7 +778,15 @@ COMMENT ON COLUMN personutilization.radiologydays IS 'Number of unique days in t
 COMMENT ON COLUMN personutilization.specialtydays IS 'Number of unique days in the census interval when a primary care specialist other than an anesthesiologist, general practitioner, pathologist, radiologist, or surgeon was in the role of most responsible procedure provider and specifically delivered care in their specialty.';
 COMMENT ON COLUMN personutilization.surgerydays IS 'Number of unique days in the census interval when a primary care surgeon was in the role of most responsible procedure provider and specifically delivered procedures in their specialty.';
 COMMENT ON COLUMN personutilization.primarycaredays IS 'Number of unique days in the census interval when the person visited primary care in the community.';
-COMMENT ON COLUMN personutilization.supportivelivingdays IS 'Naive sum of designated supportive living days that intersected with the census interval, including overlapping stays.';
-COMMENT ON COLUMN personutilization.supportivelivingadmissions IS 'Designated supportive living admissions in the census interval.';
-COMMENT ON COLUMN personutilization.supportivelivingdischarges IS 'Designated supportive living discharges in the census interval.';
-COMMENT ON COLUMN personutilization.supportivelivingstays IS 'Designated supportive living stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.designateddays IS 'Naive sum of designated supportive living days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.designatedadmissions IS 'Designated supportive living admissions in the census interval.';
+COMMENT ON COLUMN personutilization.designateddischarges IS 'Designated supportive living discharges in the census interval.';
+COMMENT ON COLUMN personutilization.designatedstays IS 'Designated supportive living stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.nondesignateddays IS 'Naive sum of non-designated supportive living days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.nondesignatedadmissions IS 'Non-designated supportive living admissions in the census interval.';
+COMMENT ON COLUMN personutilization.nondesignateddischarges IS 'Non-designated supportive living discharges in the census interval.';
+COMMENT ON COLUMN personutilization.nondesignatedstays IS 'Non-designated supportive living stays intersecting with the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingdays IS 'Naive sum of supportive living days that intersected with the census interval, including overlapping stays.';
+COMMENT ON COLUMN personutilization.supportivelivingadmissions IS 'Supportive living admissions in the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingdischarges IS 'Supportive living discharges in the census interval.';
+COMMENT ON COLUMN personutilization.supportivelivingstays IS 'Supportive living stays intersecting with the census interval.';
