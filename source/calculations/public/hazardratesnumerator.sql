@@ -288,7 +288,6 @@ CASE [hazardrate]
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [GERIATRICDAYS]
-
     WHEN 'OBSTETRICPROCEDURES' THEN
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
@@ -317,7 +316,6 @@ CASE [hazardrate]
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [PATHOLOGYDAYS]
-
     WHEN 'PEDIATRICPROCEDURES' THEN
         (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [PEDIATRICPROCEDURES]
@@ -329,7 +327,6 @@ CASE [hazardrate]
     WHEN 'PEDIATRICDAYS' THEN
         (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [PEDIATRICDAYS]
-
     WHEN 'PEDIATRICSURGICALPROCEDURES' THEN
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
@@ -344,7 +341,6 @@ CASE [hazardrate]
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))
             * [PEDIATRICSURGERYDAYS]
-
     WHEN 'PSYCHIATRYPROCEDURES' THEN
         1000
             * (1 + DATEDIFF('day', [CENSUSSTART], [CENSUSEND]))

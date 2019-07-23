@@ -82,8 +82,11 @@ parameter:
     * `[ANESTHESIOLOGYPERCENTUTILIZATION]`
     * `[CONSULTPERCENTUTILIZATION]`
     * `[GENERALPRACTICEPERCENTUTILIZATION]`
+    * `[GERIATRICPERCENTUTILIZATION]`
     * `[OBSTETRICPERCENTUTILIZATION]`
     * `[PATHOLOGYPERCENTUTILIZATION]`
+    * `[PEDIATRICPERCENTUTILIZATION]`
+    * `[PEDIATRICSURGERYPERCENTUTILIZATION]`
     * `[PSYCHIATRYPERCENTUTILIZATION]`
     * `[RADIOLOGYPERCENTUTILIZATION]`
     * `[SPECIALTYPERCENTUTILIZATION]`
@@ -97,7 +100,7 @@ parameter:
     * `[statistic_hazardratelower]`
     * `[statistic_hazardrateupper]`
     * `[variable_hazardraterecommended]`
-10. In `hazardratespublic.twb` create a new live connection to the `hazardrates` table named
+10. Create a new live connection to the `hazardrates` table named
 `hazardratespublic`, ensuring that the `Initial SQL...` opens a parallel session.
 
 ```SQL
