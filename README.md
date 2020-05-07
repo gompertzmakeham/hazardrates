@@ -173,6 +173,6 @@ Of the 19 data sources that currently feed into this hazard rates analysis, a nu
 
 Disclaimer
 ----------
-The aggregate data presented in this project are compiled and released in accordance with the [Health Information Act of Alberta](http://canlii.ca/t/81pf) under the provisions of [Part 4, Section 27, Sub-section 1(g)](Health Information Act, RSA 2000, c H-5, s 27(1) <http://canlii.ca/t/53fss#sec27subsec1> retrieved on 2020-05-07) for the purpose of health system quality improvement, monitoring, and evaluation.
+The aggregate data presented in this project are compiled and released in accordance with the [Health Information Act of Alberta](http://canlii.ca/t/81pf) under the provisions of [Part 4, Section 27, Sub-section 1(g)](http://canlii.ca/t/53fss#sec27subsec1) for the purpose of health system quality improvement, monitoring, and evaluation.
 
 This material is intended for general information only, and is provided on an *"as is"*, or *"where is"* basis. Although reasonable efforts were made to confirm the accuracy of the information, Alberta Health Services does not make any representation or warranty, express, implied, or statutory, as to the accuracy, reliability, completeness, applicability, or fitness for a particular purpose of such information. This material is not a substitute for the advice of a qualified health professional. Alberta Health Services expressly disclaims all liability for the use of these materials, and for any claims, actions, demands, or suits arising from such use.
