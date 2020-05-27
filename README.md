@@ -103,15 +103,16 @@ The administrative data sources we work has three modalities of recording inform
 
 Differentiation between:
 
-* transactionally recorded events
-* clerically recorded events
-* Existential bounds on events
+* transactional recording of events.
+* clerically reflective recording events.
+* Inferential existential bounds on events.
 
 The impact of:
 
-* *Censoring* is what you do not know about the patients you have been observing because you cannot see into the future.
+* *Censoring* is what you do not know about observed patients because you cannot see into the future.
 * *Survivorship bias* is what you do not know about the patients you never observed because they did not live long enough to be included.
-* *Immortal time bias* is what you do not know about observed patients because you cannot see into the past
+* *Immortal time bias* is what you do not know about observed patients because you cannot see into the past.
+* *Sampling Bias* is what you do not know about patients you did not observe.
 
 Epistemic Uncertainty
 ---------------------
